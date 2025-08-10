@@ -74,10 +74,13 @@ AI assistants MUST maintain documentation integrity:
 ✅ Verify AI_CONTEXT.md accuracy after modifications
 ✅ Update cross-references when changing document structure
 ✅ Document decisions and reasoning for future AI context
+✅ Keep commit messages under 300 characters to prevent timeout
 ❌ Never make changes without updating relevant documentation
 ❌ Never leave broken links or outdated references
+❌ Never write commit messages longer than 4-5 lines
 
 Documentation is code. Treat it with the same rigor.
+Commit messages should be concise but informative.
 ```
 
 ---
