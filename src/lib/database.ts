@@ -537,18 +537,18 @@ export class DatabaseService {
 
   // UTILITY METHODS
 
-  private transformPersonFromDb(dbPerson: any): Person {
+  private transformPersonFromDb(dbPerson: Record<string, unknown>): Person {
     return {
-      id: dbPerson.id,
-      organizationId: dbPerson.organization_id,
-      createdBy: dbPerson.created_by,
-      firstName: dbPerson.first_name,
-      lastName: dbPerson.last_name,
-      email: dbPerson.email,
-      phone: dbPerson.phone,
-      title: dbPerson.title,
-      company: dbPerson.company,
-      industry: dbPerson.industry,
+      id: dbPerson.id as string,
+      organizationId: dbPerson.organization_id as string,
+      createdBy: dbPerson.created_by as string,
+      firstName: dbPerson.first_name as string,
+      lastName: dbPerson.last_name as string,
+      email: dbPerson.email as string | undefined,
+      phone: dbPerson.phone as string | undefined,
+      title: dbPerson.title as string | undefined,
+      company: dbPerson.company as string | undefined,
+      industry: dbPerson.industry as string | undefined,
       seniorityLevel: dbPerson.seniority_level,
       department: dbPerson.department,
       linkedinUrl: dbPerson.linkedin_url,

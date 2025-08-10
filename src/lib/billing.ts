@@ -459,7 +459,7 @@ export class BillingService {
   }
 
   // Webhook handler for Stripe events
-  async handleStripeWebhook(event: any): Promise<void> {
+  async handleStripeWebhook(event: Record<string, unknown>): Promise<void> {
     // TODO: Implement Stripe webhook handling
     // This would process Stripe webhook events to update subscription status
     
