@@ -460,6 +460,100 @@ Consensus + Cultural DNA = Green light for execution
 
 ---
 
+## 🎯 **COMPREHENSIVE WEEKLY REVIEW PROMPT**
+
+### **@weekly-review = Complete Weekly Assessment Framework**
+```markdown
+"COMPREHENSIVE WEEKLY REVIEW - RelationshipOS Week [X] Assessment
+
+I need a complete, brutally honest assessment of this week's progress across all critical dimensions. Respond in segments for each section, providing specific evidence and confidence ratings.
+
+SECTION 1: EXECUTIVE TEAM ANALYSIS (@exec-segment)
+- Reid (CEO): Market positioning, competitive threats, strategic alignment
+- Jensen (CTO): Technical architecture, performance gaps, scalability risks  
+- Mark (CBO): Customer value proposition, revenue model validation, unit economics
+- Tim (COO): User experience reality, operational challenges, quality standards
+- Eric (CoS): Execution effectiveness, timeline accuracy, resource allocation
+
+SECTION 2: DOCUMENTATION ALIGNMENT AUDIT (@alignment-segment)
+- Compare current codebase against technical scope documentation
+- Identify specific gaps, mismatches, or implementation drift
+- Rate alignment percentage with evidence for rating
+- List critical missing components from planned architecture
+
+SECTION 3: CUSTOMER REALITY CHECK (@customer-segment)
+- Would real customers pay $299/month for this week's progress? Why/why not?
+- What value is actually delivered vs. promised?
+- How would target customers react to a demo of current functionality?
+- What customer problems remain unsolved after this week?
+
+SECTION 4: COMPETITIVE VULNERABILITY ASSESSMENT (@competitive-segment)
+- What defensible advantages were built vs. easily replicable features?
+- How could a well-funded competitor attack our current approach?
+- What would our smartest competitor criticize about this week's work?
+- Where are we building commodity features vs. revolutionary capabilities?
+
+SECTION 5: TECHNICAL DEBT & SCALING AUDIT (@debt-segment)
+- What shortcuts were taken that will hurt us at scale?
+- Which technical decisions will we regret at 1000+ customers?
+- What performance bottlenecks were introduced or not addressed?
+- How much technical debt accumulated vs. eliminated this week?
+
+SECTION 6: RESOURCE OPTIMIZATION ANALYSIS (@resource-segment)
+- Did we work on the highest-impact priorities this week?
+- If we had 50% less time/budget, what would we cut from this week's work?
+- What low-impact work consumed disproportionate resources?
+- Where did perfectionism prevent shipping or progress?
+
+SECTION 7: ASSUMPTION VALIDATION REVIEW (@assumption-segment)
+- What planning assumptions proved wrong this week?
+- What evidence contradicted our Week [X] expectations?
+- Which pivots or course corrections are needed based on learnings?
+- What new risks or opportunities emerged that weren't anticipated?
+
+SECTION 8: FORWARD RISK ASSESSMENT (@risk-segment)
+- What are the top 5 risks that could derail Week [X+1] progress?
+- Which dependencies or external factors pose threats?
+- What internal execution gaps need immediate attention?
+- How confident are we in next week's timeline and scope?
+
+SECTION 9: REVOLUTIONARY STANDARDS VALIDATION (@standards-segment)
+- Does this week's progress advance our 'feels like the future' goal?
+- How does current functionality compare to $5K/month human VAs?
+- What evidence supports our 10x better claim vs. alternatives?
+- Where are we settling for incremental vs. revolutionary improvements?
+
+REQUIREMENTS FOR EACH SEGMENT:
+□ Provide specific evidence for all claims
+□ Include confidence ratings (1-10) for assessments
+□ Identify both strengths AND critical gaps
+□ Suggest concrete next actions for identified problems
+□ Rate overall week performance with supporting reasoning
+
+Answer each segment with brutal honesty. Truth serves the mission of building the best product in the world."
+```
+
+### **@weekly-truth = Ultra-Compressed Truth Check**
+```markdown
+"WEEKLY TRUTH CHECK - Week [X] Reality Assessment
+
+Answer these 8 critical questions with brutal honesty and evidence:
+
+1. CUSTOMER TEST: Would 5 target customers pay $299/month for this week's progress right now?
+2. COMPETITIVE MOAT: What defensible advantages did we build vs. commodity features?
+3. TECH DEBT: What shortcuts will hurt us at 1000+ customers?
+4. RESOURCE BURN: Did we work on highest-impact priorities or waste time on perfectionism?
+5. ASSUMPTION BREAKS: What planning assumptions proved wrong and need pivots?
+6. SCALING RISKS: What will break first when we grow?
+7. EXECUTION GAPS: Where is our methodology failing vs. working?
+8. REVOLUTIONARY STANDARD: Does this feel like the future or just another tool?
+
+Rate confidence (1-10) and provide specific evidence for each answer.
+Truth over politeness. Kyle's success over harmony."
+```
+
+---
+
 **Your virtual executive team is now instantly accessible with hotkeys, trigger prompts, and lightning-fast decision support. Copy, paste, and get world-class business advice in seconds!** ⚡
 
 **Ready to put your quick-access virtual team to work building RelationshipOS?** 🚀 
