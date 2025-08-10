@@ -74,13 +74,16 @@ AI assistants MUST maintain documentation integrity:
 ✅ Verify AI_CONTEXT.md accuracy after modifications
 ✅ Update cross-references when changing document structure
 ✅ Document decisions and reasoning for future AI context
-✅ Keep commit messages under 300 characters to prevent timeout
+✅ Keep commit messages under 80 characters TOTAL to prevent timeout
+✅ Use single-line commits only: "🎯 Week X Day - achievement, metric"
+✅ Example: "🚀 Week 3 Wed - Oracle 1.1s, 4/4 demos, $1,196 ARR"
 ❌ Never make changes without updating relevant documentation
 ❌ Never leave broken links or outdated references
-❌ Never write commit messages longer than 4-5 lines
+❌ NEVER exceed 80 characters or git push will timeout
+❌ NEVER use multi-line commit messages
 
 Documentation is code. Treat it with the same rigor.
-Commit messages should be concise but informative.
+Commit messages MUST be ultra-concise to prevent git timeout failures.
 ```
 
 ---
