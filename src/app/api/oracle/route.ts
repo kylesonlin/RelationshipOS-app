@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getVectorStore } from '@/lib/vector-store';
 import { getRelationshipInsights, SAMPLE_ORG_ID, SAMPLE_USER_ID } from '@/lib/sample-data';
+import { getCache } from '@/lib/cache';
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -14,11 +15,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize OpenAI client at runtime, not build time
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
     const { query } = await request.json();
 
     if (!query) {
@@ -28,11 +24,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get relationship intelligence context using vector similarity
-    const relationshipContext = await getRelationshipInsights(query);
-    
-    // Enhanced Oracle AI System Prompt with relationship context
-    const systemPrompt = `You are the Oracle Engine for RelationshipOS - an AI that provides revolutionary relationship intelligence for professionals.
+    // Get high-performance cache instance
+    const cache = getCache();
+
+    // Use cached Oracle response wrapper for performance optimization
+    const result = await cache.getCachedOracleResponse(
+      query,
+      SAMPLE_ORG_ID,
+      async () => {
+        // This function only runs on cache miss
+        const relationshipContext = await getRelationshipInsights(query);
+        
+        // Initialize OpenAI client at runtime, not build time
+        const openai = new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY,
+        });
+        
+        // Enhanced Oracle AI System Prompt with relationship context
+        const systemPrompt = `You are the Oracle Engine for RelationshipOS - an AI that provides revolutionary relationship intelligence for professionals.
 
 You have access to real professional relationship data and must provide insights that are 10x better than human VAs.
 
@@ -58,54 +67,79 @@ If no specific relationship context is available, provide strategic networking f
 
 Remember: You're replacing $5K/month human VAs - your insights must be faster, more comprehensive, and more actionable than any human could provide.`;
 
-    // Call OpenAI GPT-4 Turbo for intelligent relationship analysis
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: query }
-      ],
-      max_tokens: 800,
-      temperature: 0.7,
-    });
+        // Call OpenAI GPT-4 Turbo for intelligent relationship analysis
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4-turbo-preview",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: query }
+          ],
+          max_tokens: 800,
+          temperature: 0.7,
+        });
 
-    const oracleResponse = completion.choices[0]?.message?.content;
+        const oracleResponse = completion.choices[0]?.message?.content;
 
-    if (!oracleResponse) {
-      return NextResponse.json(
-        { error: 'Oracle failed to generate intelligence report' },
-        { status: 500 }
-      );
-    }
+        if (!oracleResponse) {
+          throw new Error('Oracle failed to generate intelligence report');
+        }
 
-    const responseTime = Date.now() - startTime;
+        return {
+          response: oracleResponse,
+          query: query,
+          timestamp: new Date().toISOString(),
+          model: "gpt-4-turbo-preview",
+          relationshipContextUsed: relationshipContext !== "No specific relationship context found. Providing general relationship intelligence.",
+          metadata: {
+            tokensUsed: completion.usage?.total_tokens || 0,
+            hasRelationshipData: relationshipContext.includes("RELATIONSHIP CONTEXT:"),
+          }
+        };
+      }
+    );
 
     // Store Oracle interaction for learning (async, don't await)
-    try {
-      const vectorStore = getVectorStore();
-      vectorStore.storeOracleInteraction(
-        SAMPLE_ORG_ID,
-        SAMPLE_USER_ID,
-        query,
-        oracleResponse,
-        determineQueryType(query)
-      ).catch(err => console.error('Failed to store Oracle interaction:', err));
-    } catch (err) {
-      // Don't let analytics errors break the main flow
-      console.error('Analytics error:', err);
+    if (!result.fromCache) {
+      try {
+        const vectorStore = getVectorStore();
+        const responseData = result.data as {
+          response: string;
+          query: string;
+        };
+        vectorStore.storeOracleInteraction(
+          SAMPLE_ORG_ID,
+          SAMPLE_USER_ID,
+          responseData.query,
+          responseData.response,
+          determineQueryType(query)
+        ).catch(err => console.error('Failed to store Oracle interaction:', err));
+      } catch (err) {
+        console.error('Analytics error:', err);
+      }
     }
 
+    // Get cache statistics for monitoring
+    const cacheStats = cache.getStats();
+    
+    // Add performance metadata
+    const responseData = result.data as Record<string, unknown>;
+    
     return NextResponse.json({
-      response: oracleResponse,
-      query: query,
-      timestamp: new Date().toISOString(),
-      model: "gpt-4-turbo-preview",
-      responseTime: responseTime,
-      relationshipContextUsed: relationshipContext !== "No specific relationship context found. Providing general relationship intelligence.",
-      metadata: {
-        tokensUsed: completion.usage?.total_tokens || 0,
-        hasRelationshipData: relationshipContext.includes("RELATIONSHIP CONTEXT:"),
-        processingTime: responseTime
+      ...responseData,
+      performance: {
+        responseTime: result.responseTime,
+        fromCache: result.fromCache,
+        cacheHitRate: Math.round(cacheStats.cacheHitRate * 100) / 100,
+        averageResponseTime: Math.round(cacheStats.averageResponseTime),
+        cacheSize: cacheStats.size,
+        totalQueries: cacheStats.totalQueries
+      },
+      guarantee: {
+        targetResponseTime: "< 10 seconds",
+        achieved: result.responseTime < 10000,
+        performanceLevel: result.responseTime < 2000 ? "excellent" : 
+                         result.responseTime < 5000 ? "good" : 
+                         result.responseTime < 10000 ? "acceptable" : "needs optimization"
       }
     });
 
@@ -118,7 +152,11 @@ Remember: You're replacing $5K/month human VAs - your insights must be faster, m
       { 
         error: 'Oracle Engine encountered an error processing your request',
         details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined,
-        responseTime: responseTime,
+        performance: {
+          responseTime: responseTime,
+          fromCache: false,
+          error: true
+        },
         suggestion: "Try rephrasing your query or check that the system is properly configured."
       },
       { status: 500 }
@@ -149,17 +187,34 @@ function determineQueryType(query: string): string {
   return 'general_intelligence';
 }
 
+// Cache statistics endpoint
 export async function GET() {
-  return NextResponse.json({
-    message: 'Oracle Engine API',
-    status: 'operational',
-    version: '1.0.0',
-    capabilities: [
-      'Professional relationship analysis',
-      'Networking opportunity identification',
-      'Relationship prioritization',
-      'Follow-up strategy recommendations',
-      'Relationship health monitoring',
-    ],
-  })
+  try {
+    const cache = getCache();
+    const stats = cache.getStats();
+    
+    return NextResponse.json({
+      service: 'Oracle Engine',
+      status: 'operational',
+      performance: {
+        cacheHitRate: `${Math.round(stats.cacheHitRate * 100) / 100}%`,
+        averageResponseTime: `${Math.round(stats.averageResponseTime)}ms`,
+        totalQueries: stats.totalQueries,
+        cacheSize: `${stats.size}/${stats.maxSize}`,
+        guarantee: "< 10 second response time"
+      },
+      capabilities: [
+        "Real-time relationship intelligence",
+        "Vector similarity search",
+        "Predictive relationship health",
+        "Strategic networking optimization",
+        "High-performance caching"
+      ]
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to get Oracle status' },
+      { status: 500 }
+    );
+  }
 } 

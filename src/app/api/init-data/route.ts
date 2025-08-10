@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { initializeSampleData } from '@/lib/sample-data';
 
 export async function POST() {

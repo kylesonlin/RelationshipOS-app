@@ -1,13 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Search, Sparkles, TrendingUp, Users, AlertTriangle, Target } from 'lucide-react'
+import { Loader2, Search, Sparkles, TrendingUp, Users, AlertTriangle, Target, Clock, Zap, BarChart3 } from 'lucide-react'
 
 interface OracleResponse {
   response: string
   query: string
   timestamp: string
   model: string
+  performance?: {
+    responseTime: number
+    fromCache: boolean
+    cacheHitRate: number
+    averageResponseTime: number
+    cacheSize: number
+    totalQueries: number
+  }
+  guarantee?: {
+    targetResponseTime: string
+    achieved: boolean
+    performanceLevel: string
+  }
 }
 
 export default function OracleSearch() {
@@ -84,6 +97,15 @@ export default function OracleSearch() {
     setQuery(suggestedQuery)
   }
 
+  const getPerformanceColor = (level: string) => {
+    switch (level) {
+      case 'excellent': return 'text-green-700 bg-green-100'
+      case 'good': return 'text-blue-700 bg-blue-100'
+      case 'acceptable': return 'text-yellow-700 bg-yellow-100'
+      default: return 'text-red-700 bg-red-100'
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       {/* Oracle Header */}
@@ -101,16 +123,16 @@ export default function OracleSearch() {
         </p>
         <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
           <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full flex items-center">
-            <TrendingUp className="h-3 w-3 mr-1" />
-            Sub-10 Second Analysis
+            <Clock className="h-3 w-3 mr-1" />
+            &lt;10 Second Guarantee
           </span>
           <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full flex items-center">
-            <Users className="h-3 w-3 mr-1" />
-            Unlimited Network Scale
+            <Zap className="h-3 w-3 mr-1" />
+            High-Performance Cache
           </span>
           <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full flex items-center">
-            <Target className="h-3 w-3 mr-1" />
-            Predictive Intelligence
+            <BarChart3 className="h-3 w-3 mr-1" />
+            Vector Intelligence
           </span>
         </div>
       </div>
@@ -212,6 +234,50 @@ export default function OracleSearch() {
               <span>{new Date(response.timestamp).toLocaleTimeString()}</span>
             </div>
           </div>
+
+          {/* Performance Metrics */}
+          {response.performance && (
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-lg mb-4 border border-gray-200">
+              <div className="flex items-center space-x-2 mb-3">
+                <BarChart3 className="h-4 w-4 text-blue-600" />
+                <span className="font-semibold text-blue-800">Performance Metrics</span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <div className="text-gray-600">Response Time</div>
+                  <div className="font-semibold flex items-center space-x-1">
+                    <span>{response.performance.responseTime}ms</span>
+                    {response.performance.fromCache && (
+                      <span className="px-1 py-0.5 bg-green-100 text-green-700 rounded text-xs">cached</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-gray-600">Cache Hit Rate</div>
+                  <div className="font-semibold">{response.performance.cacheHitRate}%</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">Average Time</div>
+                  <div className="font-semibold">{response.performance.averageResponseTime}ms</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">Total Queries</div>
+                  <div className="font-semibold">{response.performance.totalQueries}</div>
+                </div>
+              </div>
+              {response.guarantee && (
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Performance Level:</span>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPerformanceColor(response.guarantee.performanceLevel)}`}>
+                      {response.guarantee.performanceLevel} • {response.guarantee.achieved ? '✓' : '✗'} {response.guarantee.targetResponseTime}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
           <p className="text-green-700 mb-4">
             Professional relationship intelligence delivered in seconds
           </p>
@@ -240,7 +306,7 @@ export default function OracleSearch() {
               </div>
               <p className="text-sm text-purple-700">
                 This analysis would cost $2,000+ from a human VA and take 2-3 days. 
-                Oracle delivered superior intelligence in seconds at near-zero marginal cost.
+                Oracle delivered superior intelligence in {response.performance?.responseTime || 'under 10'} seconds at near-zero marginal cost.
               </p>
             </div>
           </div>
