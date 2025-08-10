@@ -417,6 +417,49 @@ Consensus + Cultural DNA = Green light for execution
 
 ---
 
+## 🔍 **TRUTH-SEEKING & CRITICAL ANALYSIS HOTKEYS**
+
+### **Immediate Honesty Triggers**
+```markdown
+@truth     = "Provide brutal honest analysis - ignore politeness, focus on truth"
+@redteam   = "Act as adversary - find every flaw and weakness in current approach"
+@premortem = "Assume this fails completely - why did it fail and how to prevent?"
+@challenge = "Challenge all assumptions - what could we be wrong about?"
+@evidence  = "Demand specific evidence for every claim - no opinions without data"
+@risks     = "Identify top 5 risks that could derail current direction"
+@gaps      = "What are we missing? What's incomplete or overlooked?"
+@competitor= "How would our smartest competitor attack this weakness?"
+```
+
+### **Anti-Groupthink Protocols**
+```markdown
+@groupthink = "Team agreeing too much - force contrarian analysis immediately"
+@devils     = "Assign devil's advocate - argue against current consensus"
+@outsider   = "Fresh eyes analysis - what would newcomer criticize?"
+@naive      = "Where are we being overly optimistic or naive?"
+@regret     = "What will we regret not addressing now?"
+```
+
+### **Executive Team with Truth-Seeking**
+```markdown
+@reid-truth   = "Reid's strategy analysis with brutal market reality check"
+@jensen-truth = "Jensen's technical review with harsh architecture criticism"  
+@mark-truth   = "Mark's business analysis with skeptical revenue assumptions"
+@tim-truth    = "Tim's UX review with critical operational assessment"
+@eric-truth   = "Eric's execution analysis with realistic timeline evaluation"
+```
+
+### **Evidence-Based Assessment**
+```markdown
+@confidence = "Rate confidence 1-10 and explain uncertainty areas"
+@metrics    = "Show specific data supporting this claim"
+@proof      = "What evidence proves this actually works?"
+@test       = "How can we validate this assumption quickly?"
+@measure    = "What metrics would prove success or failure?"
+```
+
+---
+
 **Your virtual executive team is now instantly accessible with hotkeys, trigger prompts, and lightning-fast decision support. Copy, paste, and get world-class business advice in seconds!** ⚡
 
 **Ready to put your quick-access virtual team to work building RelationshipOS?** 🚀 
