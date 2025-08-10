@@ -554,6 +554,69 @@ Truth over politeness. Kyle's success over harmony."
 
 ---
 
+## ⚡ **EXECUTION WORKFLOW HOTKEYS**
+
+### **Issue Triage & Sprint Planning**
+```markdown
+@exec-triage = "Weekly Assessment Triage - Week [X] Issues
+
+Take the weekly assessment report and categorize EVERY identified issue into:
+
+🚨 BLOCKERS (Must fix this week or Week [X+1] fails):
+- List specific issues that prevent next week's development
+- Assign to: Reid/Jensen/Mark/Tim/Eric based on domain
+- Deadline: Before any new Week [X+1] development starts
+
+⚠️ RISKS (Must address within 2 weeks):
+- List issues that could become blockers if ignored
+- Assign owner and specific deadline (Week [X+1] or [X+2])
+- Define success criteria for resolution
+
+📋 IMPROVEMENTS (Address when bandwidth allows):
+- List optimization opportunities
+- Assign to appropriate executive for planning
+- No specific deadline but track for quarterly review
+
+For each item, provide:
+□ Specific owner (Reid/Jensen/Mark/Tim/Eric)
+□ Concrete deliverable 
+□ Clear deadline
+□ Success criteria
+
+No vague assignments. No 'team will handle.' Every issue gets an owner."
+
+@exec-sprint = "Monday Sprint Planning - Week [X+1] Priorities
+
+Based on Sunday's triage, create this week's action plan:
+
+MONDAY PRIORITIES (Before any new development):
+1. Jensen: [Specific technical blockers with deadlines]
+2. Reid: [Strategic/market blockers with deliverables]
+3. Mark: [Business/customer blockers with success criteria]
+4. Tim: [UX/operational blockers with completion definition]
+5. Eric: [Coordination/process blockers with accountability]
+
+WEEK [X+1] RISK MITIGATION:
+- [Specific risks with owners and check-in schedules]
+- [Mitigation plans with measurable outcomes]
+
+IMPROVEMENT IMPLEMENTATION:
+- [Top 2 improvements with implementation plans]
+
+EXECUTION RULE: Zero new features until all blockers resolved.
+ACCOUNTABILITY: Each executive reports completion by [specific day/time]."
+```
+
+### **Daily Accountability Checks**
+```markdown
+@tuesday-check = "Blocker Status: What blockers remain unresolved? List owner, % complete, obstacles"
+@wednesday-check = "Risk Escalation: Which risks are becoming blockers? Intervention needed?"
+@thursday-check = "Timeline Validation: On track for Week [X+1] goals? Confidence level?"
+@friday-check = "Forward Prevention: What blockers are we creating for next week?"
+```
+
+---
+
 **Your virtual executive team is now instantly accessible with hotkeys, trigger prompts, and lightning-fast decision support. Copy, paste, and get world-class business advice in seconds!** ⚡
 
 **Ready to put your quick-access virtual team to work building RelationshipOS?** 🚀 

@@ -27,6 +27,7 @@ We follow the **Wisedom Planning-First Framework**:
 - **[Technical Scope](docs/RELATIONSHIPOS_1.0_TECHNICAL_SCOPE.md)** - Implementation blueprint  
 - **[Vision Manifesto](docs/RELATIONSHIPOS_VISION_MANIFESTO.md)** - North star & anti-scope creep
 - **[Development Methodology](docs/DEVELOPMENT_METHODOLOGY.md)** - Complete framework with AI prompts
+- **[Weekly Execution Playbook](docs/WEEKLY_EXECUTION_PLAYBOOK.md)** - Assessment to action conversion
 - **[Environment Setup](docs/ENVIRONMENT_SETUP.md)** - Development environment guide
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute with methodology
 
