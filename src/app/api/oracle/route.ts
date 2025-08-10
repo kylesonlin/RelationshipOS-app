@@ -1,95 +1,84 @@
-import { NextRequest, NextResponse } from 'next/server'
-import OpenAI from 'openai'
-
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-}) : null
+import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
 export async function POST(request: NextRequest) {
   try {
-    const startTime = Date.now()
-    const { query } = await request.json()
-
-    if (!query || typeof query !== 'string') {
+    if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'Query is required and must be a string' },
-        { status: 400 }
-      )
-    }
-
-    // Check if OpenAI is configured
-    if (!openai) {
-      return NextResponse.json(
-        { error: 'Oracle Engine not configured. OpenAI API key is missing.' },
+        { error: 'OpenAI API key not configured' },
         { status: 503 }
-      )
+      );
     }
 
-    // TODO: Add user authentication and context
-    // TODO: Add relationship data retrieval from Supabase
-    // TODO: Add intelligent caching for performance
+    // Initialize OpenAI client at runtime, not build time
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
-    // Oracle Engine GPT-4 prompt for relationship intelligence
-    const systemPrompt = `You are the Oracle Engine, an AI virtual assistant that replaces expensive human VAs for professional relationship management.
+    const { query } = await request.json();
 
-Your role is to provide intelligent insights about professional relationships, networking opportunities, and relationship management strategies.
+    if (!query) {
+      return NextResponse.json(
+        { error: 'Query is required' },
+        { status: 400 }
+      );
+    }
 
-Key capabilities:
-- Analyze professional networks and relationships
-- Identify networking opportunities and introductions
-- Provide relationship prioritization recommendations
-- Suggest follow-up strategies and timing
-- Detect relationship health and maintenance needs
+    // Oracle AI System Prompt for Relationship Intelligence
+    const systemPrompt = `You are the Oracle Engine for RelationshipOS - an AI that provides revolutionary relationship intelligence for professionals.
 
-Always respond with:
-1. Clear, actionable insights
-2. Specific recommendations with reasoning
-3. Professional tone focused on relationship intelligence
-4. Concise but comprehensive analysis
+Your role: Analyze relationship queries and provide insights that are 10x better than human VAs by:
+1. Identifying relationship patterns and opportunities
+2. Suggesting strategic relationship moves
+3. Providing actionable intelligence about professional networks
+4. Offering relationship optimization recommendations
 
-Current query context: Professional relationship management assistance.`
+Respond with:
+- Specific, actionable insights
+- Strategic relationship recommendations  
+- Professional networking opportunities
+- Relationship health assessments
+- Connection opportunity identification
 
+Format responses as professional relationship intelligence, not generic advice.`;
+
+    // Call OpenAI GPT-4 Turbo for real relationship analysis
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: "gpt-4-turbo-preview",
       messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
-          role: 'user',
-          content: query,
-        },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: query }
       ],
-      max_tokens: 1000,
+      max_tokens: 500,
       temperature: 0.7,
-    })
+    });
 
-    const response = completion.choices[0].message.content || 'No response generated'
-    const responseTime = Date.now() - startTime
+    const oracleResponse = completion.choices[0]?.message?.content;
 
-    // TODO: Store query and response in database for analytics
-    // TODO: Update cache for similar queries
+    if (!oracleResponse) {
+      return NextResponse.json(
+        { error: 'Failed to generate Oracle response' },
+        { status: 500 }
+      );
+    }
+
+    // TODO: Store query and response in database for learning
+    // TODO: Implement relationship context integration
+    // TODO: Add vector similarity search with Pinecone
 
     return NextResponse.json({
-      response,
-      responseTime,
-      metadata: {
-        model: 'gpt-4-turbo-preview',
-        tokens: completion.usage?.total_tokens || 0,
-        cached: false,
-      },
-    })
+      response: oracleResponse,
+      query: query,
+      timestamp: new Date().toISOString(),
+      model: "gpt-4-turbo-preview"
+    });
+
   } catch (error) {
-    console.error('Oracle Engine error:', error)
-    
+    console.error('Oracle API Error:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to process Oracle query',
-        details: process.env.NODE_ENV === 'development' ? (error as Error).message : undefined
-      },
+      { error: 'Internal server error' },
       { status: 500 }
-    )
+    );
   }
 }
 
