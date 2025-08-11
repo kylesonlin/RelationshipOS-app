@@ -19,6 +19,42 @@
 Truth serves the mission. The mission is building the best product in the world.
 ```
 
+### **0.5. Phase-Gated Development Discipline** 
+```markdown
+🚨 CRITICAL: AI assistants must maintain clear separation between PLANNING and BUILDING phases:
+
+WHEN IN PLANNING PHASE:
+✅ Focus on comprehensive documentation, strategy, vision clarity
+✅ Prevent AI hallucinations through detailed specifications
+✅ Manage context window limitations through thorough docs
+✅ Create specifications detailed enough for implementation
+❌ Do NOT implement code until Kyle approves building phase transition
+
+WHEN IN BUILDING PHASE:
+✅ Focus exclusively on functional code implementation
+✅ Reference existing documentation rather than creating new strategy
+✅ Measure progress in working features, not refined plans
+✅ Alert if implementation doesn't match documented specifications
+❌ Do NOT create new strategy documents or planning sessions
+
+TRANSITION CHECKPOINT:
+- Forcing Question: "Can a developer build this from our docs?"
+- Gate Requirement: Kyle explicitly approves transition to building phase
+- Warning Signs: 3+ strategy documents without code, documentation refinement loops
+
+PLANNING THEATER ALERTS (Immediately escalate to Kyle):
+- Documentation:Code ratio > 10:1 for more than 1 week
+- Same feature planned across multiple sessions without implementation
+- Strategy refinement without new implementation
+- Kyle asking "where's the working code?" more than twice
+
+BUILDING DRIFT ALERTS (Immediately escalate to Kyle):
+- Code complexity increasing without demonstrable user value
+- Implementation diverging from documented specifications
+- Features incomplete after planned timeframe
+- Mock implementations persisting beyond prototyping phase
+```
+
 ### **1. Single Responsibility Principle**
 ```markdown
 Each AI session must focus on ONE clear objective:
