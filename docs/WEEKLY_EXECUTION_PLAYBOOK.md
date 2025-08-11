@@ -37,7 +37,57 @@ Complete the 9-section systematic assessment covering:
 - Revolutionary standards validation
 ```
 
-### **Step 2: Issue Triage**
+### **Step 2: Weekly Completion Validation**
+```markdown
+Run: @weekly-complete
+
+"Weekly Completion Validation - Week [X] Phase-Gated Review
+
+Systematic validation of weekly progress using phase-gated development framework:
+
+📋 PHASE IDENTIFICATION & TRANSITION VALIDATION:
+- Current Phase: [Planning/Building] 
+- Phase Start Date: [Date when current phase began]
+- Planned Phase Duration: [Expected duration]
+- Kyle Approval Status: [Approved transition / Still in phase / Pending approval]
+- Phase-Appropriate Progress: [Yes/No with evidence]
+
+⚡ BUILDING PHASE VALIDATION (if in building phase):
+- Functional Code Delivered: [Lines of working code]
+- Working Features Completed: [List demonstrable features]
+- User-Facing Changes: [What users can actually interact with]
+- Kyle Interaction Success: [Features Kyle validated this week]
+- Specification Alignment: [Implementation matches docs Y/N]
+
+📋 PLANNING PHASE VALIDATION (if in planning phase):  
+- Documentation Completeness: [% complete for transition]
+- Strategic Decisions Finalized: [List key decisions made]
+- Implementation Readiness: [Can developer build from docs Y/N]
+- Confidence Level: [Kyle's confidence 1-10]
+- Transition Readiness: [Ready for Kyle approval Y/N]
+
+🚨 WARNING SIGNAL AUDIT:
+- Planning Theater Indicators: [Any warning signs present]
+- Building Drift Indicators: [Any quality concerns]
+- Documentation:Code Ratio: [Current ratio if concerning]
+- Refinement Loops: [Any recursive documentation updates]
+- Kyle Escalation History: [Times Kyle had to redirect focus]
+
+🎯 WEEK COMPLETION STATUS:
+- Primary Objective Achievement: [Completed/Partial/Failed]
+- Phase-Appropriate Metrics Hit: [Yes/No with specifics]
+- Blocker Resolution Rate: [X of Y blockers resolved]
+- Quality Gate Passage: [All phase gates passed Y/N]
+- Sustainable Rhythm Maintained: [Planning→Building balance Y/N]
+
+📈 FORWARD MOMENTUM ANALYSIS:
+- Next Week Phase Prediction: [Planning/Building/Transition]
+- Resource Allocation Readiness: [Team ready for next phase]
+- Risk Mitigation Status: [Top risks addressed]
+- Revolutionary Progress Evidence: [Tangible advancement toward launch]
+```
+
+### **Step 3: Issue Triage**
 ```markdown
 Run: @exec-triage
 
@@ -69,7 +119,7 @@ For each item, provide:
 No vague assignments. No 'team will handle.' Every issue gets an owner."
 ```
 
-### **Step 3: Ownership Clarity Review**
+### **Step 4: Ownership Clarity Review**
 ```markdown
 Validate triage output ensures:
 □ Every issue has specific named owner

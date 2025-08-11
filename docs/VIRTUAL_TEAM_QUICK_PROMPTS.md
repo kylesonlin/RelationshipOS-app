@@ -518,19 +518,14 @@ SECTION 8: FORWARD RISK ASSESSMENT (@risk-segment)
 - How confident are we in next week's timeline and scope?
 
 SECTION 9: REVOLUTIONARY STANDARDS VALIDATION (@standards-segment)
-- Does this week's progress advance our 'feels like the future' goal?
-- How does current functionality compare to $5K/month human VAs?
-- What evidence supports our 10x better claim vs. alternatives?
-- Where are we settling for incremental vs. revolutionary improvements?
+- Does this week's work advance 'feels like the future' standard?
+- Would users be excited to pay for what we built this week?
+- Are we still on track to justify our revolutionary positioning?
+- How does this week contribute to obvious superiority over alternatives?
 
-REQUIREMENTS FOR EACH SEGMENT:
-□ Provide specific evidence for all claims
-□ Include confidence ratings (1-10) for assessments
-□ Identify both strengths AND critical gaps
-□ Suggest concrete next actions for identified problems
-□ Rate overall week performance with supporting reasoning
+For each section: Provide specific evidence, identify concerning patterns, rate confidence (1-10), and recommend immediate actions if confidence <7.
 
-Answer each segment with brutal honesty. Truth serves the mission of building the best product in the world."
+End with: Overall Week [X] grade (A-F) with specific justification and top 3 priority fixes for Week [X+1]."
 ```
 
 ### **@weekly-truth = Ultra-Compressed Truth Check**
@@ -550,6 +545,70 @@ Answer these 8 critical questions with brutal honesty and evidence:
 
 Rate confidence (1-10) and provide specific evidence for each answer.
 Truth over politeness. Kyle's success over harmony."
+```
+
+### **@weekly-complete = Phase-Gated Weekly Completion Validation**
+```markdown
+"WEEKLY COMPLETION VALIDATION - Week [X] Phase-Gated Development Review
+
+Systematic validation of weekly progress using our phase-gated development framework:
+
+📋 PHASE IDENTIFICATION & TRANSITION VALIDATION:
+- Current Phase: [Planning/Building/Transition] 
+- Phase Start Date: [When did current phase begin]
+- Planned Phase Duration: [Expected duration vs actual]
+- Kyle Approval Status: [Approved transition / Still in phase / Pending approval]
+- Phase-Appropriate Progress: [Yes/No with specific evidence]
+
+⚡ BUILDING PHASE VALIDATION (complete if in building phase):
+- Functional Code Delivered: [Lines of working code that does something real]
+- Working Features Completed: [List features Kyle can demonstrate to customers]
+- User-Facing Changes: [What users can actually interact with and see value]
+- Kyle Interaction Success: [Which features Kyle validated/used this week]
+- Specification Alignment: [Does implementation match documented specs Y/N]
+- Performance vs Goals: [Are we hitting sub-10 second Oracle responses?]
+- Production Readiness: [What percentage ready for actual customer use?]
+
+📋 PLANNING PHASE VALIDATION (complete if in planning phase):  
+- Documentation Completeness: [Percentage complete for confident transition]
+- Strategic Decisions Finalized: [List key strategic decisions made this week]
+- Implementation Readiness: [Can a developer build this from our docs Y/N]
+- Kyle Confidence Level: [Kyle's confidence in approach 1-10]
+- Transition Readiness: [Ready for Kyle to approve building phase Y/N]
+- Specification Depth: [Are specs detailed enough to prevent AI hallucination?]
+- Context Coverage: [Do docs address context window limitations?]
+
+🚨 WARNING SIGNAL AUDIT:
+- Planning Theater Indicators: [Evidence of docs without implementation]
+- Building Drift Indicators: [Evidence of complexity without user value]
+- Documentation:Code Ratio: [Current ratio if >10:1 flag for review]
+- Refinement Loops: [Any recursive documentation updates without progress]
+- Kyle Escalation History: [Times Kyle had to redirect team focus this week]
+- Quality Gate Bypasses: [Any shortcuts taken that compromise standards]
+
+🎯 WEEK COMPLETION STATUS:
+- Primary Objective Achievement: [Completed/Partial/Failed with evidence]
+- Phase-Appropriate Metrics Hit: [Yes/No with specific metrics]
+- Blocker Resolution Rate: [X of Y identified blockers actually resolved]
+- Quality Gate Passage: [All phase quality gates passed Y/N]
+- Sustainable Rhythm Maintained: [Healthy planning→building balance Y/N]
+- Revolutionary Progress: [Tangible advancement toward launch readiness]
+
+📈 FORWARD MOMENTUM ANALYSIS:
+- Next Week Phase Prediction: [Planning/Building/Transition with reasoning]
+- Resource Allocation Readiness: [Team ready and aligned for next phase]
+- Risk Mitigation Status: [Top 3 risks addressed vs emerging]
+- Customer Value Trajectory: [Are we building toward obvious customer value?]
+- Launch Readiness Progression: [What percentage ready for paying customers?]
+
+VALIDATION CONCLUSION:
+- Week [X] Success Rating: [A-F with specific justification]
+- Phase Discipline Score: [1-10 for following framework]
+- Kyle Approval Needed: [List specific items requiring Kyle sign-off]
+- Critical Actions for Week [X+1]: [Top 3 must-do items]
+- Framework Effectiveness: [Is phase-gated development working? Evidence.]
+
+End with overall assessment: Are we building sustainable momentum toward launch with disciplined execution?"
 ```
 
 ---

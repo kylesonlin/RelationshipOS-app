@@ -494,6 +494,45 @@ const competitionMitigation = {
 3. **Evening**: Update progress and metrics in [Current Status](CURRENT_STATUS.md)
 4. **Blockers**: Use [Virtual Executive Team](VIRTUAL_EXECUTIVE_TEAM.md) for rapid decision-making
 
+### **Weekly Completion Workflow (Phase-Gated Development)**
+1. **Sunday Evening**: 
+   - Run `@weekly-review` for comprehensive assessment
+   - Run `@weekly-complete` for phase-gated validation
+   - Run `@exec-triage` to convert issues into owned action items
+2. **Monday Morning**: 
+   - Run `@exec-sprint` to assign specific tasks with deadlines
+   - Validate current phase (Planning vs Building) alignment
+   - Confirm Kyle approval status for phase transitions
+3. **Mid-Week Check** (Wednesday):
+   - Validate phase-appropriate progress metrics
+   - Check warning signals (planning theater, building drift)
+   - Escalate phase misalignment issues immediately
+4. **Friday Review**:
+   - Assess week completion against phase objectives
+   - Prepare weekend blockers list for Sunday triage
+   - Document evidence for weekly completion validation
+
+### **Phase-Gated Quality Gates**
+```typescript
+// Planning Phase Completion Criteria
+interface PlanningPhaseComplete {
+  documentationReady: boolean;     // Can developer build from docs?
+  strategicDecisions: boolean;     // All key decisions finalized?
+  kyleConfidence: number;          // 8+ confidence level
+  implementationSpecs: boolean;    // Detailed enough to prevent hallucinations?
+  transitionApproval: boolean;     // Kyle explicitly approves building phase?
+}
+
+// Building Phase Success Metrics
+interface BuildingPhaseSuccess {
+  functionalCode: number;          // Lines of working code delivered
+  demonstrableFeatures: string[]; // Features Kyle can interact with
+  specificationMatch: boolean;     // Implementation matches docs?
+  userValue: boolean;             // Would customers pay for this?
+  qualityGates: boolean;          // All technical standards met?
+}
+```
+
 ---
 
 **🚀 RelationshipOS 1.0 Technical Scope: Ready to build the AI Virtual Assistant that replaces expensive human VAs with revolutionary relationship intelligence!**
