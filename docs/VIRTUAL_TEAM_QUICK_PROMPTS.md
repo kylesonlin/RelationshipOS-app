@@ -547,68 +547,109 @@ Rate confidence (1-10) and provide specific evidence for each answer.
 Truth over politeness. Kyle's success over harmony."
 ```
 
-### **@weekly-complete = Phase-Gated Weekly Completion Validation**
+### **@weekly-complete = Phase-Gated Weekly Completion + Action Conversion**
 ```markdown
-"WEEKLY COMPLETION VALIDATION - Week [X] Phase-Gated Development Review
+"COMPREHENSIVE WEEKLY COMPLETION REVIEW - RelationshipOS Week [X]
 
-Systematic validation of weekly progress using our phase-gated development framework:
+🎯 MISSION: Complete weekly assessment with phase-gated validation, then immediately convert all issues into owned action items with deadlines.
 
-📋 PHASE IDENTIFICATION & TRANSITION VALIDATION:
-- Current Phase: [Planning/Building/Transition] 
-- Phase Start Date: [When did current phase begin]
-- Planned Phase Duration: [Expected duration vs actual]
+PHASE 1: COMPREHENSIVE ASSESSMENT
+Run the full 9-section weekly review with brutal honesty and evidence-based analysis:
+- Executive team analysis across all domains (Reid/Jensen/Mark/Tim/Eric)
+- Documentation alignment audit with specific gaps identified
+- Customer reality check with actual value validation
+- Competitive vulnerability assessment with threat analysis
+- Technical debt and scaling audit with impact measurement
+- Resource optimization analysis with waste identification
+- Assumption validation review with pivot recommendations
+- Forward risk assessment with probability scoring
+- Revolutionary standards validation with user excitement prediction
+
+PHASE 2: PHASE-GATED DEVELOPMENT VALIDATION
+Systematic validation using our phase-gated framework:
+
+📋 PHASE IDENTIFICATION & TRANSITION STATUS:
+- Current Phase: [Planning/Building/Transition] with start date
 - Kyle Approval Status: [Approved transition / Still in phase / Pending approval]
+- Phase Duration: [Expected vs actual time in current phase]
 - Phase-Appropriate Progress: [Yes/No with specific evidence]
 
-⚡ BUILDING PHASE VALIDATION (complete if in building phase):
+⚡ BUILDING PHASE VALIDATION (if in building phase):
 - Functional Code Delivered: [Lines of working code that does something real]
 - Working Features Completed: [List features Kyle can demonstrate to customers]
 - User-Facing Changes: [What users can actually interact with and see value]
 - Kyle Interaction Success: [Which features Kyle validated/used this week]
-- Specification Alignment: [Does implementation match documented specs Y/N]
-- Performance vs Goals: [Are we hitting sub-10 second Oracle responses?]
-- Production Readiness: [What percentage ready for actual customer use?]
+- Specification Alignment: [Implementation matches documented specs Y/N]
+- Customer Value Evidence: [Would customers pay for this week's work?]
 
-📋 PLANNING PHASE VALIDATION (complete if in planning phase):  
-- Documentation Completeness: [Percentage complete for confident transition]
-- Strategic Decisions Finalized: [List key strategic decisions made this week]
-- Implementation Readiness: [Can a developer build this from our docs Y/N]
+📋 PLANNING PHASE VALIDATION (if in planning phase):
+- Documentation Completeness: [% ready for confident transition to building]
+- Strategic Decisions Finalized: [Key decisions made this week]
+- Implementation Readiness: [Can developer build from our docs Y/N]
 - Kyle Confidence Level: [Kyle's confidence in approach 1-10]
 - Transition Readiness: [Ready for Kyle to approve building phase Y/N]
-- Specification Depth: [Are specs detailed enough to prevent AI hallucination?]
-- Context Coverage: [Do docs address context window limitations?]
 
 🚨 WARNING SIGNAL AUDIT:
-- Planning Theater Indicators: [Evidence of docs without implementation]
+- Planning Theater Indicators: [Evidence of endless docs without building]
 - Building Drift Indicators: [Evidence of complexity without user value]
-- Documentation:Code Ratio: [Current ratio if >10:1 flag for review]
-- Refinement Loops: [Any recursive documentation updates without progress]
-- Kyle Escalation History: [Times Kyle had to redirect team focus this week]
-- Quality Gate Bypasses: [Any shortcuts taken that compromise standards]
+- Documentation:Code Ratio: [Current ratio - flag if >10:1]
+- Kyle Escalation History: [Times Kyle had to redirect focus this week]
+- Quality Gate Bypasses: [Any shortcuts that compromise standards]
 
-🎯 WEEK COMPLETION STATUS:
-- Primary Objective Achievement: [Completed/Partial/Failed with evidence]
-- Phase-Appropriate Metrics Hit: [Yes/No with specific metrics]
-- Blocker Resolution Rate: [X of Y identified blockers actually resolved]
-- Quality Gate Passage: [All phase quality gates passed Y/N]
-- Sustainable Rhythm Maintained: [Healthy planning→building balance Y/N]
-- Revolutionary Progress: [Tangible advancement toward launch readiness]
+PHASE 3: IMMEDIATE ACTION CONVERSION
+After completing assessment, automatically convert to action:
 
-📈 FORWARD MOMENTUM ANALYSIS:
+ISSUE TRIAGE (@exec-triage):
+Categorize EVERY identified issue into:
+🚨 BLOCKERS (Must fix before Week [X+1] or next week fails):
+- Specific issues preventing next week's development
+- Owner assignment: Reid/Jensen/Mark/Tim/Eric based on domain
+- Concrete deliverable with measurable completion criteria
+- Hard deadline (specific day/time)
+
+⚠️ RISKS (Must address within 2 weeks or significant impact):
+- Issues that will compound if not addressed soon
+- Owner assignment with backup support identified
+- Mitigation strategy with checkpoints
+- Escalation trigger if not resolved in timeframe
+
+📋 IMPROVEMENTS (Implement when bandwidth allows):
+- Quality/efficiency improvements without urgency
+- Owner assignment for when capacity exists
+- Priority ranking for resource allocation
+- Success metrics for optional validation
+
+SPRINT PLANNING (@exec-sprint):
+Create Monday execution plan with specific assignments:
+- 🔧 JENSEN (CTO): Technical blockers, architecture issues, performance gaps
+- 📈 REID (CEO): Strategic blockers, market positioning, competitive threats  
+- 💰 MARK (CBO): Business model validation, customer value, revenue issues
+- 🎨 TIM (COO): User experience problems, operational challenges, quality issues
+- ⚙️ ERIC (CoS): Process coordination, resource allocation, timeline management
+
+EXECUTION ENFORCEMENT PROTOCOL:
+□ Zero new features until all blockers resolved
+□ Daily accountability schedule (who checks what when)
+□ Escalation triggers clearly defined (when to alert Kyle)
+□ Success criteria for each action item measurable
+□ Friday completion validation process established
+
+PHASE 4: FORWARD MOMENTUM VALIDATION
+End with systematic forward-looking analysis:
 - Next Week Phase Prediction: [Planning/Building/Transition with reasoning]
-- Resource Allocation Readiness: [Team ready and aligned for next phase]
-- Risk Mitigation Status: [Top 3 risks addressed vs emerging]
-- Customer Value Trajectory: [Are we building toward obvious customer value?]
-- Launch Readiness Progression: [What percentage ready for paying customers?]
+- Resource Readiness: [Team aligned and ready for predicted phase]
+- Launch Progress: [What % ready for paying customers after Week [X+1]]
+- Kyle Approval Needed: [Specific items requiring Kyle sign-off]
+- Critical Success Factors: [Top 3 must-achieve items for Week [X+1]]
 
-VALIDATION CONCLUSION:
-- Week [X] Success Rating: [A-F with specific justification]
-- Phase Discipline Score: [1-10 for following framework]
-- Kyle Approval Needed: [List specific items requiring Kyle sign-off]
-- Critical Actions for Week [X+1]: [Top 3 must-do items]
-- Framework Effectiveness: [Is phase-gated development working? Evidence.]
+COMPLETION REQUIREMENTS:
+✅ Overall Week [X] Grade: [A-F with specific evidence]
+✅ Phase Discipline Score: [1-10 for following framework]
+✅ Action Conversion: [All issues converted to owned tasks Y/N]
+✅ Execution Readiness: [Monday sprint plan complete Y/N]
 
-End with overall assessment: Are we building sustainable momentum toward launch with disciplined execution?"
+Truth over politeness. Kyle's success over harmony. Evidence over opinions.
+Action over analysis. Building over documentation when in building phase."
 ```
 
 ---
