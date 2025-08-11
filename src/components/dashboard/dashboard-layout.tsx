@@ -34,6 +34,7 @@ export default function DashboardLayout({ children, user, organization }: Dashbo
     { name: 'People', href: '/dashboard/people', icon: Users },
     { name: 'Team', href: '/dashboard/team', icon: Users },
     { name: 'Analytics', href: '/dashboard/analytics', icon: TrendingUp },
+    { name: 'VA Comparison', href: '/dashboard/va-comparison', icon: DollarSign },
     { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
     { name: 'Oracle Search', href: '/dashboard', icon: Search },
   ];
