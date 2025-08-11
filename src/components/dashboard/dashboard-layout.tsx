@@ -13,7 +13,8 @@ import {
   X,
   ChevronDown,
   LogOut,
-  User
+  User,
+  TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
 import { User as UserType, Organization } from '@/lib/auth';
@@ -32,6 +33,7 @@ export default function DashboardLayout({ children, user, organization }: Dashbo
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'People', href: '/dashboard/people', icon: Users },
     { name: 'Team', href: '/dashboard/team', icon: Users },
+    { name: 'Analytics', href: '/dashboard/analytics', icon: TrendingUp },
     { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
     { name: 'Oracle Search', href: '/dashboard', icon: Search },
   ];
