@@ -31,6 +31,7 @@ export default function DashboardLayout({ children, user, organization }: Dashbo
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'People', href: '/dashboard/people', icon: Users },
+    { name: 'Team', href: '/dashboard/team', icon: Users },
     { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
     { name: 'Oracle Search', href: '/dashboard', icon: Search },
   ];
