@@ -717,6 +717,47 @@ ACCOUNTABILITY: Each executive reports completion by [specific day/time]."
 
 ---
 
+### **@weekly = COMPLETE WEEKLY REVIEW + ACTION CONVERSION**
+```markdown
+@weekly: Complete weekly assessment with phase-gated validation and immediate action conversion for RelationshipOS Week [X].
+
+PHASE 1: COMPREHENSIVE ASSESSMENT
+Run full 9-section weekly review with brutal honesty:
+- Executive team analysis (Reid/Jensen/Mark/Tim/Eric domains)
+- Documentation alignment audit with specific gaps
+- Customer reality check with value validation
+- Competitive vulnerability assessment with threats
+- Technical debt and scaling audit with impact
+- Resource optimization analysis with waste identification
+- Assumption validation review with pivot recommendations
+- Forward risk assessment with probability scoring
+- Revolutionary standards validation with user excitement
+
+PHASE 2: PHASE-GATED VALIDATION
+- Current Phase: [Planning/Building/Transition] with timeline
+- Kyle Approval Status and phase-appropriate progress
+- Building Phase: Functional code, working features, Kyle interaction
+- Planning Phase: Documentation readiness, strategic decisions
+- Warning Signals: Planning theater, building drift indicators
+
+PHASE 3: ACTION CONVERSION
+- Categorize ALL issues: Blockers/Risks/Improvements
+- Assign owners: Reid/Jensen/Mark/Tim/Eric by domain
+- Create Monday sprint plan with deadlines
+- Establish accountability and escalation protocols
+
+PHASE 4: FORWARD MOMENTUM
+- Next week phase prediction and resource readiness
+- Launch progress percentage and Kyle approval needs
+- Critical success factors for Week [X+1]
+
+Output: Week grade (A-F), phase discipline score (1-10), complete Monday action plan.
+
+Truth over politeness. Kyle's success over harmony. Action over analysis.
+```
+
+---
+
 **Your virtual executive team is now instantly accessible with hotkeys, trigger prompts, and lightning-fast decision support. Copy, paste, and get world-class business advice in seconds!** ⚡
 
 **Ready to put your quick-access virtual team to work building RelationshipOS?** 🚀 
