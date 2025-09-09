@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route, createBrowserRouter, RouterProvider } fro
 import Layout from "./components/layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { AnalyticsProvider } from "./components/AnalyticsProvider";
+import { ABTestProvider } from "./components/ABTestProvider";
+import CookieConsent from "./components/CookieConsent";
 import ROIDashboard from "./pages/ROIDashboard";
 import Oracle from "./pages/Oracle";
 import Contacts from "./pages/Contacts";
@@ -18,13 +21,17 @@ import TeamSharing from "./pages/TeamSharing";
 import Settings from "./pages/Settings";
 import GamificationDashboard from "./pages/GamificationDashboard";
 import Auth from "./pages/Auth";
-// import GoogleSuccess from "./pages/GoogleSuccess"; // Removed as not needed
 import ResetPassword from "./pages/ResetPassword";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
 import BillingSuccess from "./pages/BillingSuccess";
 import BillingDashboard from "./pages/BillingDashboard";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Onboarding from "./pages/Onboarding";
+import AdminDashboard from "./pages/AdminDashboard";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +51,6 @@ const router = createBrowserRouter([
     element: <Auth />,
     errorElement: <ErrorPage />,
   },
-  // Removed GoogleSuccess route - not needed with direct Google auth
   {
     path: "/reset-password",
     element: <ResetPassword />,
@@ -53,6 +59,21 @@ const router = createBrowserRouter([
   {
     path: "/pricing",
     element: <Pricing />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/terms",
+    element: <TermsOfService />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/privacy",
+    element: <PrivacyPolicy />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/onboarding",
+    element: <Onboarding />,
     errorElement: <ErrorPage />,
   },
   {
@@ -207,6 +228,28 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/support",
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <Support />
+        </Layout>
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/admin",
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <AdminDashboard />
+        </Layout>
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
@@ -216,9 +259,14 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <RouterProvider router={router} />
+        <AnalyticsProvider>
+          <ABTestProvider>
+            <Toaster />
+            <Sonner />
+            <RouterProvider router={router} />
+            <CookieConsent />
+          </ABTestProvider>
+        </AnalyticsProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>

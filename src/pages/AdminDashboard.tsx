@@ -81,8 +81,12 @@ const AdminDashboard = () => {
         created_at: profile.created_at,
         full_name: profile.full_name,
         company: profile.company,
-        subscription_status: profile.subscribers?.[0]?.subscription_status || 'inactive',
-        plan_id: profile.subscribers?.[0]?.plan_id,
+        subscription_status: Array.isArray(profile.subscribers) && profile.subscribers.length > 0 
+          ? profile.subscribers[0].subscription_status || 'inactive'
+          : 'inactive',
+        plan_id: Array.isArray(profile.subscribers) && profile.subscribers.length > 0
+          ? profile.subscribers[0].plan_id
+          : null,
         last_sign_in: profile.updated_at,
       })) || [];
 

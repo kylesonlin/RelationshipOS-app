@@ -11,7 +11,9 @@ import {
   Clock,
   Zap,
   Trophy,
-  CreditCard
+  CreditCard,
+  HelpCircle,
+  Shield
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -46,6 +48,8 @@ const toolItems = [
 ]
 
 const systemItems = [
+  { title: "Support", url: "/support", icon: HelpCircle },
+  { title: "Admin", url: "/admin", icon: Shield },
   { title: "Billing", url: "/billing", icon: CreditCard },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
