@@ -26,6 +26,7 @@ interface OnboardingData {
   goals: string[];
   acceptedTerms: boolean;
   acceptedPrivacy: boolean;
+  addDemoData: boolean;
 }
 
 const Onboarding = () => {
@@ -36,13 +37,14 @@ const Onboarding = () => {
     goals: [],
     acceptedTerms: false,
     acceptedPrivacy: false,
+    addDemoData: true,
   });
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const totalSteps = 4;
+  const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
 
   const goalOptions = [
@@ -120,12 +122,29 @@ const Onboarding = () => {
             goals: data.goals,
             onboarding_completed_at: new Date().toISOString(),
           }
-        });
+         });
 
-      toast({
-        title: "Welcome to RelationshipOS!",
-        description: "Your account has been set up successfully.",
-      });
+      // Seed demo data if requested
+      if (data.addDemoData) {
+        try {
+          await supabase.functions.invoke('seed-demo-data');
+          toast({
+            title: "Welcome to RelationshipOS!",
+            description: "Your account has been set up with demo data to help you get started.",
+          });
+        } catch (demoError) {
+          console.error('Demo data seeding failed:', demoError);
+          toast({
+            title: "Welcome to RelationshipOS!",
+            description: "Your account has been set up successfully. Demo data couldn't be added, but you can explore the features.",
+          });
+        }
+      } else {
+        toast({
+          title: "Welcome to RelationshipOS!",
+          description: "Your account has been set up successfully.",
+        });
+      }
 
       navigate('/dashboard');
     } catch (error: any) {
@@ -150,6 +169,8 @@ const Onboarding = () => {
         return data.goals.length > 0;
       case 4:
         return data.acceptedTerms && data.acceptedPrivacy;
+      case 5:
+        return true; // Demo data step is optional
       default:
         return false;
     }
@@ -304,6 +325,56 @@ const Onboarding = () => {
                     </Button>
                   </Label>
                 </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold">Get Started Quickly</h2>
+              <p className="text-muted-foreground">
+                Would you like us to add sample data to help you explore the platform?
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 p-4 border rounded-lg">
+                <Checkbox
+                  id="demoData"
+                  checked={data.addDemoData}
+                  onCheckedChange={(checked) => 
+                    setData(prev => ({ ...prev, addDemoData: checked as boolean }))
+                  }
+                />
+                <div className="flex-1">
+                  <Label htmlFor="demoData" className="text-sm font-medium cursor-pointer">
+                    Add sample data to my account
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will add 5 sample contacts, interactions, and tasks so you can immediately see how the platform works.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Sample data includes:</strong>
+                </p>
+                <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                  <li>• Business contacts with realistic profiles</li>
+                  <li>• Recent interaction history</li>
+                  <li>• Follow-up tasks and reminders</li>
+                  <li>• Progress tracking and gamification</li>
+                </ul>
+                <p className="text-xs text-muted-foreground mt-2">
+                  You can delete this sample data at any time.
+                </p>
               </div>
             </div>
           </div>

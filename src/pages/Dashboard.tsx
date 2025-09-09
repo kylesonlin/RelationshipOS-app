@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import SubscriptionBanner from "@/components/billing/SubscriptionBanner"
+import { SeedDemoData } from "@/components/SeedDemoData"
 import { useSubscription } from "@/hooks/useSubscription"
 import { 
   Users, 
@@ -90,6 +91,11 @@ const Dashboard = () => {
     <div className="p-6 space-y-6">
       {/* Subscription Banner */}
       <SubscriptionBanner />
+      
+      {/* Demo Data Section - Show if user has few contacts */}
+      <div className="flex justify-center">
+        <SeedDemoData />
+      </div>
       
       {/* Header */}
       <div className="flex justify-between items-start">
