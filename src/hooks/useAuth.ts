@@ -12,10 +12,22 @@ export const useAuth = () => {
   useEffect(() => {
     // Check for existing session FIRST to ensure immediate auth state
     const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+      try {
+        console.log('Initializing auth...');
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+        }
+        
+        console.log('Session found:', !!session);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setLoading(false);
+      }
     };
 
     initializeAuth();
@@ -23,10 +35,14 @@ export const useAuth = () => {
     // Set up auth state listener for future changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        console.log('Auth state changed:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
+        
+        // Only set loading to false after we've processed the initial session
+        if (event !== 'INITIAL_SESSION') {
+          setLoading(false);
+        }
 
         // Handle Google OAuth callback and store tokens - defer to prevent deadlock
         if (event === 'SIGNED_IN' && session?.provider_token) {
