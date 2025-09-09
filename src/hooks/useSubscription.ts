@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from './useAuth';
 
 interface SubscriptionPlan {
   plan_id: string;
   name: string;
   description: string;
   price_monthly: number;
-  features: any; // Using any for JSON data from Supabase
-  limits: any; // Using any for JSON data from Supabase
+  features: any;
+  limits: any;
 }
 
 interface SubscriptionStatus {
@@ -34,8 +33,30 @@ export const useSubscription = () => {
   const [usage, setUsage] = useState<UsageData>({ oracle_queries: 0, contacts: 0, team_members: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
-  const { user } = useAuth();
+
+  // Get current user without causing circular dependency
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getCurrentUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user || null);
+      if (event === 'SIGNED_IN' && session) {
+        // Check subscription when user signs in
+        setTimeout(() => {
+          checkSubscription();
+        }, 100);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const checkSubscription = async () => {
     try {
@@ -62,7 +83,6 @@ export const useSubscription = () => {
       
       if (error) throw error;
       
-      // Open Stripe checkout in new tab
       if (data?.url) {
         window.open(data.url, '_blank');
         toast({
@@ -92,7 +112,6 @@ export const useSubscription = () => {
       
       if (error) throw error;
       
-      // Open customer portal in new tab
       if (data?.url) {
         window.open(data.url, '_blank');
         toast({
@@ -131,7 +150,6 @@ export const useSubscription = () => {
       
       if (error) throw error;
       
-      // Refresh usage data
       await loadUsage();
     } catch (err: any) {
       console.error('Error tracking usage:', err);
@@ -210,8 +228,11 @@ export const useSubscription = () => {
       setLoading(false);
     };
 
-    initialize();
-  }, []);
+    // Only initialize if we have a user
+    if (user) {
+      initialize();
+    }
+  }, [user]);
 
   return {
     plans,
