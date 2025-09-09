@@ -183,6 +183,15 @@ All colors MUST be HSL.
     height: auto;
   }
   
+  /* Animation utilities */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  .line-clamp-1 {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap;
+  }
+  
   /* Reduce animations on low-end devices */
   @media (prefers-reduced-motion: reduce) {
     *,

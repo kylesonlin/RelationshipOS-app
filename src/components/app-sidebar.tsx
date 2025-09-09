@@ -16,6 +16,7 @@ import {
   Shield
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
+import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
 
 import {
   Sidebar,
@@ -139,7 +140,10 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* System - pushed to bottom */}
-        <div className="mt-auto">
+        <div className="mt-auto space-y-2">
+          {/* Profile Navigation Card */}
+          <ProfileNavigationCard />
+          
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
