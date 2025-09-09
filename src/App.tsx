@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout";
-import ROIDashboard from "./pages/ROIDashboard";
+import SimpleROI from "./pages/SimpleROI";
 import Oracle from "./pages/Oracle";
 import Contacts from "./pages/Contacts";
 import TimeTracking from "./pages/TimeTracking";
@@ -29,7 +29,7 @@ const App = () => {
       <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<ROIDashboard />} />
+            <Route path="/" element={<SimpleROI />} />
             <Route path="/oracle" element={<Oracle />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/time-tracking" element={<TimeTracking />} />

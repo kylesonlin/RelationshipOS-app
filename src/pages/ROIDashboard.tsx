@@ -14,6 +14,8 @@ import {
 } from "lucide-react"
 
 export default function ROIDashboard() {
+  console.log("ROIDashboard component is rendering...");
+  
   // Simulated data - in real app this would come from analytics
   const monthlyVACost = 5000
   const relationshipOSCost = 299
