@@ -259,14 +259,10 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AnalyticsProvider>
-          <ABTestProvider>
-            <Toaster />
-            <Sonner />
-            <RouterProvider router={router} />
-            <CookieConsent />
-          </ABTestProvider>
-        </AnalyticsProvider>
+        <Toaster />
+        <Sonner />
+        <RouterProvider router={router} />
+        <CookieConsent />
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>
