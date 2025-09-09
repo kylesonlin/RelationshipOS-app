@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { UsageMeter } from "@/components/UsageMeter"
+import { useSubscription } from "@/hooks/useSubscription"
 import { 
   Search, 
   Plus, 
@@ -28,6 +30,7 @@ import {
 
 const Contacts = () => {
   const [searchTerm, setSearchTerm] = useState("")
+  const { trackUsage } = useSubscription()
   
   const contacts = [
     {
@@ -142,6 +145,13 @@ const Contacts = () => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Usage Meter */}
+      <UsageMeter 
+        resourceType="contacts" 
+        title="Contact Management" 
+        description="Track and organize your professional relationships"
+      />
+      
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>

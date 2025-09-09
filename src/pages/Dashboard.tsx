@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import SubscriptionBanner from "@/components/billing/SubscriptionBanner"
+import { useSubscription } from "@/hooks/useSubscription"
 import { 
   Users, 
   Calendar, 
@@ -17,6 +19,7 @@ import {
 } from "lucide-react"
 
 const Dashboard = () => {
+  const { subscription, canUseFeature } = useSubscription();
   const relationshipHealthScore = 85
   
   const upcomingTasks = [
@@ -85,6 +88,9 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Subscription Banner */}
+      <SubscriptionBanner />
+      
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>

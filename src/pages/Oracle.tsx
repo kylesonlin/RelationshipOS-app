@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { AIModeIndicator } from "@/components/ai/AIModeIndicator"
+import { ProtectedFeature } from "@/components/ProtectedFeature"
+import { UsageMeter } from "@/components/UsageMeter"
+import { useSubscription } from "@/hooks/useSubscription"
 import { 
   Search,
   Sparkles,
@@ -50,6 +53,7 @@ const Oracle = () => {
   const [conversationId, setConversationId] = useState<string>("")
   const [proactiveInsights, setProactiveInsights] = useState<string[]>([])
   const { toast } = useToast()
+  const { trackUsage, isWithinLimit, canUseFeature } = useSubscription()
 
   // Simple function to check if Supabase is configured
   const isSupabaseConfigured = () => {
@@ -173,15 +177,13 @@ const Oracle = () => {
   }
 
   const handleSearch = async () => {
-    if (!query.trim() || !isAuthenticated) return
+    if (!query.trim() || !isAuthenticated || !isWithinLimit('oracle_queries')) return
     
     setIsLoading(true)
     
     try {
-      // Increment usage if using platform mode
-      if ((window as any).incrementAIUsage) {
-        await (window as any).incrementAIUsage()
-      }
+      // Track usage
+      await trackUsage('oracle_query', 1, { query: query.substring(0, 100) })
 
       // Check if Supabase is properly configured
       if (!isSupabaseConfigured()) {
@@ -291,6 +293,13 @@ const Oracle = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
+      {/* Usage Meter */}
+      <UsageMeter 
+        resourceType="oracle_queries" 
+        title="AI Oracle Usage" 
+        description="Monthly AI-powered relationship insights"
+      />
+      
       {/* Header with AI Mode Indicator */}
       <div className="flex items-center justify-between">
         <div className="text-center space-y-4 flex-1">
@@ -352,40 +361,46 @@ const Oracle = () => {
       )}
 
       {/* Search Interface */}
-      <Card className="shadow-medium border-primary/20">
-        <CardContent className="p-6">
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                placeholder="Ask the Oracle: 'Who should I prioritize this week?' or 'What's the context for my next meeting?'"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary"
-                disabled={isLoading}
-              />
+      <ProtectedFeature 
+        feature="ai_oracle" 
+        upgradeTitle="AI Oracle Insights"
+        upgradeDescription="Get AI-powered insights about your relationships and networking strategy"
+      >
+        <Card className="shadow-medium border-primary/20">
+          <CardContent className="p-6">
+            <div className="flex gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Input
+                  placeholder="Ask the Oracle: 'Who should I prioritize this week?' or 'What's the context for my next meeting?'"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary"
+                  disabled={isLoading || !isWithinLimit('oracle_queries')}
+                />
+              </div>
+              <Button 
+                onClick={handleSearch}
+                disabled={!query.trim() || isLoading || !isWithinLimit('oracle_queries')}
+                className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Thinking...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5 mr-2" />
+                    Ask Oracle
+                  </>
+                )}
+              </Button>
             </div>
-            <Button 
-              onClick={handleSearch}
-              disabled={!query.trim() || isLoading}
-              className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all disabled:opacity-50"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Thinking...</span>
-                </div>
-              ) : (
-                <>
-                  <Send className="h-5 w-5 mr-2" />
-                  Ask Oracle
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </ProtectedFeature>
 
       {/* Suggested Queries */}
       {responses.length === 0 && (
