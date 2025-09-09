@@ -5,6 +5,8 @@ import { StreakTracker } from "@/components/gamification/StreakTracker"
 import { Leaderboard } from "@/components/gamification/Leaderboard"
 import { ProgressChallenges } from "@/components/gamification/ProgressChallenges"
 import { XPBar } from "@/components/gamification/XPBar"
+import { LinkedInTeaser } from "@/components/gamification/LinkedInTeaser"
+import { NetworkXPSystem } from "@/components/gamification/NetworkXPSystem"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -129,6 +131,7 @@ export default function GamificationDashboard() {
             {/* Left Column */}
             <div className="lg:col-span-2 space-y-6">
               <XPBar showDetails={true} />
+              <LinkedInTeaser />
               <RelationshipHealthScore />
               <ProgressChallenges />
             </div>
@@ -136,45 +139,7 @@ export default function GamificationDashboard() {
             {/* Right Column */}
             <div className="space-y-6">
               <StreakTracker />
-              
-              {/* Recent Achievements */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    Recent Achievements
-                  </CardTitle>
-                  <CardDescription>Your latest accomplishments</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Users className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">Contact Collector</div>
-                      <div className="text-xs text-muted-foreground">Reached 50 contacts</div>
-                    </div>
-                    <Badge variant="default" className="text-xs">+250 XP</Badge>
-                  </div>
-
-                  <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <Calendar className="h-4 w-4 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">Meeting Marathon</div>
-                      <div className="text-xs text-muted-foreground">Completed 25 meetings</div>
-                    </div>
-                    <Badge variant="outline" className="text-green-600 border-green-600 text-xs">+300 XP</Badge>
-                  </div>
-
-                  <Button variant="outline" className="w-full text-sm">
-                    <Gift className="h-4 w-4 mr-2" />
-                    View All Achievements
-                  </Button>
-                </CardContent>
-              </Card>
+              <NetworkXPSystem />
             </div>
           </div>
         </TabsContent>
