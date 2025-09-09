@@ -10,6 +10,8 @@ import { IntegrationCard } from "@/components/integrations/IntegrationCard"
 import { SetupWizard } from "@/components/integrations/SetupWizard"
 import { UsageMonitor } from "@/components/integrations/UsageMonitor"
 import { SyncControls } from "@/components/integrations/SyncControls"
+import { GoogleIntegrationStatus } from "@/components/integrations/GoogleIntegrationStatus"
+import { IntelligentSyncDashboard } from "@/components/integrations/IntelligentSyncDashboard"
 import { 
   Mail, 
   Calendar, 
@@ -242,7 +244,12 @@ export default function Integrations() {
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
+          {/* Google Intelligence Dashboard */}
+          <IntelligentSyncDashboard />
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Google Integration Status */}
+            <GoogleIntegrationStatus />
             {/* Connected Integrations */}
             <Card>
               <CardHeader>

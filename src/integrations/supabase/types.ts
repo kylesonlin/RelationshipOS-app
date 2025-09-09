@@ -1258,6 +1258,16 @@ export type Database = {
           user_name: string
         }[]
       }
+      get_stale_contacts: {
+        Args: { days_threshold?: number; user_id_param: string }
+        Returns: {
+          days_since_last_contact: number
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
