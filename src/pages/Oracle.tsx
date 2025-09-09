@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
+import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,6 +40,25 @@ const Oracle = () => {
   const [query, setQuery] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [responses, setResponses] = useState<OracleResponse[]>([])
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { toast } = useToast()
+
+  useEffect(() => {
+    checkAuth()
+  }, [])
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    setIsAuthenticated(!!user)
+    
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to use the Oracle Engine",
+        variant: "destructive"
+      })
+    }
+  }
 
   const suggestedQueries = [
     {
@@ -106,35 +127,71 @@ const Oracle = () => {
   }
 
   const handleSearch = async () => {
-    if (!query.trim()) return
+    if (!query.trim() || !isAuthenticated) return
     
     setIsLoading(true)
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000))
-    
-    const response: OracleResponse = {
-      id: Date.now().toString(),
-      question: query,
-      ...(mockResponses[query] || {
-        answer: `I've analyzed your relationship data for "${query}". Based on current patterns and interactions, here are my intelligent recommendations with actionable insights tailored to your specific situation.`,
-        confidence: 85 + Math.floor(Math.random() * 10),
-        responseTime: 1.5 + Math.random() * 4,
-        sources: [
-          { type: "Contact Data", name: "Recent Interactions", relevance: 90 },
-          { type: "Calendar", name: "Meeting History", relevance: 85 },
-          { type: "Task Analytics", name: "Success Patterns", relevance: 80 }
-        ],
-        insights: [
-          "Your most successful outcomes follow specific engagement patterns",
-          "Timing your outreach based on recipient preferences increases response rates",
-          "Combining personal and professional context yields better results"
-        ]
+    try {
+      const { data, error } = await supabase.functions.invoke('oracle-query', {
+        body: { query }
+      })
+
+      if (error) {
+        throw error
+      }
+
+      const response: OracleResponse = {
+        id: Date.now().toString(),
+        question: query,
+        answer: data.response.answer,
+        confidence: data.response.confidence,
+        responseTime: data.response.responseTime,
+        sources: data.response.sources,
+        insights: data.response.insights
+      }
+      
+      setResponses(prev => [response, ...prev])
+      setQuery("")
+
+      toast({
+        title: "Oracle Analysis Complete",
+        description: `Response generated with ${data.response.confidence}% confidence`
+      })
+
+    } catch (error) {
+      console.error('Oracle query error:', error)
+      
+      // Fallback to mock response if function fails
+      const response: OracleResponse = {
+        id: Date.now().toString(),
+        question: query,
+        ...(mockResponses[query] || {
+          answer: `I've analyzed your relationship data for "${query}". Based on current patterns and interactions, here are my intelligent recommendations with actionable insights tailored to your specific situation.`,
+          confidence: 85 + Math.floor(Math.random() * 10),
+          responseTime: 1.5 + Math.random() * 4,
+          sources: [
+            { type: "Contact Data", name: "Recent Interactions", relevance: 90 },
+            { type: "Calendar", name: "Meeting History", relevance: 85 },
+            { type: "Task Analytics", name: "Success Patterns", relevance: 80 }
+          ],
+          insights: [
+            "Your most successful outcomes follow specific engagement patterns",
+            "Timing your outreach based on recipient preferences increases response rates",
+            "Combining personal and professional context yields better results"
+          ]
+        })
+      }
+      
+      setResponses(prev => [response, ...prev])
+      setQuery("")
+
+      toast({
+        title: "Using Demo Mode",
+        description: "Connect your integrations for real-time data analysis",
+        variant: "destructive"
       })
     }
     
-    setResponses(prev => [response, ...prev])
-    setQuery("")
     setIsLoading(false)
   }
 
@@ -165,6 +222,21 @@ const Oracle = () => {
         </p>
       </div>
 
+      {/* Authentication Warning */}
+      {!isAuthenticated && (
+        <Card className="border-destructive/50 bg-destructive/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3 text-destructive">
+              <Zap className="h-5 w-5" />
+              <div>
+                <p className="font-medium">Authentication Required</p>
+                <p className="text-sm text-muted-foreground">Sign in to access real-time relationship data and AI insights</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Search Interface */}
       <Card className="shadow-medium border-primary/20">
         <CardContent className="p-6">
@@ -177,13 +249,13 @@ const Oracle = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary"
-                disabled={isLoading}
+                disabled={isLoading || !isAuthenticated}
               />
             </div>
             <Button 
               onClick={handleSearch}
-              disabled={!query.trim() || isLoading}
-              className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all"
+              disabled={!query.trim() || isLoading || !isAuthenticated}
+              className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all disabled:opacity-50"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
