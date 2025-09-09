@@ -1,6 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,62 +8,90 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { user_id, access_token, refresh_token, expires_at, scopes } = await req.json();
+    const { provider_token, provider_refresh_token, user } = await req.json();
 
-    if (!user_id || !access_token) {
-      throw new Error('Missing required parameters');
+    if (!user?.id) {
+      throw new Error('User ID is required');
     }
 
-    // Store Google tokens securely
-    const { error } = await supabaseClient
+    console.log('Storing Google tokens for user:', user.id);
+
+    // Calculate token expiry (Google tokens typically expire in 1 hour)
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+
+    // Store the Google API tokens securely
+    const { error: tokenError } = await supabase
       .from('user_google_tokens')
       .upsert({
-        user_id,
-        access_token,
-        refresh_token,
-        expires_at,
-        scopes: scopes || ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/calendar.readonly']
+        user_id: user.id,
+        access_token: provider_token,
+        refresh_token: provider_refresh_token,
+        expires_at: expiresAt.toISOString(),
+        scopes: [
+          'openid',
+          'email', 
+          'profile',
+          'https://www.googleapis.com/auth/gmail.readonly',
+          'https://www.googleapis.com/auth/calendar.readonly'
+        ],
+        updated_at: new Date().toISOString()
       });
 
-    if (error) {
-      throw error;
+    if (tokenError) {
+      console.error('Error storing Google tokens:', tokenError);
+      throw new Error('Failed to store Google tokens');
     }
 
-    // Log successful token storage
-    console.log(`Google tokens stored successfully for user: ${user_id}`);
+    // Update user profile with Google data if available
+    if (user.user_metadata) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: user.id,
+          full_name: user.user_metadata.full_name || user.user_metadata.name,
+          avatar_url: user.user_metadata.avatar_url,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString()
+        });
+
+      if (profileError) {
+        console.error('Error updating profile:', profileError);
+      }
+    }
+
+    console.log('Successfully stored Google tokens and updated profile');
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: 'Google tokens stored successfully' 
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
       }
     );
 
   } catch (error) {
-    console.error('Error storing Google tokens:', error);
-    
+    console.error('Error in store-google-tokens function:', error);
     return new Response(
       JSON.stringify({ 
         error: error.message,
         success: false 
       }),
-      { 
+      {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
       }
     );
   }
