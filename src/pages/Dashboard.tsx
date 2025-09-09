@@ -10,10 +10,12 @@ import { SmartWidget } from "@/components/dashboard/SmartWidget"
 import { ActionSuggestions } from "@/components/dashboard/ActionSuggestions"
 import { QuickActions } from "@/components/dashboard/QuickActions"
 import { RelationshipHealthScore } from "@/components/gamification/RelationshipHealthScore"
-import { SeedDemoData } from "@/components/SeedDemoData"
+import { GoogleSyncCTA } from "@/components/onboarding/GoogleSyncCTA"
+import { ExecutiveCalendarWidget } from "@/components/dashboard/ExecutiveCalendarWidget"
 import { useAuth } from "@/hooks/useAuth"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
+import { useGoogleIntegration } from "@/hooks/useGoogleIntegration"
 import { useNavigate } from "react-router-dom"
 import { 
   Search, 
@@ -37,7 +39,8 @@ import {
 const Dashboard = () => {
   const { user } = useAuth();
   const { subscription, canUseFeature } = useSubscription();
-  const { metrics, loading } = useDashboardData();
+  const { metrics, loading, refreshMetrics } = useDashboardData();
+  const { isConnected, hasGmailAccess, hasCalendarAccess } = useGoogleIntegration();
   const navigate = useNavigate();
   const [oracleQuery, setOracleQuery] = useState("");
 
@@ -81,6 +84,10 @@ const Dashboard = () => {
   const tasksAutomated = 127;
   const hoursPerWeek = 15;
 
+  // Determine if user needs onboarding vs showing full dashboard
+  const needsOnboarding = totalContacts < 3 && (!isConnected || (!hasGmailAccess && !hasCalendarAccess));
+  const hasIntelligenceData = isConnected && (hasGmailAccess || hasCalendarAccess);
+
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
       {/* Executive AI Command Center Hero */}
@@ -98,11 +105,6 @@ const Dashboard = () => {
             </p>
           </div>
         </div>
-        {totalContacts === 0 && (
-          <div className="mt-6">
-            <SeedDemoData />
-          </div>
-        )}
       </div>
 
       {/* Executive ROI Hero - Primary Value Proposition */}
@@ -156,158 +158,181 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* AI Team's Strategic Intelligence */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <ActionSuggestions />
+      {/* Dynamic Content Based on User State */}
+      {needsOnboarding ? (
+        // Show onboarding experience for new users
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <GoogleSyncCTA 
+            totalContacts={totalContacts} 
+            onSyncComplete={() => {
+              refreshMetrics();
+              // Force re-render by updating a state or triggering navigation
+              window.location.reload();
+            }} 
+          />
+          <ExecutiveCalendarWidget />
         </div>
-        <div>
-          <Card className="executive-card border-primary/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Brain className="h-5 w-5 text-primary" />
-                AI Strategy Assistant
-              </CardTitle>
-              <CardDescription>
-                Executive decision support and strategic insights
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Strategic question or decision support..."
-                  value={oracleQuery}
-                  onChange={(e) => setOracleQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
-                  className="text-sm executive-card"
-                />
-                <Button 
-                  onClick={handleOracleSearch}
-                  size="sm"
-                  className="executive-button px-4"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => navigate('/oracle?q=strategic relationship priorities this week')}
-                  className="justify-start text-xs h-9 hover:bg-primary/10"
-                >
-                  Strategic priorities
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => navigate('/oracle?q=executive meeting preparation analysis')}
-                  className="justify-start text-xs h-9 hover:bg-primary/10"
-                >
-                  Meeting intelligence
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      ) : (
+        // Show full dashboard for active users
+        <>
+          {/* AI Team's Strategic Intelligence */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <ActionSuggestions />
+            </div>
+            <div>
+              {hasIntelligenceData ? (
+                <ExecutiveCalendarWidget />
+              ) : (
+                <Card className="executive-card border-primary/30">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Brain className="h-5 w-5 text-primary" />
+                      AI Strategy Assistant
+                    </CardTitle>
+                    <CardDescription>
+                      Executive decision support and strategic insights
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Strategic question or decision support..."
+                        value={oracleQuery}
+                        onChange={(e) => setOracleQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
+                        className="text-sm executive-card"
+                      />
+                      <Button 
+                        onClick={handleOracleSearch}
+                        size="sm"
+                        className="executive-button px-4"
+                      >
+                        <Search className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => navigate('/oracle?q=strategic relationship priorities this week')}
+                        className="justify-start text-xs h-9 hover:bg-primary/10"
+                      >
+                        Strategic priorities
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => navigate('/oracle?q=executive meeting preparation analysis')}
+                        className="justify-start text-xs h-9 hover:bg-primary/10"
+                      >
+                        Meeting intelligence
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
 
-      {/* Executive Intelligence Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/analytics')}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Relationship Health
-              </CardTitle>
-              <Badge variant="default" className="text-xs">Excellent</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-3">
-              <div className="data-metric text-2xl font-bold">
-                {relationshipHealth}%
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4 text-success" />
-                <span className="font-medium text-success">+5% this week</span>
-              </div>
-              <Progress value={relationshipHealth} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
+          {/* Executive Intelligence Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/analytics')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Relationship Health
+                  </CardTitle>
+                  <Badge variant="default" className="text-xs">Excellent</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="data-metric text-2xl font-bold">
+                    {relationshipHealth}%
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <TrendingUp className="h-4 w-4 text-success" />
+                    <span className="font-medium text-success">+5% this week</span>
+                  </div>
+                  <Progress value={relationshipHealth} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/gamification-dashboard')}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Weekly Performance
-              </CardTitle>
-              <Badge variant="secondary" className="text-xs">3 days left</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-3">
-              <div className="data-metric text-2xl font-bold">
-                {weeklyGoal}%
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4 text-success" />
-                <span className="font-medium text-success">On track</span>
-              </div>
-              <Progress value={weeklyGoal} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
+            <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/gamification-dashboard')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Weekly Performance
+                  </CardTitle>
+                  <Badge variant="secondary" className="text-xs">3 days left</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="data-metric text-2xl font-bold">
+                    {weeklyGoal}%
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <TrendingUp className="h-4 w-4 text-success" />
+                    <span className="font-medium text-success">On track</span>
+                  </div>
+                  <Progress value={weeklyGoal} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/meeting-prep')}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Today's Meetings
-              </CardTitle>
-              <Badge 
-                variant={upcomingMeetings > 0 ? "destructive" : "default"} 
-                className="text-xs"
-              >
-                {upcomingMeetings > 0 ? "Action needed" : "All clear"}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-3">
-              <div className="data-metric text-2xl font-bold">
-                {upcomingMeetings}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                <span>{upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/meeting-prep')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Today's Meetings
+                  </CardTitle>
+                  <Badge 
+                    variant={upcomingMeetings > 0 ? "destructive" : "default"} 
+                    className="text-xs"
+                  >
+                    {upcomingMeetings > 0 ? "Action needed" : "All clear"}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="data-metric text-2xl font-bold">
+                    {upcomingMeetings}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>{upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/contacts?filter=stale')}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Stale Relationships
-              </CardTitle>
-              <Badge variant="secondary" className="text-xs">Priority</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-3">
-              <div className="data-metric text-2xl font-bold">
-                {staleContacts}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/contacts?filter=stale')}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    Stale Relationships
+                  </CardTitle>
+                  <Badge variant="secondary" className="text-xs">Priority</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div className="data-metric text-2xl font-bold">
+                    {staleContacts}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   )
 }
