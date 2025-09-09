@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { supabase } from "@/integrations/supabase/client"
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -48,15 +48,26 @@ const Oracle = () => {
   }, [])
 
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setIsAuthenticated(!!user)
+    // Skip auth check if Supabase is not configured
+    if (!isSupabaseConfigured()) {
+      setIsAuthenticated(true) // Allow demo mode
+      return
+    }
     
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to use the Oracle Engine",
-        variant: "destructive"
-      })
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsAuthenticated(!!user)
+      
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to use the Oracle Engine",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      setIsAuthenticated(true) // Fallback to demo mode
     }
   }
 
@@ -132,6 +143,11 @@ const Oracle = () => {
     setIsLoading(true)
     
     try {
+      // Check if Supabase is properly configured
+      if (!isSupabaseConfigured()) {
+        throw new Error('Supabase not configured - using demo mode')
+      }
+      
       const { data, error } = await supabase.functions.invoke('oracle-query', {
         body: { query }
       })
@@ -222,15 +238,15 @@ const Oracle = () => {
         </p>
       </div>
 
-      {/* Authentication Warning */}
-      {!isAuthenticated && (
-        <Card className="border-destructive/50 bg-destructive/5">
+      {/* Configuration Warning */}
+      {!isSupabaseConfigured() && (
+        <Card className="border-warning/50 bg-warning/5">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3 text-destructive">
+            <div className="flex items-center gap-3 text-warning-foreground">
               <Zap className="h-5 w-5" />
               <div>
-                <p className="font-medium">Authentication Required</p>
-                <p className="text-sm text-muted-foreground">Sign in to access real-time relationship data and AI insights</p>
+                <p className="font-medium">Demo Mode Active</p>
+                <p className="text-sm text-muted-foreground">Connect to Supabase in project settings to enable real-time Oracle functionality</p>
               </div>
             </div>
           </CardContent>
@@ -249,12 +265,12 @@ const Oracle = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary"
-                disabled={isLoading || !isAuthenticated}
+                disabled={isLoading}
               />
             </div>
             <Button 
               onClick={handleSearch}
-              disabled={!query.trim() || isLoading || !isAuthenticated}
+              disabled={!query.trim() || isLoading}
               className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all disabled:opacity-50"
             >
               {isLoading ? (
