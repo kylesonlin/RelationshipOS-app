@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -32,8 +32,13 @@ interface OracleResponse {
     type: string
     name: string
     relevance: number
+    lastUpdated?: string
+    recordCount?: number
   }>
   insights: string[]
+  followUpQuestions: string[]
+  conversationId: string
+  proactiveRecommendations?: string[]
 }
 
 const Oracle = () => {
@@ -41,6 +46,8 @@ const Oracle = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [responses, setResponses] = useState<OracleResponse[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [conversationId, setConversationId] = useState<string>("")
+  const [proactiveInsights, setProactiveInsights] = useState<string[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
@@ -118,6 +125,17 @@ const Oracle = () => {
         "Sarah Johnson generates 40% more business when contacted regularly",
         "David Chen responds best to messages sent on Tuesday mornings",
         "Your response rate increases 65% when following up within 48 hours"
+      ],
+      followUpQuestions: [
+        "Would you like me to draft personalized outreach messages for Sarah and David?",
+        "Should I analyze the optimal timing for contacting Alex Rodriguez?",
+        "Can I help you schedule these priority touchpoints in your calendar?"
+      ],
+      conversationId: "demo_conv_1",
+      proactiveRecommendations: [
+        "💡 I notice you have the highest response rates on Tuesday mornings",
+        "📈 Consider setting up quarterly check-ins with your top 10 contacts",
+        "🎯 David's company just announced new funding - perfect conversation starter"
       ]
     },
     "What's the context for my 3pm meeting?": {
@@ -133,6 +151,17 @@ const Oracle = () => {
         "Michael prefers data-driven conversations with specific ROI examples",
         "TechFlow typically makes decisions in Q1 for the following year",
         "Previous proposals were most effective when under 10 slides"
+      ],
+      followUpQuestions: [
+        "Would you like me to prepare a brief with Michael's recent company updates?",
+        "Should I identify mutual connections who could provide additional context?",
+        "Can I draft follow-up talking points for after the meeting?"
+      ],
+      conversationId: "demo_conv_2",
+      proactiveRecommendations: [
+        "📊 TechFlow's recent earnings report shows 25% growth - great conversation starter",
+        "🤝 Your mutual connection Lisa Park could provide additional insights",
+        "📅 Consider scheduling a follow-up within 48 hours to maintain momentum"
       ]
     }
   }
@@ -149,7 +178,11 @@ const Oracle = () => {
       }
       
       const { data, error } = await supabase.functions.invoke('oracle-query', {
-        body: { query }
+        body: { 
+          query, 
+          conversationId: conversationId || undefined,
+          userId: 'demo-user'
+        }
       })
 
       if (error) {
@@ -163,7 +196,20 @@ const Oracle = () => {
         confidence: data.response.confidence,
         responseTime: data.response.responseTime,
         sources: data.response.sources,
-        insights: data.response.insights
+        insights: data.response.insights,
+        followUpQuestions: data.response.followUpQuestions || [],
+        conversationId: data.response.conversationId,
+        proactiveRecommendations: data.response.proactiveRecommendations || []
+      }
+      
+      // Update conversation ID for context
+      if (!conversationId) {
+        setConversationId(data.response.conversationId)
+      }
+      
+      // Store proactive insights
+      if (data.response.proactiveRecommendations) {
+        setProactiveInsights(data.response.proactiveRecommendations)
       }
       
       setResponses(prev => [response, ...prev])
@@ -195,7 +241,18 @@ const Oracle = () => {
             "Timing your outreach based on recipient preferences increases response rates",
             "Combining personal and professional context yields better results"
           ]
-        })
+        }),
+        followUpQuestions: mockResponses[query]?.followUpQuestions || [
+          "Would you like me to analyze specific relationships in detail?",
+          "Should I identify your highest-priority contacts for this week?",
+          "Can I help you create a strategic outreach plan?"
+        ],
+        conversationId: conversationId || `demo_${Date.now()}`,
+        proactiveRecommendations: [
+          "💡 I notice 3 high-value contacts haven't been contacted recently",
+          "📈 Your Tuesday outreach typically has 40% higher response rates",
+          "🎯 Two contacts in your network recently changed roles - perfect timing for outreach"
+        ]
       }
       
       setResponses(prev => [response, ...prev])
@@ -237,6 +294,33 @@ const Oracle = () => {
           Ask me anything about your relationships. I'll analyze your data and provide intelligent insights to help you build stronger connections.
         </p>
       </div>
+
+      {/* Proactive Insights */}
+      {proactiveInsights.length > 0 && (
+        <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
+              <Sparkles className="h-5 w-5" />
+              Proactive Insights
+            </CardTitle>
+            <CardDescription>
+              Strategic recommendations I've identified from your relationship data
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {proactiveInsights.map((insight, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-white dark:bg-blue-900 rounded-lg border border-blue-200 dark:border-blue-700">
+                  <div className="w-6 h-6 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-blue-600 dark:text-blue-300 text-xs font-bold">{index + 1}</span>
+                  </div>
+                  <p className="text-sm text-blue-800 dark:text-blue-200">{insight}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Configuration Warning */}
       {!isSupabaseConfigured() && (
@@ -410,6 +494,32 @@ const Oracle = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Follow-up Questions */}
+              {response.followUpQuestions && response.followUpQuestions.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-primary" />
+                    Follow-up Questions
+                  </h4>
+                  <div className="space-y-2">
+                    {response.followUpQuestions.map((question, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setQuery(question)}
+                        className="w-full text-left p-3 bg-primary/5 hover:bg-primary/10 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-5 h-5 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <ChevronRight className="h-3 w-3 text-primary group-hover:translate-x-0.5 transition-transform" />
+                          </div>
+                          <span className="text-sm text-primary group-hover:text-primary/80">{question}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
