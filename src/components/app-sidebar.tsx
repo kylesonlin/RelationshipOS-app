@@ -32,26 +32,9 @@ import {
 } from "@/components/ui/sidebar"
 
 const mainItems = [
-  { title: "ROI Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Oracle Engine", url: "/oracle", icon: Brain },
-  { title: "Achievements", url: "/achievements", icon: Trophy },
-  { title: "Contacts", url: "/contacts", icon: Users },
-  { title: "Time Tracking", url: "/time-tracking", icon: Clock },
-  { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-]
-
-const toolItems = [
-  { title: "Follow-up Automation", url: "/follow-up", icon: Target },
-  { title: "Integrations", url: "/integrations", icon: Zap },
-  { title: "Team Sharing", url: "/team", icon: Users },
-  { title: "Documents", url: "/documents", icon: FileText },
-]
-
-const systemItems = [
-  { title: "Support", url: "/support", icon: HelpCircle },
-  { title: "Admin", url: "/admin", icon: Shield },
-  { title: "Billing", url: "/billing", icon: CreditCard },
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "People", url: "/contacts", icon: Users },
+  { title: "Oracle", url: "/oracle", icon: Brain },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
@@ -103,7 +86,6 @@ export function AppSidebar() {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "hidden" : ""}>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -120,46 +102,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Tools */}
-        <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "hidden" : ""}>Tools</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClass(item.url)}>
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* System - pushed to bottom */}
-        <div className="mt-auto space-y-2">
-          {/* Profile Navigation Card */}
+        {/* Profile Navigation Card - pushed to bottom */}
+        <div className="mt-auto">
           <ProfileNavigationCard />
-          
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {systemItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClass(item.url)}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
         </div>
       </SidebarContent>
     </Sidebar>

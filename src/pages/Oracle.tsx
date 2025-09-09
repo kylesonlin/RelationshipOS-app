@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,6 +47,7 @@ interface OracleResponse {
 }
 
 const Oracle = () => {
+  const location = useLocation()
   const [query, setQuery] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [responses, setResponses] = useState<OracleResponse[]>([])
@@ -62,7 +64,20 @@ const Oracle = () => {
 
   useEffect(() => {
     checkAuth()
-  }, [])
+    
+    // Check for query parameter from dashboard
+    const searchParams = new URLSearchParams(location.search)
+    const urlQuery = searchParams.get('q')
+    if (urlQuery) {
+      setQuery(urlQuery)
+      // Auto-execute if there's a query parameter
+      setTimeout(() => {
+        if (urlQuery.trim()) {
+          handleSearch(urlQuery)
+        }
+      }, 100)
+    }
+  }, [location.search])
 
   const checkAuth = async () => {
     // Skip auth check if Supabase is not configured
@@ -176,14 +191,15 @@ const Oracle = () => {
     }
   }
 
-  const handleSearch = async () => {
-    if (!query.trim() || !isAuthenticated || !isWithinLimit('oracle_queries')) return
+  const handleSearch = async (queryText?: string) => {
+    const searchQuery = queryText || query
+    if (!searchQuery.trim() || !isAuthenticated || !isWithinLimit('oracle_queries')) return
     
     setIsLoading(true)
     
     try {
       // Track usage
-      await trackUsage('oracle_query', 1, { query: query.substring(0, 100) })
+      await trackUsage('oracle_query', 1, { query: searchQuery.substring(0, 100) })
 
       // Check if Supabase is properly configured
       if (!isSupabaseConfigured()) {
@@ -192,7 +208,7 @@ const Oracle = () => {
       
       const { data, error } = await supabase.functions.invoke('oracle-query', {
         body: { 
-          query, 
+          query: searchQuery, 
           conversationId: conversationId || undefined,
           userId: 'demo-user'
         }
@@ -204,7 +220,7 @@ const Oracle = () => {
 
       const response: OracleResponse = {
         id: Date.now().toString(),
-        question: query,
+        question: searchQuery,
         answer: data.response.answer,
         confidence: data.response.confidence,
         responseTime: data.response.responseTime,
@@ -239,9 +255,9 @@ const Oracle = () => {
       // Fallback to mock response if function fails
       const response: OracleResponse = {
         id: Date.now().toString(),
-        question: query,
-        ...(mockResponses[query] || {
-          answer: `I've analyzed your relationship data for "${query}". Based on current patterns and interactions, here are my intelligent recommendations with actionable insights tailored to your specific situation.`,
+        question: searchQuery,
+        ...(mockResponses[searchQuery] || {
+          answer: `I've analyzed your relationship data for "${searchQuery}". Based on current patterns and interactions, here are my intelligent recommendations with actionable insights tailored to your specific situation.`,
           confidence: 85 + Math.floor(Math.random() * 10),
           responseTime: 1.5 + Math.random() * 4,
           sources: [
@@ -255,7 +271,7 @@ const Oracle = () => {
             "Combining personal and professional context yields better results"
           ]
         }),
-        followUpQuestions: mockResponses[query]?.followUpQuestions || [
+        followUpQuestions: mockResponses[searchQuery]?.followUpQuestions || [
           "Would you like me to analyze specific relationships in detail?",
           "Should I identify your highest-priority contacts for this week?",
           "Can I help you create a strategic outreach plan?"
@@ -269,7 +285,9 @@ const Oracle = () => {
       }
       
       setResponses(prev => [response, ...prev])
-      setQuery("")
+      if (!queryText) {
+        setQuery("")
+      }
 
       toast({
         title: "Using Demo Mode",
@@ -381,7 +399,7 @@ const Oracle = () => {
                 />
               </div>
               <Button 
-                onClick={handleSearch}
+                onClick={() => handleSearch()}
                 disabled={!query.trim() || isLoading || !isWithinLimit('oracle_queries')}
                 className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all disabled:opacity-50"
               >

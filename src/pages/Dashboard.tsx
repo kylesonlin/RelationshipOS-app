@@ -1,31 +1,29 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import SubscriptionBanner from "@/components/billing/SubscriptionBanner"
-import { SeedDemoData } from "@/components/SeedDemoData"
 import { DashboardSkeleton } from "@/components/ui/dashboard-skeleton"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useAuth } from "@/hooks/useAuth"
+import { useNavigate } from "react-router-dom"
 import { 
   Users, 
-  Calendar, 
   TrendingUp, 
-  Clock, 
-  Phone, 
-  Mail, 
-  MessageCircle,
-  Plus,
+  Heart,
+  Search,
+  Brain,
   CheckCircle2,
-  AlertCircle,
-  Heart
+  Clock,
+  Send
 } from "lucide-react"
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { subscription, canUseFeature } = useSubscription();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [oracleQuery, setOracleQuery] = useState("");
   const relationshipHealthScore = 85;
 
   useEffect(() => {
@@ -40,173 +38,94 @@ const Dashboard = () => {
   if (isLoading) {
     return <DashboardSkeleton />;
   }
-  
-  const upcomingTasks = [
-    {
-      id: 1,
-      type: "follow-up",
-      contact: "Sarah Johnson",
-      task: "Follow up about marketing proposal",
-      priority: "high",
-      dueDate: "Today",
-      lastContact: "2 weeks ago",
-      avatar: "SJ"
-    },
-    {
-      id: 2,
-      type: "connect",
-      contact: "David Lee",
-      task: "Connect on LinkedIn",
-      priority: "medium",
-      dueDate: "Tomorrow",
-      lastContact: "Never",
-      avatar: "DL"
-    },
-    {
-      id: 3,
-      type: "call",
-      contact: "Alex Rodriguez",
-      task: "Quarterly check-in call",
-      priority: "medium",
-      dueDate: "This week",
-      lastContact: "3 months ago",
-      avatar: "AR"
+
+  const handleOracleSearch = () => {
+    if (oracleQuery.trim()) {
+      navigate(`/oracle?q=${encodeURIComponent(oracleQuery)}`);
+    } else {
+      navigate('/oracle');
     }
-  ]
+  };
 
   const recentActivity = [
-    { action: "Added new contact", contact: "Emily Wilson", time: "2 hours ago" },
-    { action: "Completed follow-up", contact: "Mike Chen", time: "5 hours ago" },
-    { action: "Scheduled meeting", contact: "Lisa Park", time: "1 day ago" },
+    { action: "Asked Oracle about Q4 strategy", contact: "Marketing insights", time: "2 hours ago" },
+    { action: "Connected with", contact: "Emily Wilson", time: "5 hours ago" },
+    { action: "Oracle analyzed", contact: "Relationship patterns", time: "1 day ago" },
   ]
 
-  const stats = [
-    { label: "Total Contacts", value: "247", icon: Users, change: "+12 this month" },
-    { label: "This Week's Meetings", value: "8", icon: Calendar, change: "3 confirmed" },
-    { label: "Follow-ups Due", value: "5", icon: Clock, change: "2 overdue" },
-    { label: "Connection Growth", value: "+15%", icon: TrendingUp, change: "vs last month" },
+  const quickStats = [
+    { label: "Total People", value: "247", icon: Users },
+    { label: "Relationship Health", value: `${relationshipHealthScore}%`, icon: Heart },
+    { label: "Recent Insights", value: "12", icon: TrendingUp },
   ]
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high": return "bg-destructive text-destructive-foreground"
-      case "medium": return "bg-warning text-warning-foreground"
-      case "low": return "bg-success text-success-foreground"
-      default: return "bg-muted text-muted-foreground"
-    }
-  }
-
-  const getTaskIcon = (type: string) => {
-    switch (type) {
-      case "follow-up": return Mail
-      case "connect": return Users
-      case "call": return Phone
-      default: return MessageCircle
-    }
-  }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Subscription Banner */}
-      <SubscriptionBanner />
-      
-      {/* Demo Data Section - Show if user has few contacts */}
-      <div className="flex justify-center">
-        <SeedDemoData />
-      </div>
-      
+    <div className="p-4 md:p-6 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Good morning, {user?.user_metadata?.full_name?.split(' ')[0] || 'there'}</h1>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your relationships today</p>
-        </div>
-        <Button className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all w-full md:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Contact
-        </Button>
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl md:text-4xl font-bold">Welcome back, {user?.user_metadata?.full_name?.split(' ')[0] || 'there'}</h1>
+        <p className="text-muted-foreground text-lg">Ask Oracle anything about your relationships and network</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index} className="shadow-soft hover:shadow-medium transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.label}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+      {/* Primary Oracle Search */}
+      <Card className="border-primary/20 shadow-medium">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+              <Brain className="h-5 w-5 text-white" />
+            </div>
+            <h2 className="text-xl font-semibold">Ask Oracle Anything</h2>
+          </div>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+              <Input
+                placeholder="Who should I prioritize this week? What's the context for my next meeting?"
+                value={oracleQuery}
+                onChange={(e) => setOracleQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
+                className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary"
+              />
+            </div>
+            <Button 
+              onClick={handleOracleSearch}
+              className="px-8 py-6 bg-gradient-primary shadow-medium hover:shadow-strong transition-all"
+            >
+              <Send className="h-5 w-5 mr-2" />
+              Ask Oracle
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {quickStats.map((stat, index) => (
+          <Card key={index} className="shadow-soft hover:shadow-medium transition-shadow text-center">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-center mb-2">
+                <stat.icon className="h-8 w-8 text-primary" />
+              </div>
+              <div className="text-3xl font-bold mb-1">{stat.value}</div>
+              <div className="text-sm text-muted-foreground">{stat.label}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Relationship Health Score */}
-        <Card className="shadow-soft">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-primary" />
-              Relationship Health Score
-            </CardTitle>
-            <CardDescription>
-              Overall strength of your network connections
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold text-primary">{relationshipHealthScore}%</span>
-              <Badge variant="outline" className="text-success border-success">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +5% this month
-              </Badge>
-            </div>
-            <Progress value={relationshipHealthScore} className="h-3" />
-            <div className="text-sm text-muted-foreground">
-              Your network is strong! Keep nurturing key relationships.
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card className="shadow-soft">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common relationship management tasks</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
-              <Users className="mr-2 h-4 w-4" />
-              Add New Contact
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Calendar className="mr-2 h-4 w-4" />
-              Schedule Follow-up
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Mail className="mr-2 h-4 w-4" />
-              Send Bulk Message
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <TrendingUp className="mr-2 h-4 w-4" />
-              View Analytics
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card className="shadow-soft">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest relationship activities</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
+      {/* Recent Activity */}
+      <Card className="shadow-soft">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-primary" />
+            Recent Activity
+          </CardTitle>
+          <CardDescription>Your latest relationship activities</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center space-x-3 text-sm">
+              <div key={index} className="flex items-center space-x-4 text-sm">
                 <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
                 <div className="flex-1">
                   <span className="font-medium">{activity.action}</span>
@@ -215,73 +134,6 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* AI-Powered Suggestions */}
-      <Card className="shadow-soft">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-primary" />
-            AI-Powered Relationship Suggestions
-          </CardTitle>
-          <CardDescription>
-            Smart recommendations to strengthen your network
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {upcomingTasks.map((task) => {
-              const TaskIcon = getTaskIcon(task.type)
-              return (
-                <div key={task.id} className="flex flex-col md:flex-row md:items-center md:justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors gap-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white font-medium text-sm">{task.avatar}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
-                        <h4 className="font-medium truncate">{task.task}</h4>
-                        <Badge className={getPriorityColor(task.priority)} variant="secondary">
-                          {task.priority}
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        <span className="font-medium text-foreground">{task.contact}</span>
-                        <span className="hidden sm:inline"> • Last contacted {task.lastContact} • Due {task.dueDate}</span>
-                        <div className="sm:hidden">
-                          <div>Last: {task.lastContact}</div>
-                          <div>Due: {task.dueDate}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2 flex-shrink-0">
-                    <Button size="sm" variant="outline" className="flex-1 md:flex-none">
-                      <TaskIcon className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">
-                        {task.type === "follow-up" ? "Follow Up" : 
-                         task.type === "connect" ? "Connect" : "Call"}
-                      </span>
-                      <span className="sm:hidden">
-                        {task.type === "follow-up" ? "Follow" : 
-                         task.type === "connect" ? "Connect" : "Call"}
-                      </span>
-                    </Button>
-                    <Button size="sm" variant="ghost">
-                      <CheckCircle2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          
-          <div className="mt-4 pt-4 border-t">
-            <Button variant="outline" className="w-full">
-              View All Suggestions
-            </Button>
           </div>
         </CardContent>
       </Card>
