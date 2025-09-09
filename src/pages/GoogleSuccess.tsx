@@ -12,61 +12,42 @@ const GoogleSuccess = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const handleTokenStorage = async () => {
+    const handleAuthSuccess = async () => {
       try {
         // Get the current session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError || !session) {
-          throw new Error('No valid session found');
+          console.error('No valid session found:', sessionError);
+          // Still redirect even if no session
+          navigate("/");
+          return;
         }
 
-        // Extract Google provider token
-        const googleToken = session.provider_token;
-        const refreshToken = session.provider_refresh_token;
-        
-        if (googleToken) {
-          // Store tokens via edge function
-          const { error } = await supabase.functions.invoke('store-google-tokens', {
-            body: {
-              user_id: session.user.id,
-              access_token: googleToken,
-              refresh_token: refreshToken,
-              expires_at: new Date(Date.now() + 3600 * 1000).toISOString(), // 1 hour from now
-              scopes: ['openid', 'email', 'profile', 'https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/calendar.readonly']
-            }
-          });
-
-          if (error) {
-            console.error('Error storing tokens:', error);
-          }
-        }
+        console.log('Google auth successful, session:', session.user.email);
 
         toast({
           title: "Welcome to RelationshipOS! 🎉",
           description: "Your Google account has been connected successfully.",
         });
 
-        // Redirect to dashboard after a brief moment
-        setTimeout(() => {
-          navigate("/");
-        }, 3000);
+        // Redirect to dashboard immediately
+        navigate("/");
 
       } catch (error) {
         console.error('Error handling Google auth:', error);
         toast({
-          title: "Setup Complete",
-          description: "Welcome to RelationshipOS!",
+          title: "Welcome to RelationshipOS! 🎉",
+          description: "Your account has been set up successfully.",
         });
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
+        // Redirect even on error
+        navigate("/");
       } finally {
         setLoading(false);
       }
     };
 
-    handleTokenStorage();
+    handleAuthSuccess();
   }, [navigate, toast]);
 
   if (loading) {
@@ -134,9 +115,6 @@ const GoogleSuccess = () => {
               Get Started
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">
-              Redirecting automatically in a few seconds...
-            </p>
           </div>
         </CardContent>
       </Card>
