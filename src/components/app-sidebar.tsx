@@ -6,7 +6,8 @@ import {
   FileText, 
   MessageSquare, 
   Settings,
-  Target
+  Target,
+  Brain
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -25,6 +26,7 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Oracle Engine", url: "/oracle", icon: Brain },
   { title: "Contacts", url: "/contacts", icon: Users },
   { title: "Calendar", url: "/calendar", icon: Calendar },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
