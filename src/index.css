@@ -70,6 +70,12 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Mobile responsiveness and performance */
+    --gradient-subtle: linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted)));
+    --mobile-breakpoint: 640px;
+    --tablet-breakpoint: 768px;
+    --desktop-breakpoint: 1024px;
   }
 
   .dark {
@@ -135,5 +141,57 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    /* Optimize for mobile performance */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
   }
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .mobile-hidden {
+      display: none !important;
+    }
+  }
+  
+  /* Touch targets for mobile */
+  @media (max-width: 768px) {
+    button, 
+    input, 
+    select, 
+    textarea,
+    [role="button"],
+    [tabindex="0"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
+  /* Performance optimizations */
+  * {
+    box-sizing: border-box;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Reduce animations on low-end devices */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
 }

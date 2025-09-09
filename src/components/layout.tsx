@@ -19,23 +19,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="h-16 border-b bg-card flex items-center justify-between px-6 shadow-soft">
-            <div className="flex items-center gap-4">
+          <header className="h-14 md:h-16 border-b bg-card flex items-center justify-between px-4 md:px-6 shadow-soft flex-shrink-0">
+            <div className="flex items-center gap-2 md:gap-4 min-w-0 flex-1">
               <SidebarTrigger />
               
-              {/* Search */}
-              <div className="relative max-w-md w-full">
+              {/* Search - hidden on mobile, shown on tablet+ */}
+              <div className="relative max-w-md w-full hidden sm:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input 
                   placeholder="Search contacts, tasks..." 
-                  className="pl-10 bg-background"
+                  className="pl-10 bg-background text-sm"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
+              {/* Search button for mobile */}
+              <Button variant="ghost" size="icon" className="sm:hidden">
+                <Search className="h-4 w-4" />
+              </Button>
+              
               <Button variant="ghost" size="icon">
                 <Bell className="h-4 w-4" />
               </Button>
