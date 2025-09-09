@@ -17,10 +17,13 @@ interface PageViewEvent {
 }
 
 export const useAnalytics = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   // Initialize analytics
   useEffect(() => {
+    // Don't run analytics if auth is still loading
+    if (loading) return;
+    
     // Initialize your analytics service here
     // For example: Google Analytics, Mixpanel, Amplitude, etc.
     
@@ -33,7 +36,7 @@ export const useAnalytics = () => {
         });
       }
     }
-  }, [user]);
+  }, [user, loading]);
 
   const track = useCallback((event: string, properties?: Record<string, any>) => {
     const eventData: AnalyticsEvent = {

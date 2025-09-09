@@ -19,13 +19,18 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
   const analytics = useAnalytics();
   const location = useLocation();
 
-  // Track page views automatically
+  // Track page views automatically (only after analytics is initialized)
   useEffect(() => {
-    const pageTitle = document.title || location.pathname;
-    analytics.page(pageTitle, {
-      path: location.pathname,
-      search: location.search,
-    });
+    // Add a small delay to ensure everything is initialized
+    const timer = setTimeout(() => {
+      const pageTitle = document.title || location.pathname;
+      analytics.page(pageTitle, {
+        path: location.pathname,
+        search: location.search,
+      });
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [location, analytics]);
 
   return (
