@@ -1,19 +1,15 @@
 import { 
-  Home, 
+  Command,
   Users, 
   Brain, 
-  BarChart3, 
+  TrendingUp, 
   Settings,
-  Plus,
-  Calendar,
-  Clock,
-  Target,
   Zap,
   Puzzle,
   Trophy,
-  Share2,
-  DollarSign,
-  Headphones
+  Shield,
+  Calendar,
+  Clock
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
@@ -31,30 +27,26 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-// Simplified 5-section navigation focused on user workflows
-const primaryItems = [
-  { title: "Home", url: "/", icon: Home },
-  { title: "People", url: "/contacts", icon: Users },
-  { title: "Assistant", url: "/oracle", icon: Brain },
-  { title: "Insights", url: "/analytics", icon: BarChart3 },
+// Executive AI Command Center Navigation
+const commandItems = [
+  { title: "AI Command Center", url: "/", icon: Command },
+  { title: "Relationship Intelligence", url: "/contacts", icon: Users },
+  { title: "AI Strategy Assistant", url: "/oracle", icon: Brain },
+  { title: "Executive Intelligence", url: "/analytics", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
-// Quick access items that appear in collapsed mode or as secondary actions
-const quickAccessItems = [
-  { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
-  { title: "Time Tracking", url: "/time-tracking", icon: Clock },
-  { title: "Automation", url: "/follow-up-automation", icon: Zap },
+// Intelligence Tools
+const intelligenceItems = [
+  { title: "Data Intelligence Hub", url: "/integrations", icon: Puzzle },
+  { title: "Meeting Intelligence", url: "/meeting-prep", icon: Calendar },
+  { title: "Automation Engine", url: "/follow-up-automation", icon: Zap },
 ]
 
-// Tools & Features - Built-out functionality
-const toolsItems = [
-  { title: "Integrations", url: "/integrations", icon: Puzzle },
-  { title: "Team Sharing", url: "/team-sharing", icon: Share2 },
-  { title: "Achievements", url: "/gamification-dashboard", icon: Trophy },
-  { title: "ROI Analytics", url: "/roi-dashboard", icon: Target },
-  { title: "Billing", url: "/billing-dashboard", icon: DollarSign },
-  { title: "Support", url: "/support", icon: Headphones },
+// Professional Growth (subtle placement)
+const growthItems = [
+  { title: "Professional Growth", url: "/gamification-dashboard", icon: Trophy },
+  { title: "Security Dashboard", url: "/admin-dashboard", icon: Shield },
 ]
 
 export function AppSidebar() {
@@ -72,10 +64,10 @@ export function AppSidebar() {
 
   const getNavClass = (path: string) => {
     const active = isActive(path)
-    return `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+    return `flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all duration-200 ${
       active 
-        ? "bg-primary text-primary-foreground shadow-soft font-medium" 
-        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        ? "executive-card-premium text-primary font-semibold shadow-executive" 
+        : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground hover:shadow-soft"
     }`
   }
 
@@ -85,30 +77,33 @@ export function AppSidebar() {
       collapsible="icon"
     >
       <SidebarContent className="flex flex-col h-full">
-        {/* Logo/Brand */}
-        <div className="p-6 border-b">
+        {/* Executive Brand */}
+        <div className="p-6 border-b border-sidebar-border">
           {!collapsed ? (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">R</span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center executive-card-premium">
+                <Command className="h-5 w-5 text-primary" />
               </div>
-              <span className="font-semibold text-lg">RelationshipOS</span>
+              <div>
+                <div className="executive-title text-lg">RelationshipOS</div>
+                <div className="text-xs text-muted-foreground">Executive Command Center</div>
+              </div>
             </div>
           ) : (
             <div className="flex justify-center">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">R</span>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center executive-card-premium">
+                <Command className="h-5 w-5 text-primary" />
               </div>
             </div>
           )}
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {/* Primary Navigation - Always visible */}
+          {/* Executive Command Navigation */}
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu className="space-y-1">
-                {primaryItems.map((item) => (
+              <SidebarMenu className="space-y-2">
+                {commandItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClass(item.url)}>
@@ -122,13 +117,13 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Quick Access - Show only when expanded */}
+          {/* Intelligence Tools - Show only when expanded */}
           {!collapsed && (
-            <SidebarGroup className="mt-6">
-              <SidebarGroupLabel className="text-xs text-muted-foreground">Quick Access</SidebarGroupLabel>
+            <SidebarGroup className="mt-8">
+              <SidebarGroupLabel className="text-xs text-muted-foreground font-medium">Intelligence Tools</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu className="space-y-1">
-                  {quickAccessItems.map((item) => (
+                  {intelligenceItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClass(item.url)}>
@@ -143,13 +138,13 @@ export function AppSidebar() {
             </SidebarGroup>
           )}
 
-          {/* Tools & Features - Show only when expanded */}
+          {/* Professional Growth - Show only when expanded */}
           {!collapsed && (
-            <SidebarGroup className="mt-6">
-              <SidebarGroupLabel className="text-xs text-muted-foreground">Tools & Features</SidebarGroupLabel>
+            <SidebarGroup className="mt-8">
+              <SidebarGroupLabel className="text-xs text-muted-foreground font-medium">Professional</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu className="space-y-1">
-                  {toolsItems.map((item) => (
+                  {growthItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClass(item.url)}>

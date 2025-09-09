@@ -83,101 +83,108 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
-      {/* AI Team Hero Section */}
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <Brain className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Your AI Relationship Team
-          </h1>
+      {/* Executive AI Command Center Hero */}
+      <div className="text-center space-y-6 py-8">
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center executive-card-premium">
+            <Brain className="h-6 w-6 text-primary" />
+          </div>
+          <div className="text-left">
+            <h1 className="executive-title text-4xl md:text-5xl">
+              AI Command Center
+            </h1>
+            <p className="executive-subtitle mt-2">
+              {getTimeBasedGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Executive'}
+            </p>
+          </div>
         </div>
-        <p className="text-muted-foreground text-lg">
-          {getTimeBasedGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || 'there'}
-        </p>
         {totalContacts === 0 && (
-          <div className="mt-4">
+          <div className="mt-6">
             <SeedDemoData />
           </div>
         )}
       </div>
 
-      {/* ROI Metrics - What Your AI Team Accomplished */}
-      <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20 shadow-elegant">
-        <CardHeader className="text-center pb-3">
-          <CardTitle className="text-xl font-bold flex items-center justify-center gap-2">
-            <DollarSign className="h-6 w-6 text-green-600" />
-            What Your AI Team Accomplished This Month
+      {/* Executive ROI Hero - Primary Value Proposition */}
+      <Card className="executive-card-premium border-primary/30">
+        <CardHeader className="text-center pb-6">
+          <CardTitle className="executive-title text-2xl flex items-center justify-center gap-3">
+            <DollarSign className="h-8 w-8 text-success" />
+            Executive ROI Dashboard
           </CardTitle>
-          <CardDescription>
-            Your virtual relationship management team vs. hiring a $5K/month VA
+          <CardDescription className="executive-subtitle">
+            Your AI team's measurable business impact vs. traditional $5K/month VA
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800">
-              <div className="text-2xl font-bold text-green-700 dark:text-green-400">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="metric-card p-6 text-center">
+              <div className="roi-display text-3xl mb-2">
                 ${monthlySavings.toLocaleString()}
               </div>
-              <p className="text-sm text-green-600 dark:text-green-500">Monthly Savings</p>
+              <p className="text-sm font-medium text-success">Monthly Savings</p>
+              <p className="text-xs text-muted-foreground mt-1">94% cost reduction</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-background border">
-              <div className="text-2xl font-bold">{tasksAutomated}</div>
-              <p className="text-sm text-muted-foreground">Tasks Automated</p>
+            <div className="metric-card p-6 text-center">
+              <div className="data-metric text-3xl mb-2">{tasksAutomated}</div>
+              <p className="text-sm font-medium">Tasks Automated</p>
+              <p className="text-xs text-muted-foreground mt-1">Daily operations</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-background border">
-              <div className="text-2xl font-bold">{hoursPerWeek}</div>
-              <p className="text-sm text-muted-foreground">Hours Saved/Week</p>
+            <div className="metric-card p-6 text-center">
+              <div className="data-metric text-3xl mb-2">{hoursPerWeek}h</div>
+              <p className="text-sm font-medium">Weekly Time Saved</p>
+              <p className="text-xs text-muted-foreground mt-1">Executive focus time</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-background border">
-              <div className="text-2xl font-bold flex items-center justify-center gap-1">
+            <div className="metric-card p-6 text-center">
+              <div className="roi-display text-3xl mb-2 flex items-center justify-center gap-2">
                 1,574%
-                <ArrowUp className="h-4 w-4 text-green-600" />
+                <ArrowUp className="h-5 w-5 text-success" />
               </div>
-              <p className="text-sm text-muted-foreground">Annual ROI</p>
+              <p className="text-sm font-medium text-success">Annual ROI</p>
+              <p className="text-xs text-muted-foreground mt-1">Annualized return</p>
             </div>
           </div>
-          <div className="mt-4 text-center">
+          <div className="mt-8 text-center">
             <Button 
-              variant="outline" 
               onClick={() => navigate('/roi-dashboard')}
-              className="bg-background/50"
+              className="executive-button"
             >
               <TrendingUp className="h-4 w-4 mr-2" />
-              View Full ROI Analysis
+              Complete ROI Analysis
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Your AI Team's Daily Agenda */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* AI Team's Strategic Intelligence */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <ActionSuggestions />
         </div>
         <div>
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+          <Card className="executive-card border-primary/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Brain className="h-5 w-5 text-primary" />
-                Ask Your AI Team
+                AI Strategy Assistant
               </CardTitle>
               <CardDescription>
-                Get instant insights and recommendations
+                Executive decision support and strategic insights
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="flex gap-2">
                 <Input
-                  placeholder="What should I focus on today?"
+                  placeholder="Strategic question or decision support..."
                   value={oracleQuery}
                   onChange={(e) => setOracleQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
-                  className="text-sm"
+                  className="text-sm executive-card"
                 />
                 <Button 
                   onClick={handleOracleSearch}
                   size="sm"
-                  className="bg-gradient-primary px-4"
+                  className="executive-button px-4"
                 >
                   <Search className="h-4 w-4" />
                 </Button>
@@ -186,18 +193,18 @@ const Dashboard = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => navigate('/oracle?q=who should I follow up with this week')}
-                  className="justify-start text-xs h-8"
+                  onClick={() => navigate('/oracle?q=strategic relationship priorities this week')}
+                  className="justify-start text-xs h-9 hover:bg-primary/10"
                 >
-                  Who needs follow-up?
+                  Strategic priorities
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => navigate('/oracle?q=upcoming meeting preparation recommendations')}
-                  className="justify-start text-xs h-8"
+                  onClick={() => navigate('/oracle?q=executive meeting preparation analysis')}
+                  className="justify-start text-xs h-9 hover:bg-primary/10"
                 >
-                  Meeting prep help
+                  Meeting intelligence
                 </Button>
               </div>
             </CardContent>
@@ -205,74 +212,101 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Secondary Metrics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-6">
-        <SmartWidget
-          title="Relationship Health"
-          value={`${relationshipHealth}%`}
-          trend="up"
-          trendValue="+5% this week"
-          badge="Excellent"
-          badgeVariant="default"
-          priority="medium"
-          action={{
-            label: "View Details",
-            onClick: () => navigate('/analytics')
-          }}
-        >
-          <Progress value={relationshipHealth} className="h-2" />
-        </SmartWidget>
+      {/* Executive Intelligence Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/analytics')}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Relationship Health
+              </CardTitle>
+              <Badge variant="default" className="text-xs">Excellent</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              <div className="data-metric text-2xl font-bold">
+                {relationshipHealth}%
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="h-4 w-4 text-success" />
+                <span className="font-medium text-success">+5% this week</span>
+              </div>
+              <Progress value={relationshipHealth} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <SmartWidget
-          title="Weekly Goal"
-          value={`${weeklyGoal}%`}
-          trend="up"
-          trendValue="On track"
-          badge="3 days left"
-          badgeVariant="secondary"
-          priority="medium"
-          action={{
-            label: "View Progress",
-            onClick: () => navigate('/gamification-dashboard')
-          }}
-        >
-          <Progress value={weeklyGoal} className="h-2" />
-        </SmartWidget>
+        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/gamification-dashboard')}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Weekly Performance
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">3 days left</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              <div className="data-metric text-2xl font-bold">
+                {weeklyGoal}%
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="h-4 w-4 text-success" />
+                <span className="font-medium text-success">On track</span>
+              </div>
+              <Progress value={weeklyGoal} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <SmartWidget
-          title="Today's Meetings"
-          value={upcomingMeetings}
-          description="Prep available"
-          badge={upcomingMeetings > 0 ? "Action needed" : "All clear"}
-          badgeVariant={upcomingMeetings > 0 ? "destructive" : "default"}
-          priority="medium"
-          action={{
-            label: "Prep Now",
-            onClick: () => navigate('/meeting-prep')
-          }}
-        >
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            {upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}
-          </div>
-        </SmartWidget>
+        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/meeting-prep')}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Today's Meetings
+              </CardTitle>
+              <Badge 
+                variant={upcomingMeetings > 0 ? "destructive" : "default"} 
+                className="text-xs"
+              >
+                {upcomingMeetings > 0 ? "Action needed" : "All clear"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              <div className="data-metric text-2xl font-bold">
+                {upcomingMeetings}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4" />
+                <span>{upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <SmartWidget
-          title="Stale Relationships"
-          value={staleContacts}
-          description="Need attention"
-          badge="Priority"
-          badgeVariant="secondary"
-          priority="medium"
-          action={{
-            label: "Review",
-            onClick: () => navigate('/contacts?filter=stale')
-          }}
-        >
-          <div className="text-sm text-muted-foreground">
-            {staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
-          </div>
-        </SmartWidget>
+        <Card className="metric-card hover:shadow-executive cursor-pointer" onClick={() => navigate('/contacts?filter=stale')}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Stale Relationships
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">Priority</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              <div className="data-metric text-2xl font-bold">
+                {staleContacts}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

@@ -214,9 +214,9 @@ export const ActionSuggestions = () => {
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Your AI Team's Daily Agenda
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <Sparkles className="h-6 w-6 text-primary" />
+            AI Team's Daily Intelligence
           </CardTitle>
           <Button
             variant="ghost"
@@ -228,10 +228,10 @@ export const ActionSuggestions = () => {
             <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="executive-subtitle text-sm">
           {isConnected 
-            ? "AI-powered insights from your Google data" 
-            : "Connect Google for personalized insights"
+            ? "Real-time strategic insights from integrated data sources" 
+            : "Connect Google for executive intelligence capabilities"
           }
         </p>
       </CardHeader>
@@ -247,7 +247,7 @@ export const ActionSuggestions = () => {
           return (
             <div
               key={suggestion.id}
-              className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md cursor-pointer group relative ${getPriorityStyles(suggestion.priority)}`}
+              className={`metric-card p-5 cursor-pointer group relative transition-all duration-300 hover:shadow-executive ${getPriorityStyles(suggestion.priority)}`}
               onClick={suggestion.action}
             >
               {suggestion.isDismissible && (
@@ -265,10 +265,10 @@ export const ActionSuggestions = () => {
               )}
               
               <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3 flex-1">
-                  <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    <Icon className="h-4 w-4 text-primary" />
-                  </div>
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="p-3 rounded-xl executive-card-premium group-hover:shadow-soft transition-all">
+                      <Icon className="h-5 w-5 text-primary" />
+                    </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-1">
                       <h4 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors">
