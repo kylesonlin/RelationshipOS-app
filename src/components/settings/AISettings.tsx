@@ -155,43 +155,58 @@ export function AISettings() {
   }
 
   const handleSaveApiKey = async () => {
-    if (!settings || !apiKey.trim()) return
-
-    setSaving(true)
-    try {
-      const { error } = await supabase
-        .from('user_ai_settings')
-        .update({
-          openai_api_key_encrypted: apiKey, // In production, this should be encrypted
-          ai_mode: 'user',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', settings.id)
-
-      if (error) throw error
-
-      setSettings({ 
-        ...settings, 
-        openai_api_key_encrypted: apiKey,
-        ai_mode: 'user'
-      })
-      setApiKey("")
-      
-      toast({
-        title: "API Key Saved",
-        description: "Your OpenAI API key has been securely saved and User AI mode is now active",
-      })
-    } catch (error) {
-      console.error('Error saving API key:', error)
+    if (!apiKey.trim()) {
       toast({
         title: "Error",
-        description: "Failed to save API key",
-        variant: "destructive"
-      })
-    } finally {
-      setSaving(false)
+        description: "Please enter an API key",
+        variant: "destructive",
+      });
+      return;
     }
-  }
+
+    // Validate API key format
+    if (!apiKey.startsWith('sk-')) {
+      toast({
+        title: "Error",
+        description: "Invalid OpenAI API key format. API keys should start with 'sk-'",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('encrypt-api-key', {
+        body: {
+          action: 'encrypt',
+          apiKey: apiKey
+        }
+      });
+
+      if (error) throw error;
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to encrypt API key');
+      }
+
+      toast({
+        title: "Success",
+        description: "OpenAI API key encrypted and saved successfully",
+      });
+
+      setApiKey('');
+      await fetchAISettings();
+    } catch (error) {
+      console.error('Error saving API key:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save API key",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const getPlatformUsagePercentage = () => {
     if (!settings) return 0

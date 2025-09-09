@@ -1100,6 +1100,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_user_role: {
+        Args: { new_role: string; target_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
