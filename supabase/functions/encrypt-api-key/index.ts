@@ -41,24 +41,34 @@ serve(async (req) => {
         throw new Error('Invalid OpenAI API key format');
       }
 
-      // Use Supabase's encryption via vault
-      const { data: encryptedKey, error: encryptError } = await supabase
-        .rpc('vault_encrypt', {
-          secret: apiKey,
-          key_id: 'openai-key'
-        });
-
-      if (encryptError) {
-        console.error('Encryption error:', encryptError);
-        throw new Error('Failed to encrypt API key');
-      }
+      // Simple encryption (in production, use proper encryption)
+      const encoder = new TextEncoder();
+      const data = encoder.encode(apiKey);
+      const key = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode('encryption-key-12345678901234567890123456789012'),
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+      
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        data
+      );
+      
+      const encryptedKey = btoa(String.fromCharCode(...new Uint8Array(encrypted)));
+      const ivString = btoa(String.fromCharCode(...iv));
+      const encryptedData = `${ivString}:${encryptedKey}`;
 
       // Store encrypted key in user_ai_settings
       const { error: updateError } = await supabase
         .from('user_ai_settings')
         .upsert({
           user_id: user.id,
-          openai_api_key_encrypted: encryptedKey,
+          openai_api_key_encrypted: encryptedData,
           ai_mode: 'user',
           updated_at: new Date().toISOString()
         });
@@ -85,21 +95,37 @@ serve(async (req) => {
         throw new Error('No API key found');
       }
 
-      // Decrypt using Supabase vault
-      const { data: decryptedKey, error: decryptError } = await supabase
-        .rpc('vault_decrypt', {
-          encrypted_secret: settings.openai_api_key_encrypted
-        });
+      try {
+        // Decrypt the API key
+        const [ivString, encryptedKey] = settings.openai_api_key_encrypted.split(':');
+        const iv = new Uint8Array(atob(ivString).split('').map(c => c.charCodeAt(0)));
+        const encrypted = new Uint8Array(atob(encryptedKey).split('').map(c => c.charCodeAt(0)));
+        
+        const encoder = new TextEncoder();
+        const key = await crypto.subtle.importKey(
+          'raw',
+          encoder.encode('encryption-key-12345678901234567890123456789012'),
+          { name: 'AES-GCM' },
+          false,
+          ['decrypt']
+        );
+        
+        const decrypted = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv },
+          key,
+          encrypted
+        );
+        
+        const decryptedKey = new TextDecoder().decode(decrypted);
 
-      if (decryptError) {
+        return new Response(
+          JSON.stringify({ success: true, apiKey: decryptedKey }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      } catch (decryptError) {
         console.error('Decryption error:', decryptError);
         throw new Error('Failed to decrypt API key');
       }
-
-      return new Response(
-        JSON.stringify({ success: true, apiKey: decryptedKey }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
 
     } else {
       throw new Error('Invalid action');
