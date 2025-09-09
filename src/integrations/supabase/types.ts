@@ -185,6 +185,51 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_events: {
+        Row: {
+          attendees: Json | null
+          created_at: string
+          description: string | null
+          end_time: string
+          event_id: string
+          id: string
+          location: string | null
+          meeting_link: string | null
+          start_time: string
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attendees?: Json | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          event_id: string
+          id?: string
+          location?: string | null
+          meeting_link?: string | null
+          start_time: string
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attendees?: Json | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          event_id?: string
+          id?: string
+          location?: string | null
+          meeting_link?: string | null
+          start_time?: string
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           badge_reward: string | null
@@ -224,6 +269,36 @@ export type Database = {
           target_value?: number
           title?: string
           xp_reward?: number | null
+        }
+        Relationships: []
+      }
+      contact_activities: {
+        Row: {
+          activity_date: string
+          activity_type: string
+          contact_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          activity_date: string
+          activity_type: string
+          contact_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          activity_type?: string
+          contact_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -314,6 +389,51 @@ export type Database = {
           updated_at?: string
           user_id?: string
           xp_earned?: number | null
+        }
+        Relationships: []
+      }
+      email_interactions: {
+        Row: {
+          contact_id: string | null
+          created_at: string
+          direction: string | null
+          email_id: string
+          id: string
+          sent_at: string | null
+          sentiment_score: number | null
+          snippet: string | null
+          subject: string | null
+          thread_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string
+          direction?: string | null
+          email_id: string
+          id?: string
+          sent_at?: string | null
+          sentiment_score?: number | null
+          snippet?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string
+          direction?: string | null
+          email_id?: string
+          id?: string
+          sent_at?: string | null
+          sentiment_score?: number | null
+          snippet?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -474,6 +594,51 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           window_start?: string | null
+        }
+        Relationships: []
+      }
+      relationship_insights: {
+        Row: {
+          action_data: Json | null
+          contact_id: string | null
+          created_at: string
+          description: string
+          expires_at: string | null
+          id: string
+          insight_type: string
+          is_dismissed: boolean | null
+          priority: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json | null
+          contact_id?: string | null
+          created_at?: string
+          description: string
+          expires_at?: string | null
+          id?: string
+          insight_type: string
+          is_dismissed?: boolean | null
+          priority?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_data?: Json | null
+          contact_id?: string | null
+          created_at?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          insight_type?: string
+          is_dismissed?: boolean | null
+          priority?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
