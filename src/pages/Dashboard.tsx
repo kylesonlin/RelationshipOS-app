@@ -133,6 +133,7 @@ const Dashboard = () => {
               badge="Excellent"
               badgeVariant="default"
               priority="high"
+              noAnimations={true}
               action={{
                 label: "View Details",
                 onClick: () => navigate('/analytics')
@@ -167,6 +168,7 @@ const Dashboard = () => {
               badge="Action needed"
               badgeVariant="destructive"
               priority="high"
+              noAnimations={true}
               action={{
                 label: "Prep Now",
                 onClick: () => navigate('/meeting-prep')
