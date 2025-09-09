@@ -8,7 +8,12 @@ import {
   Calendar,
   Clock,
   Target,
-  Zap
+  Zap,
+  Puzzle,
+  Trophy,
+  Share2,
+  DollarSign,
+  Headphones
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
@@ -39,8 +44,17 @@ const primaryItems = [
 const quickAccessItems = [
   { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
   { title: "Time Tracking", url: "/time-tracking", icon: Clock },
-  { title: "ROI Dashboard", url: "/roi-dashboard", icon: Target },
   { title: "Automation", url: "/follow-up-automation", icon: Zap },
+]
+
+// Tools & Features - Built-out functionality
+const toolsItems = [
+  { title: "Integrations", url: "/integrations", icon: Puzzle },
+  { title: "Team Sharing", url: "/team-sharing", icon: Share2 },
+  { title: "Achievements", url: "/gamification-dashboard", icon: Trophy },
+  { title: "ROI Analytics", url: "/roi-dashboard", icon: Target },
+  { title: "Billing", url: "/billing-dashboard", icon: DollarSign },
+  { title: "Support", url: "/support", icon: Headphones },
 ]
 
 export function AppSidebar() {
@@ -115,6 +129,27 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu className="space-y-1">
                   {quickAccessItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClass(item.url)}>
+                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-sm">{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
+
+          {/* Tools & Features - Show only when expanded */}
+          {!collapsed && (
+            <SidebarGroup className="mt-6">
+              <SidebarGroupLabel className="text-xs text-muted-foreground">Tools & Features</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  {toolsItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <NavLink to={item.url} className={getNavClass(item.url)}>
