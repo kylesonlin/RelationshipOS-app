@@ -1,50 +1,50 @@
-import { useState, useEffect } from 'react';
-import { SmartWidget } from '@/components/dashboard/SmartWidget';
-import { ActionSuggestions } from '@/components/dashboard/ActionSuggestions';
-import { QuickActions } from '@/components/dashboard/QuickActions';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { DashboardSkeleton } from '@/components/ui/dashboard-skeleton';
-import { useSubscription } from '@/hooks/useSubscription';
-import { useAuth } from '@/hooks/useAuth';
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { DashboardSkeleton } from "@/components/ui/dashboard-skeleton"
+import { SmartWidget } from "@/components/dashboard/SmartWidget"
+import { ActionSuggestions } from "@/components/dashboard/ActionSuggestions"
+import { QuickActions } from "@/components/dashboard/QuickActions"
+import { RelationshipHealthScore } from "@/components/gamification/RelationshipHealthScore"
+import { SeedDemoData } from "@/components/SeedDemoData"
+import { useAuth } from "@/hooks/useAuth"
+import { useSubscription } from "@/hooks/useSubscription"
+import { useDashboardData } from "@/hooks/useDashboardData"
+import { useNavigate } from "react-router-dom"
 import { 
-  TrendingUp, 
+  Search, 
+  Sparkles, 
   Users, 
   Calendar, 
-  Target, 
+  TrendingUp, 
+  MessageSquare,
+  Target,
   Clock,
-  Brain,
-  Sparkles,
-  ArrowRight,
-  BarChart3,
-  Search,
-  Send,
-  Heart,
-  CheckCircle2,
+  CheckCircle,
+  AlertCircle,
+  Activity,
+  Flame,
   Zap
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+} from "lucide-react"
 
 const Dashboard = () => {
   const { user } = useAuth();
   const { subscription, canUseFeature } = useSubscription();
+  const { metrics, loading } = useDashboardData();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
   const [oracleQuery, setOracleQuery] = useState("");
 
-  useEffect(() => {
-    // Simulate loading smart dashboard data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+  // Show loading state while fetching data
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
+  // If no metrics available, show default loading
+  if (!metrics) {
     return <DashboardSkeleton />;
   }
 
@@ -64,56 +64,83 @@ const Dashboard = () => {
     return "Good evening";
   };
 
-  const upcomingMeetings = 2;
-  const staleContacts = 8;
-  const weeklyGoal = 75; // percentage
-  const relationshipHealth = 87;
+  // Use real data from the dashboard metrics
+  const upcomingMeetings = metrics.upcomingMeetings;
+  const staleContacts = metrics.staleContacts;
+  const weeklyGoal = Math.round(metrics.weeklyGoal);
+  const relationshipHealth = metrics.relationshipHealth;
+  const totalContacts = metrics.totalContacts;
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
       {/* Smart Header with Context */}
-      <div className="text-center space-y-3 animate-fade-in">
+      <div className="text-center space-y-3">
         <h1 className="text-3xl md:text-4xl font-bold">
           {getTimeBasedGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || 'there'}
         </h1>
         <p className="text-muted-foreground text-lg">
           You have {upcomingMeetings} meetings today and {staleContacts} relationships that need attention
         </p>
+        {totalContacts === 0 && (
+          <div className="mt-4">
+            <SeedDemoData />
+          </div>
+        )}
       </div>
 
-      {/* Primary Oracle Interface - Enhanced */}
-      <Card className="border-primary/20 shadow-lg bg-gradient-to-br from-primary/5 to-purple/5 animate-fade-in">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">Ask Oracle Anything</h2>
-              <p className="text-sm text-muted-foreground">Your AI relationship intelligence assistant</p>
-            </div>
-            <Badge variant="secondary" className="ml-auto">
-              <Sparkles className="h-3 w-3 mr-1" />
-              Smart
-            </Badge>
+      {/* Oracle Interface - Premium Feature */}
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5 shadow-elegant">
+        <CardHeader className="text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Sparkles className="h-6 w-6 text-primary" />
+            <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Ask Oracle Anything
+            </CardTitle>
           </div>
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                placeholder="Who should I prioritize this week? What opportunities am I missing?"
-                value={oracleQuery}
-                onChange={(e) => setOracleQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
-                className="pl-12 pr-4 py-6 text-lg border-primary/30 focus:border-primary bg-white/50"
-              />
-            </div>
+          <CardDescription className="text-base">
+            Get AI-powered insights about your relationships, upcoming meetings, and opportunities
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Ask about your relationships, meetings, or opportunities..."
+              value={oracleQuery}
+              onChange={(e) => setOracleQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleOracleSearch()}
+              className="text-base"
+            />
             <Button 
               onClick={handleOracleSearch}
-              className="px-8 py-6 bg-gradient-primary shadow-lg hover:shadow-xl transition-all hover-scale"
+              className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all px-6"
             >
-              <Send className="h-5 w-5 mr-2" />
-              Ask Oracle
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/oracle?q=who should I follow up with this week')}
+              className="text-xs"
+            >
+              Who should I follow up with?
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/oracle?q=upcoming meeting preparation recommendations')}
+              className="text-xs"
+            >
+              Meeting prep suggestions
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/oracle?q=relationship health insights')}
+              className="text-xs"
+            >
+              Relationship insights
             </Button>
           </div>
         </CardContent>
@@ -156,7 +183,7 @@ const Dashboard = () => {
             >
               <Progress value={weeklyGoal} className="h-2" />
               <p className="text-sm text-muted-foreground mt-2">
-                15/20 meaningful interactions this week
+                {metrics.weeklyGoalProgress}/5 meaningful interactions this week
               </p>
             </SmartWidget>
 
@@ -174,7 +201,7 @@ const Dashboard = () => {
             >
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                Next: Sarah Chen in 2 hours
+                {upcomingMeetings > 0 ? "Next meeting prep available" : "No meetings today"}
               </div>
             </SmartWidget>
 
@@ -191,110 +218,84 @@ const Dashboard = () => {
               }}
             >
               <div className="text-sm text-muted-foreground">
-                Including 3 high-value contacts
+                {staleContacts > 0 ? `Including high-value contacts` : "All relationships are current"}
               </div>
             </SmartWidget>
           </div>
 
           {/* Quick Actions */}
           <QuickActions />
+
+          {/* Action Suggestions */}
+          <ActionSuggestions />
         </div>
 
-        {/* Right Column - Intelligent Suggestions */}
+        {/* Right Column - Relationship Health & Goals */}
         <div className="space-y-6">
-          <ActionSuggestions />
-          
+          <RelationshipHealthScore />
+
           {/* Recent Wins */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-green-500" />
+                <CheckCircle className="h-5 w-5 text-success" />
                 Recent Wins
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-center space-x-3 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                <div>
-                  <p className="font-medium">Connected with Emily Wilson</p>
-                  <p className="text-xs text-muted-foreground">5 hours ago</p>
+              <div className="text-sm space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span>Connected with 3 new prospects this week</span>
                 </div>
-              </div>
-              <div className="flex items-center space-x-3 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                <div>
-                  <p className="font-medium">Oracle found 3 warm introductions</p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span>Completed all follow-ups on time</span>
                 </div>
-              </div>
-              <div className="flex items-center space-x-3 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                <div>
-                  <p className="font-medium">Achieved weekly connection goal</p>
-                  <p className="text-xs text-muted-foreground">2 days ago</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span>Relationship health score improved 5%</span>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Quick Links */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Access</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/analytics')}
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Analytics Dashboard
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/time-tracking')}
+              >
+                <Clock className="h-4 w-4 mr-2" />
+                Time Tracking
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start"
+                onClick={() => navigate('/follow-up-automation')}
+              >
+                <Zap className="h-4 w-4 mr-2" />
+                Automation
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
-      {/* Smart Insights Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="hover-scale cursor-pointer" onClick={() => navigate('/analytics')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
-                Analytics
-              </span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Deep insights into your relationship patterns and ROI
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover-scale cursor-pointer" onClick={() => navigate('/time-tracking')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                Time Saved
-              </span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-primary mb-1">15.5 hrs</p>
-            <p className="text-sm text-muted-foreground">
-              Saved this week through automation
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="hover-scale cursor-pointer" onClick={() => navigate('/follow-up-automation')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                Automation
-              </span>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              12 active automations working for you
-            </p>
-          </CardContent>
-        </Card>
-      </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

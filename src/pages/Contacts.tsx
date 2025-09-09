@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { UsageMeter } from "@/components/UsageMeter"
 import { ContactsSkeleton } from "@/components/ui/dashboard-skeleton"
 import { useSubscription } from "@/hooks/useSubscription"
+import { useContacts } from "@/hooks/useContacts"
 import { 
   Search, 
   Plus, 
@@ -31,110 +32,29 @@ import {
 
 const Contacts = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
   const { trackUsage } = useSubscription()
+  const { contacts, loading } = useContacts()
 
-  useEffect(() => {
-    // Simulate loading contacts
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
+  if (loading) {
     return <ContactsSkeleton />;
   }
-  
-  const contacts = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.j@marketpro.com",
-      phone: "+1 (555) 123-4567",
-      company: "MarketPro Solutions",
-      position: "Marketing Director",
-      location: "San Francisco, CA",
-      lastContact: "2 weeks ago",
-      relationship: "Strong",
-      priority: "High",
-      avatar: "SJ",
-      tags: ["Marketing", "B2B", "Lead"]
-    },
-    {
-      id: 2,
-      name: "David Lee",
-      email: "david@techstart.io",
-      phone: "+1 (555) 987-6543",
-      company: "TechStart Inc",
-      position: "Founder & CEO",
-      location: "Austin, TX",
-      lastContact: "Never",
-      relationship: "New",
-      priority: "Medium",
-      avatar: "DL",
-      tags: ["Tech", "Startup", "CEO"]
-    },
-    {
-      id: 3,
-      name: "Alex Rodriguez",
-      email: "alex.r@consulting.com",
-      phone: "+1 (555) 456-7890",
-      company: "Rodriguez Consulting",
-      position: "Senior Consultant",
-      location: "New York, NY",
-      lastContact: "3 months ago",
-      relationship: "Moderate",
-      priority: "Medium",
-      avatar: "AR",
-      tags: ["Consulting", "B2B", "Partner"]
-    },
-    {
-      id: 4,
-      name: "Emily Wilson",
-      email: "emily@designstudio.com",
-      phone: "+1 (555) 234-5678",
-      company: "Creative Design Studio",
-      position: "Design Lead",
-      location: "Los Angeles, CA",
-      lastContact: "1 week ago",
-      relationship: "Strong",
-      priority: "High",
-      avatar: "EW",
-      tags: ["Design", "Creative", "Freelancer"]
-    },
-    {
-      id: 5,
-      name: "Mike Chen",
-      email: "mike@datatech.com",
-      phone: "+1 (555) 345-6789",
-      company: "DataTech Solutions",
-      position: "Data Scientist",
-      location: "Seattle, WA",
-      lastContact: "1 month ago",
-      relationship: "Strong",
-      priority: "Medium",
-      avatar: "MC",
-      tags: ["Data", "AI", "Tech"]
-    },
-    {
-      id: 6,
-      name: "Lisa Park",
-      email: "lisa@financeplus.com",
-      phone: "+1 (555) 567-8901",
-      company: "FinancePlus",
-      position: "Financial Advisor",
-      location: "Chicago, IL",
-      lastContact: "2 days ago",
-      relationship: "Strong",
-      priority: "High",
-      avatar: "LP",
-      tags: ["Finance", "Advisory", "Professional"]
-    }
-  ]
+  // Transform contacts data to display format
+  const displayContacts = contacts.map(contact => ({
+    id: contact.id,
+    name: `${contact.first_name} ${contact.last_name}`,
+    email: contact.email,
+    phone: contact.phone || "Not provided",
+    company: contact.company || "Unknown Company",
+    position: contact.title || "Unknown Position",
+    location: contact.additional_fields?.location || "Unknown Location",
+    lastContact: "Recent", // This would come from interactions data
+    relationship: "Strong", // This would be calculated from interactions
+    priority: "Medium", // This would be calculated based on various factors
+    avatar: `${contact.first_name.charAt(0)}${contact.last_name.charAt(0)}`.toUpperCase(),
+    tags: contact.additional_fields?.tags || ["Contact"]
+  }))
 
-  const filteredContacts = contacts.filter(contact =>
+  const filteredContacts = displayContacts.filter(contact =>
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
     contact.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))

@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { useAnalyticsData } from "@/hooks/useAnalyticsData"
+import { DashboardSkeleton } from "@/components/ui/dashboard-skeleton"
 import { 
   TrendingUp, 
   TrendingDown,
@@ -21,40 +23,46 @@ import {
 } from "lucide-react"
 
 export default function Analytics() {
-  const relationshipHealth = {
-    strong: 34,
-    warm: 67,
-    cold: 23,
-    declining: 8
+  const { analytics, loading } = useAnalyticsData()
+
+  if (loading) {
+    return <DashboardSkeleton />
   }
 
-  const totalRelationships = relationshipHealth.strong + relationshipHealth.warm + relationshipHealth.cold + relationshipHealth.declining
+  if (!analytics) {
+    return <DashboardSkeleton />
+  }
+
+  const totalRelationships = analytics.relationshipHealth.strong + 
+                             analytics.relationshipHealth.warm + 
+                             analytics.relationshipHealth.cold + 
+                             analytics.relationshipHealth.declining
 
   const keyMetrics = [
     {
       title: "Relationship Score",
-      value: "8.2/10",
+      value: `${analytics.keyMetrics.relationshipScore.toFixed(1)}/10`,
       change: "+12%",
       trend: "up",
       description: "Average across portfolio"
     },
     {
       title: "Active Relationships", 
-      value: "132",
+      value: analytics.keyMetrics.activeRelationships.toString(),
       change: "+8",
       trend: "up",
       description: "Engaged in last 30 days"
     },
     {
       title: "Opportunities Identified",
-      value: "17",
+      value: analytics.keyMetrics.opportunitiesIdentified.toString(),
       change: "+5",
       trend: "up", 
       description: "This month"
     },
     {
       title: "At-Risk Relationships",
-      value: "8",
+      value: analytics.keyMetrics.atRiskRelationships.toString(),
       change: "-3",
       trend: "down",
       description: "Require attention"
@@ -64,105 +72,51 @@ export default function Analytics() {
   const businessImpact = [
     {
       metric: "Pipeline Value",
-      value: "$2.4M",
+      value: analytics.businessImpact.pipelineValue,
       change: "+15%",
       impact: "High",
       source: "Relationship referrals"
     },
     {
       metric: "Deal Velocity",
-      value: "23 days",
+      value: analytics.businessImpact.dealVelocity,
       change: "-18%",
       impact: "High",
       source: "Faster warm introductions"
     },
     {
       metric: "Win Rate",
-      value: "34%",
+      value: analytics.businessImpact.winRate,
       change: "+7%",
       impact: "Medium",
       source: "Better context & preparation"
     },
     {
       metric: "Customer Retention",
-      value: "94%",
+      value: analytics.businessImpact.customerRetention,
       change: "+3%",
       impact: "Medium", 
       source: "Proactive relationship management"
     }
   ]
 
-  const topContacts = [
-    {
-      name: "Sarah Johnson",
-      company: "Johnson Industries",
-      score: 9.8,
-      interactions: 23,
-      lastContact: "2 days ago",
-      value: "High",
-      trend: "stable"
-    },
-    {
-      name: "Mike Chen",
-      company: "TechCorp",
-      score: 9.5,
-      interactions: 19,
-      lastContact: "1 day ago", 
-      value: "High",
-      trend: "up"
-    },
-    {
-      name: "Alex Rivera",
-      company: "StartupX",
-      score: 8.9,
-      interactions: 15,
-      lastContact: "5 days ago",
-      value: "Medium",
-      trend: "down"
-    },
-    {
-      name: "Lisa Park",
-      company: "InnovateCo",
-      score: 8.7,
-      interactions: 12,
-      lastContact: "1 week ago",
-      value: "Medium", 
-      trend: "stable"
-    }
-  ]
-
   const riskAlerts = [
     {
       type: "declining",
-      contact: "David Kim",
-      company: "MegaCorp",
-      issue: "No contact in 45 days",
-      severity: "high",
-      action: "Schedule catch-up call"
+      contact: "Contact requiring attention",
+      company: "Various Companies",
+      issue: "Multiple contacts need follow-up",
+      severity: "medium",
+      action: "Review stale contacts"
     },
     {
       type: "opportunity",
-      contact: "Rachel White",
-      company: "Growth Inc",
-      issue: "Posted about expansion plans",
+      contact: "Network expansion",
+      company: "Growth opportunities",
+      issue: "Consider expanding network",
       severity: "medium",
-      action: "Send congratulations + offering"
-    },
-    {
-      type: "declining",
-      contact: "Tom Wilson", 
-      company: "Legacy Systems",
-      issue: "Engagement score dropped 30%",
-      severity: "medium",
-      action: "Send value-add content"
+      action: "Connect with new prospects"
     }
-  ]
-
-  const engagementTrends = [
-    { month: "Sep", emails: 45, meetings: 12, calls: 8 },
-    { month: "Oct", emails: 52, meetings: 15, calls: 11 },
-    { month: "Nov", emails: 67, meetings: 18, calls: 14 },
-    { month: "Dec", emails: 73, meetings: 22, calls: 16 }
   ]
 
   return (
@@ -220,13 +174,13 @@ export default function Analytics() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Strong ({relationshipHealth.strong})</span>
+                      <span className="text-sm">Strong ({analytics.relationshipHealth.strong})</span>
                     </div>
                     <span className="text-sm font-medium">
-                      {((relationshipHealth.strong / totalRelationships) * 100).toFixed(0)}%
+                      {((analytics.relationshipHealth.strong / totalRelationships) * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <Progress value={(relationshipHealth.strong / totalRelationships) * 100} className="h-2" />
+                  <Progress value={(analytics.relationshipHealth.strong / totalRelationships) * 100} className="h-2" />
                 </div>
 
                 <div className="space-y-3">
