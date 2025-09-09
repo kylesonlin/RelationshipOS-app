@@ -77,12 +77,12 @@ const Dashboard = () => {
   const relationshipHealth = metrics.relationshipHealth;
   const totalContacts = metrics.totalContacts;
 
-  // ROI calculations for AI Team Dashboard
-  const monthlyVACost = 5000;
-  const relationshipOSCost = 299;
-  const monthlySavings = monthlyVACost - relationshipOSCost;
-  const tasksAutomated = 127;
-  const hoursPerWeek = 15;
+  // Live ROI calculations from real data
+  const monthlySavings = metrics.monthlySavings;
+  const tasksAutomated = metrics.tasksAutomated;
+  const hoursPerWeek = metrics.hoursPerWeek;
+  const annualROI = metrics.annualROI;
+  const currentPlanCost = metrics.currentPlanCost;
 
   // Determine if user needs onboarding vs showing full dashboard
   const needsOnboarding = totalContacts < 3 && (!isConnected || (!hasGmailAccess && !hasCalendarAccess));
@@ -115,7 +115,7 @@ const Dashboard = () => {
             Executive ROI Dashboard
           </CardTitle>
           <CardDescription className="executive-subtitle">
-            Your AI team's measurable business impact vs. traditional $5K/month VA
+            Your AI team's measurable business impact vs. traditional ${metrics.vaCost.toLocaleString()}/month VA
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -125,7 +125,9 @@ const Dashboard = () => {
                 ${monthlySavings.toLocaleString()}
               </div>
               <p className="text-sm font-medium text-success">Monthly Savings</p>
-              <p className="text-xs text-muted-foreground mt-1">94% cost reduction</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {Math.round(((monthlySavings / metrics.vaCost) * 100))}% cost reduction vs ${currentPlanCost}/mo plan
+              </p>
             </div>
             <div className="metric-card p-6 text-center">
               <div className="data-metric text-3xl mb-2">{tasksAutomated}</div>
@@ -139,11 +141,13 @@ const Dashboard = () => {
             </div>
             <div className="metric-card p-6 text-center">
               <div className="roi-display text-3xl mb-2 flex items-center justify-center gap-2">
-                1,574%
+                {annualROI.toLocaleString()}%
                 <ArrowUp className="h-5 w-5 text-success" />
               </div>
               <p className="text-sm font-medium text-success">Annual ROI</p>
-              <p className="text-xs text-muted-foreground mt-1">Annualized return</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                ${(monthlySavings * 12).toLocaleString()} annual savings
+              </p>
             </div>
           </div>
           <div className="mt-8 text-center">
