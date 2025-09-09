@@ -18,10 +18,13 @@ import TeamSharing from "./pages/TeamSharing";
 import Settings from "./pages/Settings";
 import GamificationDashboard from "./pages/GamificationDashboard";
 import Auth from "./pages/Auth";
-import GoogleSuccess from "./pages/GoogleSuccess";
+// import GoogleSuccess from "./pages/GoogleSuccess"; // Removed as not needed
 import ResetPassword from "./pages/ResetPassword";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
+import Pricing from "./pages/Pricing";
+import BillingSuccess from "./pages/BillingSuccess";
+import BillingDashboard from "./pages/BillingDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,18 +44,31 @@ const router = createBrowserRouter([
     element: <Auth />,
     errorElement: <ErrorPage />,
   },
-  {
-    path: "/google-success",
-    element: (
-      <ProtectedRoute>
-        <GoogleSuccess />
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
+  // Removed GoogleSuccess route - not needed with direct Google auth
   {
     path: "/reset-password",
     element: <ResetPassword />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/pricing",
+    element: <Pricing />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/billing/success",
+    element: <BillingSuccess />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/billing",
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <BillingDashboard />
+        </Layout>
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
   },
   {

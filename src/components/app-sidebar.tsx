@@ -10,7 +10,8 @@ import {
   Brain,
   Clock,
   Zap,
-  Trophy
+  Trophy,
+  CreditCard
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -45,6 +46,7 @@ const toolItems = [
 ]
 
 const systemItems = [
+  { title: "Billing", url: "/billing", icon: CreditCard },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
