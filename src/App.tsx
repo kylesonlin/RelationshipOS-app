@@ -21,6 +21,7 @@ import TeamSharing from "./pages/TeamSharing";
 import Settings from "./pages/Settings";
 import GamificationDashboard from "./pages/GamificationDashboard";
 import Auth from "./pages/Auth";
+import GoogleSuccess from "./pages/GoogleSuccess";
 import ResetPassword from "./pages/ResetPassword";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
@@ -63,6 +64,11 @@ const router = createBrowserRouter([
       {
         path: "auth",
         element: <Auth />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "google-success",
+        element: <GoogleSuccess />,
         errorElement: <ErrorPage />,
       },
       {
