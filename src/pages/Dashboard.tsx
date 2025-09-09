@@ -1,10 +1,13 @@
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import SubscriptionBanner from "@/components/billing/SubscriptionBanner"
 import { SeedDemoData } from "@/components/SeedDemoData"
+import { DashboardSkeleton } from "@/components/ui/dashboard-skeleton"
 import { useSubscription } from "@/hooks/useSubscription"
+import { useAuth } from "@/hooks/useAuth"
 import { 
   Users, 
   Calendar, 
@@ -20,8 +23,23 @@ import {
 } from "lucide-react"
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const { subscription, canUseFeature } = useSubscription();
-  const relationshipHealthScore = 85
+  const [isLoading, setIsLoading] = useState(true);
+  const relationshipHealthScore = 85;
+
+  useEffect(() => {
+    // Simulate loading dashboard data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
   
   const upcomingTasks = [
     {
@@ -88,7 +106,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* Subscription Banner */}
       <SubscriptionBanner />
       
@@ -98,12 +116,12 @@ const Dashboard = () => {
       </div>
       
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Good morning, Kyle</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Good morning, {user?.user_metadata?.full_name?.split(' ')[0] || 'there'}</h1>
           <p className="text-muted-foreground mt-1">Here's what's happening with your relationships today</p>
         </div>
-        <Button className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all">
+        <Button className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all w-full md:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Add Contact
         </Button>
@@ -217,29 +235,39 @@ const Dashboard = () => {
             {upcomingTasks.map((task) => {
               const TaskIcon = getTaskIcon(task.type)
               return (
-                <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                <div key={task.id} className="flex flex-col md:flex-row md:items-center md:justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors gap-4">
                   <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-medium text-sm">{task.avatar}</span>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium">{task.task}</h4>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
+                        <h4 className="font-medium truncate">{task.task}</h4>
                         <Badge className={getPriorityColor(task.priority)} variant="secondary">
                           {task.priority}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
                         <span className="font-medium text-foreground">{task.contact}</span>
-                        {" • "}Last contacted {task.lastContact} • Due {task.dueDate}
+                        <span className="hidden sm:inline"> • Last contacted {task.lastContact} • Due {task.dueDate}</span>
+                        <div className="sm:hidden">
+                          <div>Last: {task.lastContact}</div>
+                          <div>Due: {task.dueDate}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button size="sm" variant="outline">
+                  <div className="flex items-center space-x-2 flex-shrink-0">
+                    <Button size="sm" variant="outline" className="flex-1 md:flex-none">
                       <TaskIcon className="h-4 w-4 mr-1" />
-                      {task.type === "follow-up" ? "Follow Up" : 
-                       task.type === "connect" ? "Connect" : "Call"}
+                      <span className="hidden sm:inline">
+                        {task.type === "follow-up" ? "Follow Up" : 
+                         task.type === "connect" ? "Connect" : "Call"}
+                      </span>
+                      <span className="sm:hidden">
+                        {task.type === "follow-up" ? "Follow" : 
+                         task.type === "connect" ? "Connect" : "Call"}
+                      </span>
                     </Button>
                     <Button size="sm" variant="ghost">
                       <CheckCircle2 className="h-4 w-4" />

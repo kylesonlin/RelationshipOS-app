@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { UsageMeter } from "@/components/UsageMeter"
+import { ContactsSkeleton } from "@/components/ui/dashboard-skeleton"
 import { useSubscription } from "@/hooks/useSubscription"
 import { 
   Search, 
@@ -30,7 +31,21 @@ import {
 
 const Contacts = () => {
   const [searchTerm, setSearchTerm] = useState("")
+  const [isLoading, setIsLoading] = useState(true)
   const { trackUsage } = useSubscription()
+
+  useEffect(() => {
+    // Simulate loading contacts
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <ContactsSkeleton />;
+  }
   
   const contacts = [
     {
@@ -144,7 +159,7 @@ const Contacts = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* Usage Meter */}
       <UsageMeter 
         resourceType="contacts" 
@@ -153,20 +168,20 @@ const Contacts = () => {
       />
       
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Contacts</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Contacts</h1>
           <p className="text-muted-foreground mt-1">Manage and nurture your professional relationships</p>
         </div>
-        <Button className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all">
+        <Button className="bg-gradient-primary shadow-medium hover:shadow-strong transition-all w-full md:w-auto" size="responsive">
           <Plus className="mr-2 h-4 w-4" />
           Add Contact
         </Button>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex gap-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1 max-w-full md:max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input 
             placeholder="Search contacts..." 
@@ -175,14 +190,14 @@ const Contacts = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full md:w-auto">
           <Filter className="mr-2 h-4 w-4" />
-          Filter
+          <span className="md:inline">Filter</span>
         </Button>
       </div>
 
       {/* Contacts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredContacts.map((contact) => (
           <Card key={contact.id} className="shadow-soft hover:shadow-medium transition-all cursor-pointer">
             <CardHeader className="pb-3">
@@ -278,11 +293,13 @@ const Contacts = () => {
               <div className="flex gap-2 pt-2">
                 <Button size="sm" variant="outline" className="flex-1">
                   <MessageCircle className="h-3 w-3 mr-1" />
-                  Message
+                  <span className="hidden sm:inline">Message</span>
+                  <span className="sm:hidden">Msg</span>
                 </Button>
                 <Button size="sm" variant="outline" className="flex-1">
                   <Calendar className="h-3 w-3 mr-1" />
-                  Meet
+                  <span className="hidden sm:inline">Meet</span>
+                  <span className="sm:hidden">Meet</span>
                 </Button>
               </div>
             </CardContent>

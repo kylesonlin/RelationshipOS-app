@@ -52,23 +52,23 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
         {/* Left Side - Value Proposition */}
-        <div className="space-y-8 text-center lg:text-left">
+        <div className="space-y-6 lg:space-y-8 text-center lg:text-left order-2 lg:order-1">
           <div className="space-y-4">
-            <h1 className="text-4xl lg:text-5xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Your AI-Powered{" "}
               <span className="bg-gradient-primary bg-clip-text text-transparent">
                 Relationship OS
               </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-lg">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0">
               Transform your professional relationships with AI insights from your Gmail and Calendar data.
             </p>
           </div>
 
           {/* Feature Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 max-w-2xl mx-auto lg:mx-0">
             <div className="flex items-start gap-3 text-left">
               <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
                 <Mail className="h-5 w-5 text-primary" />
@@ -120,8 +120,8 @@ const Auth = () => {
         </div>
 
         {/* Right Side - Authentication */}
-        <div className="flex justify-center lg:justify-end">
-          <Card className="w-full max-w-md">
+        <div className="flex justify-center lg:justify-end order-1 lg:order-2">
+          <Card className="w-full max-w-md shadow-elegant">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center">
                 <span className="text-2xl font-bold text-white">ROS</span>
@@ -145,7 +145,7 @@ const Auth = () => {
                 <Button
                   onClick={handleGoogleSignIn}
                   disabled={loading}
-                  className="w-full h-12 text-base bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-sm"
+                  className="w-full h-12 text-base bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-sm transition-all hover:shadow-medium"
                 >
                   {loading ? (
                     <Loader2 className="mr-3 h-5 w-5 animate-spin" />
@@ -176,7 +176,7 @@ const Auth = () => {
                   <p className="text-sm text-muted-foreground">
                     By continuing, you'll grant access to:
                   </p>
-                  <div className="flex justify-center gap-4 text-xs text-muted-foreground">
+                  <div className="flex justify-center gap-6 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Mail className="h-3 w-3" />
                       Gmail
