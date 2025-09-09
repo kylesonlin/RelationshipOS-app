@@ -9,7 +9,8 @@ import {
   Target,
   Brain,
   Clock,
-  Zap
+  Zap,
+  Trophy
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -29,6 +30,7 @@ import {
 const mainItems = [
   { title: "ROI Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Oracle Engine", url: "/oracle", icon: Brain },
+  { title: "Achievements", url: "/achievements", icon: Trophy },
   { title: "Contacts", url: "/contacts", icon: Users },
   { title: "Time Tracking", url: "/time-tracking", icon: Clock },
   { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },

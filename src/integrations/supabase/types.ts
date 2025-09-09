@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          badge_color: string
+          badge_icon: string
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean | null
+          name: string
+          requirement_type: string
+          requirement_value: number
+          tier: string | null
+          xp_reward: number | null
+        }
+        Insert: {
+          badge_color: string
+          badge_icon: string
+          created_at?: string
+          description: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requirement_type: string
+          requirement_value: number
+          tier?: string | null
+          xp_reward?: number | null
+        }
+        Update: {
+          badge_color?: string
+          badge_icon?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requirement_type?: string
+          requirement_value?: number
+          tier?: string | null
+          xp_reward?: number | null
+        }
+        Relationships: []
+      }
       ai_usage_logs: {
         Row: {
           ai_mode: string
@@ -44,6 +86,48 @@ export type Database = {
           request_type?: string
           tokens_used?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          badge_reward: string | null
+          challenge_type: string
+          created_at: string
+          description: string
+          end_date: string
+          id: string
+          is_active: boolean | null
+          start_date: string
+          target_value: number
+          title: string
+          xp_reward: number | null
+        }
+        Insert: {
+          badge_reward?: string | null
+          challenge_type: string
+          created_at?: string
+          description: string
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          start_date: string
+          target_value: number
+          title: string
+          xp_reward?: number | null
+        }
+        Update: {
+          badge_reward?: string | null
+          challenge_type?: string
+          created_at?: string
+          description?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          start_date?: string
+          target_value?: number
+          title?: string
+          xp_reward?: number | null
         }
         Relationships: []
       }
@@ -89,6 +173,51 @@ export type Database = {
           title?: string | null
           updated_at?: string
           userId?: string | null
+        }
+        Relationships: []
+      }
+      daily_activities: {
+        Row: {
+          activity_date: string
+          calls_made: number | null
+          contacts_added: number | null
+          created_at: string
+          emails_sent: number | null
+          follow_ups_completed: number | null
+          id: string
+          meetings_completed: number | null
+          notes_added: number | null
+          updated_at: string
+          user_id: string
+          xp_earned: number | null
+        }
+        Insert: {
+          activity_date: string
+          calls_made?: number | null
+          contacts_added?: number | null
+          created_at?: string
+          emails_sent?: number | null
+          follow_ups_completed?: number | null
+          id?: string
+          meetings_completed?: number | null
+          notes_added?: number | null
+          updated_at?: string
+          user_id: string
+          xp_earned?: number | null
+        }
+        Update: {
+          activity_date?: string
+          calls_made?: number | null
+          contacts_added?: number | null
+          created_at?: string
+          emails_sent?: number | null
+          follow_ups_completed?: number | null
+          id?: string
+          meetings_completed?: number | null
+          notes_added?: number | null
+          updated_at?: string
+          user_id?: string
+          xp_earned?: number | null
         }
         Relationships: []
       }
@@ -230,6 +359,77 @@ export type Database = {
           },
         ]
       }
+      team_leaderboard: {
+        Row: {
+          created_at: string
+          id: string
+          month_start: string | null
+          monthly_xp: number | null
+          rank_position: number | null
+          team_name: string | null
+          total_xp: number | null
+          updated_at: string
+          user_id: string
+          week_start: string | null
+          weekly_xp: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month_start?: string | null
+          monthly_xp?: number | null
+          rank_position?: number | null
+          team_name?: string | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id: string
+          week_start?: string | null
+          weekly_xp?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month_start?: string | null
+          monthly_xp?: number | null
+          rank_position?: number | null
+          team_name?: string | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id?: string
+          week_start?: string | null
+          weekly_xp?: number | null
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_ai_settings: {
         Row: {
           ai_mode: string
@@ -266,6 +466,101 @@ export type Database = {
           updated_at?: string
           usage_reset_date?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          current_progress: number | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_gamification: {
+        Row: {
+          created_at: string
+          current_level: number | null
+          current_streak: number | null
+          id: string
+          last_activity_date: string | null
+          longest_streak: number | null
+          relationship_health_score: number | null
+          total_contacts: number | null
+          total_meetings: number | null
+          total_opportunities: number | null
+          total_xp: number | null
+          updated_at: string
+          user_id: string
+          weekly_goal_progress: number | null
+          weekly_goal_target: number | null
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number | null
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          relationship_health_score?: number | null
+          total_contacts?: number | null
+          total_meetings?: number | null
+          total_opportunities?: number | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id: string
+          weekly_goal_progress?: number | null
+          weekly_goal_target?: number | null
+        }
+        Update: {
+          created_at?: string
+          current_level?: number | null
+          current_streak?: number | null
+          id?: string
+          last_activity_date?: string | null
+          longest_streak?: number | null
+          relationship_health_score?: number | null
+          total_contacts?: number | null
+          total_meetings?: number | null
+          total_opportunities?: number | null
+          total_xp?: number | null
+          updated_at?: string
+          user_id?: string
+          weekly_goal_progress?: number | null
+          weekly_goal_target?: number | null
         }
         Relationships: []
       }

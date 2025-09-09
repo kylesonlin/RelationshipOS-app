@@ -14,6 +14,7 @@ import FollowUpAutomation from "./pages/FollowUpAutomation";
 import Integrations from "./pages/Integrations";
 import TeamSharing from "./pages/TeamSharing";
 import Settings from "./pages/Settings";
+import GamificationDashboard from "./pages/GamificationDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<ROIDashboard />} />
             <Route path="/oracle" element={<Oracle />} />
+            <Route path="/achievements" element={<GamificationDashboard />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/time-tracking" element={<TimeTracking />} />
             <Route path="/meeting-prep" element={<MeetingPrep />} />
