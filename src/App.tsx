@@ -9,6 +9,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
+import Dashboard from "./pages/Dashboard";
 import ROIDashboard from "./pages/ROIDashboard";
 import Oracle from "./pages/Oracle";
 import Contacts from "./pages/Contacts";
@@ -117,7 +118,7 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <ROIDashboard />
+              <Dashboard />
             </Layout>
           </ProtectedRoute>
         ),
@@ -184,6 +185,61 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Layout>
               <Analytics />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "roi-dashboard",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <ROIDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "gamification-dashboard",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <GamificationDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "follow-up-automation",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <FollowUpAutomation />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "team-sharing",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <TeamSharing />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "billing-dashboard", 
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <BillingDashboard />
             </Layout>
           </ProtectedRoute>
         ),
