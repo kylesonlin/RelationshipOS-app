@@ -12,15 +12,17 @@ export const useAuth = () => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Handle Google OAuth callback and store tokens
+        // Handle Google OAuth callback and store tokens - defer to prevent deadlock
         if (event === 'SIGNED_IN' && session?.provider_token) {
           console.log('Google sign-in detected, storing tokens...');
-          await storeGoogleTokens(session);
+          setTimeout(() => {
+            storeGoogleTokens(session);
+          }, 0);
         }
       }
     );
