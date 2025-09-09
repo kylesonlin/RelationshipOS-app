@@ -7,7 +7,8 @@ import {
   MessageSquare, 
   Settings,
   Target,
-  Brain
+  Brain,
+  Clock
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -25,17 +26,18 @@ import {
 } from "@/components/ui/sidebar"
 
 const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "ROI Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Oracle Engine", url: "/oracle", icon: Brain },
   { title: "Contacts", url: "/contacts", icon: Users },
-  { title: "Calendar", url: "/calendar", icon: Calendar },
+  { title: "Time Tracking", url: "/time-tracking", icon: Clock },
+  { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ]
 
 const toolItems = [
-  { title: "Tasks", url: "/tasks", icon: Target },
+  { title: "Follow-up Automation", url: "/follow-up", icon: Target },
+  { title: "Team Sharing", url: "/team", icon: Users },
   { title: "Documents", url: "/documents", icon: FileText },
-  { title: "Messages", url: "/messages", icon: MessageSquare },
 ]
 
 const systemItems = [
