@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AISettings } from "@/components/settings/AISettings"
+import { SecurityDashboard } from "@/components/security/SecurityDashboard"
 import { 
   Settings, 
   User, 
@@ -99,18 +100,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="security">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your account security and privacy</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Security settings coming soon</p>
-              </div>
-            </CardContent>
-          </Card>
+          <SecurityDashboard />
         </TabsContent>
 
         <TabsContent value="data">

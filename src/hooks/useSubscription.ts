@@ -174,9 +174,7 @@ export const useSubscription = () => {
 
   const loadUsage = async () => {
     try {
-      const { data, error } = await supabase
-        .from('current_month_usage')
-        .select('*');
+      const { data, error } = await supabase.rpc('get_current_month_usage');
       
       if (error) throw error;
       

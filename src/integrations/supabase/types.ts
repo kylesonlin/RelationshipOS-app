@@ -1069,29 +1069,30 @@ export type Database = {
       }
     }
     Views: {
-      current_month_usage: {
-        Row: {
-          month_start: string | null
-          resource_type: string | null
-          total_usage: number | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
-      security_dashboard: {
-        Row: {
-          action: string | null
-          created_at: string | null
-          ip_address: unknown | null
-          metadata: Json | null
-          table_name: string | null
-          user_id: string | null
-          user_name: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_current_month_usage: {
+        Args: { _user_id?: string }
+        Returns: {
+          month_start: string
+          resource_type: string
+          total_usage: number
+          user_id: string
+        }[]
+      }
+      get_security_dashboard: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          action: string
+          created_at: string
+          ip_address: unknown
+          metadata: Json
+          table_name: string
+          user_id: string
+          user_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
