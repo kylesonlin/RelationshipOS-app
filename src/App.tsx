@@ -11,6 +11,7 @@ import TimeTracking from "./pages/TimeTracking";
 import MeetingPrep from "./pages/MeetingPrep";
 import Analytics from "./pages/Analytics";
 import FollowUpAutomation from "./pages/FollowUpAutomation";
+import Integrations from "./pages/Integrations";
 import TeamSharing from "./pages/TeamSharing";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/meeting-prep" element={<MeetingPrep />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/follow-up" element={<FollowUpAutomation />} />
+            <Route path="/integrations" element={<Integrations />} />
             <Route path="/team" element={<TeamSharing />} />
             <Route path="/documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Documents</h1><p className="text-muted-foreground">Coming soon...</p></div>} />
             <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground">Coming soon...</p></div>} />

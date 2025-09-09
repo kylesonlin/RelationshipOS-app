@@ -8,7 +8,8 @@ import {
   Settings,
   Target,
   Brain,
-  Clock
+  Clock,
+  Zap
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -36,6 +37,7 @@ const mainItems = [
 
 const toolItems = [
   { title: "Follow-up Automation", url: "/follow-up", icon: Target },
+  { title: "Integrations", url: "/integrations", icon: Zap },
   { title: "Team Sharing", url: "/team", icon: Users },
   { title: "Documents", url: "/documents", icon: FileText },
 ]
