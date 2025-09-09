@@ -10,9 +10,20 @@ export const useAuth = () => {
   const { storeGoogleTokens } = useGoogleIntegration();
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Check for existing session FIRST to ensure immediate auth state
+    const initializeAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    };
+
+    initializeAuth();
+
+    // Set up auth state listener for future changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -26,13 +37,6 @@ export const useAuth = () => {
         }
       }
     );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
 
     return () => subscription.unsubscribe();
   }, [storeGoogleTokens]);
