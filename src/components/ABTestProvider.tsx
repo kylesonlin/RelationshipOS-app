@@ -42,9 +42,10 @@ export const ABTestProvider = ({ children }: ABTestProviderProps) => {
   const { user } = useAuth();
   const { trackExperiment } = useAnalyticsContext();
   const [assignments, setAssignments] = useState<Record<string, string>>({});
+  const [hasTrackedExperiments, setHasTrackedExperiments] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && !hasTrackedExperiments) {
       // Generate consistent assignments based on user ID
       const newAssignments: Record<string, string> = {};
       
@@ -60,15 +61,20 @@ export const ABTestProvider = ({ children }: ABTestProviderProps) => {
           const variant = test.variants[variantIndex];
           
           newAssignments[test.name] = variant;
-          
-          // Track experiment view
-          trackExperiment(test.name, variant);
         }
       });
       
       setAssignments(newAssignments);
+      
+      // Track experiments only once after assignments are set
+      setTimeout(() => {
+        Object.entries(newAssignments).forEach(([testName, variant]) => {
+          trackExperiment(testName, variant);
+        });
+        setHasTrackedExperiments(true);
+      }, 100);
     }
-  }, [user, trackExperiment]);
+  }, [user, trackExperiment, hasTrackedExperiments]);
 
   const getVariant = (testName: string): string => {
     return assignments[testName] || 'control';
