@@ -19,7 +19,6 @@ interface SmartWidgetProps {
   children?: ReactNode;
   className?: string;
   priority?: 'high' | 'medium' | 'low';
-  noAnimations?: boolean;
 }
 
 export const SmartWidget = ({
@@ -33,11 +32,10 @@ export const SmartWidget = ({
   action,
   children,
   className = '',
-  priority = 'medium',
-  noAnimations = false
+  priority = 'medium'
 }: SmartWidgetProps) => {
   const priorityStyles = {
-    high: noAnimations ? 'border-primary/20 bg-primary/5' : 'border-primary/20 bg-primary/5 animate-pulse',
+    high: 'border-primary/20 bg-primary/5 animate-[pulse_4s_ease-in-out_infinite]',
     medium: 'border-border hover:border-primary/50 transition-colors',
     low: 'border-border opacity-90'
   };
@@ -49,7 +47,7 @@ export const SmartWidget = ({
   };
 
   return (
-    <Card className={`${priorityStyles[priority]} ${className} ${noAnimations ? '' : 'hover-scale'} cursor-pointer transition-all duration-300`}>
+    <Card className={`${priorityStyles[priority]} ${className} hover-scale cursor-pointer transition-all duration-300`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -103,7 +101,7 @@ export const SmartWidget = ({
         )}
         
         {children && (
-          <div className={noAnimations ? '' : 'animate-fade-in'}>
+          <div className="animate-fade-in">
             {children}
           </div>
         )}
