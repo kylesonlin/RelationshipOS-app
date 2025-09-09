@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client"
+import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -49,6 +49,11 @@ const Oracle = () => {
   const [conversationId, setConversationId] = useState<string>("")
   const [proactiveInsights, setProactiveInsights] = useState<string[]>([])
   const { toast } = useToast()
+
+  // Simple function to check if Supabase is configured
+  const isSupabaseConfigured = () => {
+    return !!supabase
+  }
 
   useEffect(() => {
     checkAuth()
