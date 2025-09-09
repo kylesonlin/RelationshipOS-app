@@ -1,19 +1,14 @@
 import { 
-  LayoutDashboard, 
+  Home, 
   Users, 
-  Calendar, 
+  Brain, 
   BarChart3, 
-  FileText, 
-  MessageSquare, 
   Settings,
-  Target,
-  Brain,
+  Plus,
+  Calendar,
   Clock,
-  Zap,
-  Trophy,
-  CreditCard,
-  HelpCircle,
-  Shield
+  Target,
+  Zap
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
@@ -31,30 +26,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+// Simplified 5-section navigation focused on user workflows
+const primaryItems = [
+  { title: "Home", url: "/", icon: Home },
   { title: "People", url: "/contacts", icon: Users },
-  { title: "Oracle", url: "/oracle", icon: Brain },
+  { title: "Assistant", url: "/oracle", icon: Brain },
+  { title: "Insights", url: "/analytics", icon: BarChart3 },
+  { title: "Settings", url: "/settings", icon: Settings },
+]
+
+// Quick access items that appear in collapsed mode or as secondary actions
+const quickAccessItems = [
   { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
   { title: "Time Tracking", url: "/time-tracking", icon: Clock },
-]
-
-const analyticsItems = [
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "ROI Dashboard", url: "/roi-dashboard", icon: Target },
-  { title: "Gamification", url: "/gamification-dashboard", icon: Trophy },
-]
-
-const automationItems = [
-  { title: "Follow-up Automation", url: "/follow-up-automation", icon: Zap },
-  { title: "Integrations", url: "/integrations", icon: FileText },
-  { title: "Team Sharing", url: "/team-sharing", icon: Users },
-]
-
-const systemItems = [
-  { title: "Billing", url: "/billing-dashboard", icon: CreditCard },
-  { title: "Support", url: "/support", icon: HelpCircle },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Automation", url: "/follow-up-automation", icon: Zap },
 ]
 
 export function AppSidebar() {
@@ -104,17 +90,16 @@ export function AppSidebar() {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {/* Main Navigation */}
+          {/* Primary Navigation - Always visible */}
           <SidebarGroup>
-            <SidebarGroupLabel>Main</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {mainItems.map((item) => (
+              <SidebarMenu className="space-y-1">
+                {primaryItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink to={item.url} className={getNavClass(item.url)}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        {!collapsed && <span className="font-medium">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -123,62 +108,26 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          {/* Analytics */}
-          <SidebarGroup>
-            <SidebarGroupLabel>Analytics</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {analyticsItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClass(item.url)}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          {/* Automation */}
-          <SidebarGroup>
-            <SidebarGroupLabel>Automation</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {automationItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClass(item.url)}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          {/* System */}
-          <SidebarGroup>
-            <SidebarGroupLabel>System</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {systemItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavClass(item.url)}>
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          {/* Quick Access - Show only when expanded */}
+          {!collapsed && (
+            <SidebarGroup className="mt-6">
+              <SidebarGroupLabel className="text-xs text-muted-foreground">Quick Access</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  {quickAccessItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink to={item.url} className={getNavClass(item.url)}>
+                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-sm">{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          )}
         </div>
 
         {/* Profile Navigation Card - pushed to bottom */}
