@@ -8,7 +8,13 @@ import {
   FileText, 
   Clock,
   Zap,
-  Users
+  Users,
+  Settings,
+  Puzzle,
+  TrendingUp,
+  Trophy,
+  DollarSign,
+  Headphones
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,13 +47,10 @@ export const QuickActions = () => {
       variant: 'outline'
     },
     {
-      id: 'quick-note',
-      label: 'Quick Note',
-      icon: FileText,
-      action: () => {
-        // Could open a modal for quick note taking
-        navigate('/contacts?action=note');
-      },
+      id: 'integrations',
+      label: 'Integrations',
+      icon: Puzzle,
+      action: () => navigate('/integrations'),
       variant: 'outline'
     },
     {
@@ -59,16 +62,58 @@ export const QuickActions = () => {
     },
     {
       id: 'automation',
-      label: 'Set Automation',
+      label: 'Automation',
       icon: Zap,
-      action: () => navigate('/follow-up-automation?action=create'),
+      action: () => navigate('/follow-up-automation'),
       variant: 'outline'
     },
     {
-      id: 'team-update',
-      label: 'Team Update',
+      id: 'team-sharing',
+      label: 'Team Sharing',
       icon: Users,
-      action: () => navigate('/team-sharing?action=update'),
+      action: () => navigate('/team-sharing'),
+      variant: 'outline'
+    },
+    {
+      id: 'gamification',
+      label: 'Achievements',
+      icon: Trophy,
+      action: () => navigate('/gamification-dashboard'),
+      variant: 'outline'
+    },
+    {
+      id: 'roi-dashboard',
+      label: 'ROI Analytics',
+      icon: TrendingUp,
+      action: () => navigate('/roi-dashboard'),
+      variant: 'outline'
+    },
+    {
+      id: 'billing',
+      label: 'Billing',
+      icon: DollarSign,
+      action: () => navigate('/billing-dashboard'),
+      variant: 'outline'
+    },
+    {
+      id: 'support',
+      label: 'Support',
+      icon: Headphones,
+      action: () => navigate('/support'),
+      variant: 'outline'
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      action: () => navigate('/settings'),
+      variant: 'secondary'
+    },
+    {
+      id: 'quick-note',
+      label: 'Quick Note',
+      icon: FileText,
+      action: () => navigate('/contacts?action=note'),
       variant: 'outline'
     }
   ];
@@ -79,7 +124,7 @@ export const QuickActions = () => {
         <CardTitle className="text-lg">Quick Actions</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             return (
