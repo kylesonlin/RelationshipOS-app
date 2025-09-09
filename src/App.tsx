@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Layout from "./components/layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
@@ -45,213 +45,229 @@ const queryClient = new QueryClient({
   },
 });
 
+// Wrapper component for providers that need router context
+const AppWithProviders = () => (
+  <AnalyticsProvider>
+    <ABTestProvider>
+      <Outlet />
+      <CookieConsent />
+    </ABTestProvider>
+  </AnalyticsProvider>
+);
+
 const router = createBrowserRouter([
   {
-    path: "/auth",
-    element: <Auth />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/pricing",
-    element: <Pricing />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/terms",
-    element: <TermsOfService />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/privacy",
-    element: <PrivacyPolicy />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/onboarding",
-    element: <Onboarding />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/billing/success",
-    element: <BillingSuccess />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/billing",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <BillingDashboard />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <ROIDashboard />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/oracle",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Oracle />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/achievements",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <GamificationDashboard />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/contacts",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Contacts />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/time-tracking",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <TimeTracking />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/meeting-prep",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <MeetingPrep />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/analytics",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Analytics />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/follow-up",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <FollowUpAutomation />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/integrations",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Integrations />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/team",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <TeamSharing />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/documents",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <div className="p-6">
-            <h1 className="text-2xl font-bold">Documents</h1>
-            <p className="text-muted-foreground">Coming soon...</p>
-          </div>
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/settings",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Settings />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/support",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <Support />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/admin",
-    element: (
-      <ProtectedRoute>
-        <Layout>
-          <AdminDashboard />
-        </Layout>
-      </ProtectedRoute>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
+    element: <AppWithProviders />,
+    children: [
+      {
+        path: "auth",
+        element: <Auth />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "pricing",
+        element: <Pricing />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "terms",
+        element: <TermsOfService />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPolicy />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "onboarding",
+        element: <Onboarding />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "billing/success",
+        element: <BillingSuccess />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "billing",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <BillingDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <ROIDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "oracle",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Oracle />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "achievements",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <GamificationDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "contacts",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Contacts />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "time-tracking",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <TimeTracking />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "meeting-prep",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <MeetingPrep />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "analytics",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Analytics />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "follow-up",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <FollowUpAutomation />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "integrations",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Integrations />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "team",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <TeamSharing />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "documents",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <div className="p-6">
+                <h1 className="text-2xl font-bold">Documents</h1>
+                <p className="text-muted-foreground">Coming soon...</p>
+              </div>
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "settings",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Settings />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "support",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Support />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <AdminDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
   },
 ]);
 
@@ -262,7 +278,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <RouterProvider router={router} />
-        <CookieConsent />
       </TooltipProvider>
     </QueryClientProvider>
   </ErrorBoundary>
