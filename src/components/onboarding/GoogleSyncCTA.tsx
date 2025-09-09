@@ -14,7 +14,8 @@ import {
   Sparkles,
   ArrowRight,
   Cloud,
-  RefreshCw
+  RefreshCw,
+  Shield
 } from 'lucide-react';
 import { useGoogleIntegration } from '@/hooks/useGoogleIntegration';
 import { useRelationshipInsights } from '@/hooks/useRelationshipInsights';
@@ -29,8 +30,9 @@ interface GoogleSyncCTAProps {
 export const GoogleSyncCTA = ({ totalContacts, onSyncComplete }: GoogleSyncCTAProps) => {
   const { isConnected, hasGmailAccess, hasCalendarAccess, loading: integrationLoading } = useGoogleIntegration();
   const { syncCalendarData, syncGmailData, loading: syncLoading } = useRelationshipInsights();
-  const [syncStep, setSyncStep] = useState<'idle' | 'syncing' | 'complete'>('idle');
+  const [syncStep, setSyncStep] = useState<'idle' | 'syncing' | 'complete' | 'error'>('idle');
   const [syncProgress, setSyncProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -48,6 +50,7 @@ export const GoogleSyncCTA = ({ totalContacts, onSyncComplete }: GoogleSyncCTAPr
     try {
       setSyncStep('syncing');
       setSyncProgress(10);
+      setErrorMessage('');
 
       // Sync calendar data first
       if (hasCalendarAccess) {
@@ -84,10 +87,12 @@ export const GoogleSyncCTA = ({ totalContacts, onSyncComplete }: GoogleSyncCTAPr
         onSyncComplete?.();
       }, 2000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sync error:', error);
-      setSyncStep('idle');
+      setSyncStep('error');
       setSyncProgress(0);
+      setErrorMessage(error.message || 'Sync failed');
+      
       toast({
         title: "Sync Failed",
         description: "Please try again or check your Google connection.",
@@ -149,6 +154,37 @@ export const GoogleSyncCTA = ({ totalContacts, onSyncComplete }: GoogleSyncCTAPr
             {syncProgress >= 60 && syncProgress < 80 && "Analyzing email interactions..."}
             {syncProgress >= 80 && "Generating intelligence insights..."}
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (syncStep === 'error') {
+    return (
+      <Card className="executive-card border-destructive/30 bg-destructive/5">
+        <CardHeader className="text-center">
+          <div className="w-12 h-12 rounded-xl bg-destructive/20 flex items-center justify-center mx-auto mb-3">
+            <AlertCircle className="h-6 w-6 text-destructive" />
+          </div>
+          <CardTitle className="text-destructive">Sync Failed</CardTitle>
+          <CardDescription>
+            {errorMessage || "There was an issue syncing your data"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center space-y-3">
+          <Button 
+            onClick={() => setSyncStep('idle')}
+            variant="outline"
+            className="mr-2"
+          >
+            Try Again
+          </Button>
+          <Button 
+            onClick={() => navigate('/integrations')}
+            variant="outline"
+          >
+            Check Connection
+          </Button>
         </CardContent>
       </Card>
     );
@@ -251,8 +287,9 @@ export const GoogleSyncCTA = ({ totalContacts, onSyncComplete }: GoogleSyncCTAPr
           )}
         </div>
 
-        <div className="text-xs text-muted-foreground text-center">
-          🔒 Your data is encrypted and never shared. Google sync can be disabled anytime.
+        <div className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">
+          <Shield className="h-3 w-3" />
+          Your data is encrypted and never shared. Google sync can be disabled anytime.
         </div>
       </CardContent>
     </Card>

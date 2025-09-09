@@ -29,9 +29,9 @@ export const useGoogleIntegration = () => {
       const { data: tokens, error } = await supabase
         .from('user_google_tokens')
         .select('*')
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" - safe to ignore with maybeSingle
         throw error;
       }
 

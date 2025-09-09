@@ -115,38 +115,38 @@ const Dashboard = () => {
             Executive ROI Dashboard
           </CardTitle>
           <CardDescription className="executive-subtitle">
-            Your AI team's measurable business impact vs. traditional ${metrics.vaCost.toLocaleString()}/month VA
+            Your AI team's measurable business impact vs. traditional ${(metrics?.vaCost || 5000).toLocaleString()}/month VA
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="metric-card p-6 text-center">
               <div className="roi-display text-3xl mb-2">
-                ${monthlySavings.toLocaleString()}
+                ${(monthlySavings || 0).toLocaleString()}
               </div>
               <p className="text-sm font-medium text-success">Monthly Savings</p>
               <p className="text-xs text-muted-foreground mt-1">
-                {Math.round(((monthlySavings / metrics.vaCost) * 100))}% cost reduction vs ${currentPlanCost}/mo plan
+                {Math.round(((monthlySavings || 0) / (metrics?.vaCost || 5000)) * 100)}% cost reduction vs ${currentPlanCost || 99}/mo plan
               </p>
             </div>
             <div className="metric-card p-6 text-center">
-              <div className="data-metric text-3xl mb-2">{tasksAutomated}</div>
+              <div className="data-metric text-3xl mb-2">{tasksAutomated || 0}</div>
               <p className="text-sm font-medium">Tasks Automated</p>
               <p className="text-xs text-muted-foreground mt-1">Daily operations</p>
             </div>
             <div className="metric-card p-6 text-center">
-              <div className="data-metric text-3xl mb-2">{hoursPerWeek}h</div>
+              <div className="data-metric text-3xl mb-2">{hoursPerWeek || 0}h</div>
               <p className="text-sm font-medium">Weekly Time Saved</p>
               <p className="text-xs text-muted-foreground mt-1">Executive focus time</p>
             </div>
             <div className="metric-card p-6 text-center">
               <div className="roi-display text-3xl mb-2 flex items-center justify-center gap-2">
-                {annualROI.toLocaleString()}%
+                {(annualROI || 0).toLocaleString()}%
                 <ArrowUp className="h-5 w-5 text-success" />
               </div>
               <p className="text-sm font-medium text-success">Annual ROI</p>
               <p className="text-xs text-muted-foreground mt-1">
-                ${(monthlySavings * 12).toLocaleString()} annual savings
+                ${((monthlySavings || 0) * 12).toLocaleString()} annual savings
               </p>
             </div>
           </div>
