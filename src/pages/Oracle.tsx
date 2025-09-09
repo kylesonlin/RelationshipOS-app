@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { AIModeIndicator } from "@/components/ai/AIModeIndicator"
 import { 
   Search,
   Sparkles,
@@ -177,6 +178,11 @@ const Oracle = () => {
     setIsLoading(true)
     
     try {
+      // Increment usage if using platform mode
+      if ((window as any).incrementAIUsage) {
+        await (window as any).incrementAIUsage()
+      }
+
       // Check if Supabase is properly configured
       if (!isSupabaseConfigured()) {
         throw new Error('Supabase not configured - using demo mode')
@@ -285,19 +291,22 @@ const Oracle = () => {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-medium">
-            <Brain className="h-6 w-6 text-white" />
+      {/* Header with AI Mode Indicator */}
+      <div className="flex items-center justify-between">
+        <div className="text-center space-y-4 flex-1">
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center shadow-medium">
+              <Brain className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Oracle Engine
+            </h1>
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Oracle Engine
-          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Ask me anything about your relationships. I'll analyze your data and provide intelligent insights to help you build stronger connections.
+          </p>
         </div>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Ask me anything about your relationships. I'll analyze your data and provide intelligent insights to help you build stronger connections.
-        </p>
+        <AIModeIndicator onOpenSettings={() => window.open('/settings?tab=ai', '_self')} />
       </div>
 
       {/* Proactive Insights */}

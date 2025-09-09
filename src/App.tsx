@@ -13,6 +13,7 @@ import Analytics from "./pages/Analytics";
 import FollowUpAutomation from "./pages/FollowUpAutomation";
 import Integrations from "./pages/Integrations";
 import TeamSharing from "./pages/TeamSharing";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,7 +36,7 @@ const App = () => (
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/team" element={<TeamSharing />} />
             <Route path="/documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Documents</h1><p className="text-muted-foreground">Coming soon...</p></div>} />
-            <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1><p className="text-muted-foreground">Coming soon...</p></div>} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

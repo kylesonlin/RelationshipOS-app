@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage_logs: {
+        Row: {
+          ai_mode: string
+          cost_usd: number | null
+          created_at: string
+          id: string
+          model_used: string
+          request_type: string
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          ai_mode: string
+          cost_usd?: number | null
+          created_at?: string
+          id?: string
+          model_used: string
+          request_type: string
+          tokens_used: number
+          user_id: string
+        }
+        Update: {
+          ai_mode?: string
+          cost_usd?: number | null
+          created_at?: string
+          id?: string
+          model_used?: string
+          request_type?: string
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           additional_fields: Json | null
@@ -196,6 +229,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_ai_settings: {
+        Row: {
+          ai_mode: string
+          created_at: string
+          id: string
+          monthly_platform_limit: number | null
+          monthly_platform_usage: number | null
+          openai_api_key_encrypted: string | null
+          preferences: Json | null
+          updated_at: string
+          usage_reset_date: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_mode?: string
+          created_at?: string
+          id?: string
+          monthly_platform_limit?: number | null
+          monthly_platform_usage?: number | null
+          openai_api_key_encrypted?: string | null
+          preferences?: Json | null
+          updated_at?: string
+          usage_reset_date?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_mode?: string
+          created_at?: string
+          id?: string
+          monthly_platform_limit?: number | null
+          monthly_platform_usage?: number | null
+          openai_api_key_encrypted?: string | null
+          preferences?: Json | null
+          updated_at?: string
+          usage_reset_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_integrations: {
         Row: {
