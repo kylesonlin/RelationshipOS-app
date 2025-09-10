@@ -38,17 +38,31 @@ serve(async (req) => {
       return new Response('Unauthorized', { status: 401, headers: corsHeaders })
     }
 
-    // Get Gmail access token
-    const { data: integration } = await supabaseClient
-      .from('user_integrations')
-      .select('access_token, refresh_token')
+    // Get Gmail access token from user_google_tokens table
+    const { data: tokens } = await supabaseClient
+      .from('user_google_tokens')
+      .select('access_token, refresh_token, expires_at, scopes')
       .eq('user_id', user.id)
-      .eq('provider', 'gmail')
-      .eq('is_active', true)
       .single()
 
-    if (!integration?.access_token) {
+    if (!tokens?.access_token) {
       return new Response('Gmail not connected', { status: 400, headers: corsHeaders })
+    }
+
+    // Check if token is expired
+    const now = new Date()
+    const expiresAt = new Date(tokens.expires_at)
+    if (now >= expiresAt) {
+      return new Response('Access token expired - please reconnect Google account', { 
+        status: 401, 
+        headers: corsHeaders 
+      })
+    }
+
+    // Check if user has Gmail scope
+    const hasGmailScope = tokens.scopes?.includes('https://www.googleapis.com/auth/gmail.readonly')
+    if (!hasGmailScope) {
+      return new Response('Gmail permission not granted', { status: 400, headers: corsHeaders })
     }
 
     // Fetch recent emails from Gmail API
@@ -56,7 +70,7 @@ serve(async (req) => {
       `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=50&q=in:sent OR in:inbox`,
       {
         headers: {
-          'Authorization': `Bearer ${integration.access_token}`,
+          'Authorization': `Bearer ${tokens.access_token}`,
           'Content-Type': 'application/json',
         },
       }
@@ -77,7 +91,7 @@ serve(async (req) => {
           `https://gmail.googleapis.com/gmail/v1/users/me/messages/${message.id}`,
           {
             headers: {
-              'Authorization': `Bearer ${integration.access_token}`,
+              'Authorization': `Bearer ${tokens.access_token}`,
             },
           }
         )
@@ -105,7 +119,7 @@ serve(async (req) => {
           .from('contacts')
           .select('id')
           .eq('email', contactEmail)
-          .eq('user_id', user.id)
+          .eq('userId', user.id)
           .single()
 
         if (!contact) {
@@ -117,7 +131,7 @@ serve(async (req) => {
           const { data: newContact } = await supabaseClient
             .from('contacts')
             .insert({
-              user_id: user.id,
+              userId: user.id,
               email: contactEmail,
               first_name: firstName || contactEmail.split('@')[0],
               last_name: lastNameParts.join(' ') || '',
@@ -170,12 +184,11 @@ serve(async (req) => {
       }
     }
 
-    // Update last sync time
+    // Update last sync time in google tokens table
     await supabaseClient
-      .from('user_integrations')
-      .update({ last_sync_at: new Date().toISOString() })
+      .from('user_google_tokens')
+      .update({ updated_at: new Date().toISOString() })
       .eq('user_id', user.id)
-      .eq('provider', 'gmail')
 
     return new Response(
       JSON.stringify({ 

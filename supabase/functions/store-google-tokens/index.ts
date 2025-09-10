@@ -30,7 +30,7 @@ serve(async (req) => {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 1);
 
-    // Store the Google API tokens securely
+    // Store the Google API tokens securely with conflict resolution
     const { error: tokenError } = await supabase
       .from('user_google_tokens')
       .upsert({
@@ -46,6 +46,9 @@ serve(async (req) => {
           'https://www.googleapis.com/auth/calendar.readonly'
         ],
         updated_at: new Date().toISOString()
+      }, { 
+        onConflict: 'user_id',
+        ignoreDuplicates: false 
       });
 
     if (tokenError) {
