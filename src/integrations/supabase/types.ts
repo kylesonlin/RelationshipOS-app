@@ -1237,7 +1237,22 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_dashboard_metrics: {
+        Row: {
+          completed_tasks: number | null
+          last_updated: string | null
+          pending_tasks: number | null
+          relationship_health: number | null
+          stale_contacts: number | null
+          todays_meetings: number | null
+          total_contacts: number | null
+          total_xp: number | null
+          upcoming_meetings: number | null
+          user_id: string | null
+          weekly_goal_progress: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_current_month_usage: {
@@ -1251,6 +1266,10 @@ export type Database = {
       }
       get_dashboard_data: {
         Args: { user_id_param: string }
+        Returns: Json
+      }
+      get_dashboard_metrics: {
+        Args: { p_user_id: string }
         Returns: Json
       }
       get_security_dashboard: {
@@ -1281,6 +1300,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      refresh_dashboard_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       update_user_role: {
         Args: { new_role: string; target_user_id: string }
