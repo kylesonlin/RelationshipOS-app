@@ -77,33 +77,28 @@ export const useAnalytics = () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      // Fetch contacts data
-      const { data: contacts, error: contactsError } = await supabase
-        .from('contacts')
-        .select('*')
-        .eq('userId', user.id)
+      // Optimized queries with specific field selection
+      const [contactsResult, interactionsResult, gamificationResult] = await Promise.allSettled([
+        supabase
+          .from('contacts')
+          .select('id, first_name, last_name, email, company, created_at')
+          .eq('userId', user.id),
+        supabase
+          .from('interactions')
+          .select('id, type, created_at, contacts!inner(userId)')
+          .eq('contacts.userId', user.id)
+          .gte('created_at', new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()), // Last 90 days
+        supabase
+          .from('user_gamification')
+          .select('relationship_health_score, total_opportunities')
+          .eq('user_id', user.id)
+          .maybeSingle()
+      ]);
 
-      if (contactsError) throw contactsError
-
-      // Fetch interactions data
-      const { data: interactions, error: interactionsError } = await supabase
-        .from('interactions')
-        .select(`
-          *,
-          contacts!inner(userId)
-        `)
-        .eq('contacts.userId', user.id)
-
-      if (interactionsError) throw interactionsError
-
-      // Fetch gamification data
-      const { data: gamificationData, error: gamError } = await supabase
-        .from('user_gamification')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (gamError) throw gamError
+      // Safely extract data
+      const contacts = contactsResult.status === 'fulfilled' ? contactsResult.value.data || [] : [];
+      const interactions = interactionsResult.status === 'fulfilled' ? interactionsResult.value.data || [] : [];
+      const gamificationData = gamificationResult.status === 'fulfilled' ? gamificationResult.value.data : null;
 
       // Calculate analytics
       const totalContacts = contacts?.length || 0

@@ -66,7 +66,7 @@ const Dashboard = () => {
   // Use real data from the dashboard metrics with fallbacks for instant rendering
   const upcomingMeetings = metrics?.upcomingMeetings ?? 0;
   const staleContacts = metrics?.staleContacts ?? 0;
-  const weeklyGoal = Math.round(metrics?.weeklyGoal ?? 0);
+  const weeklyGoal = Math.round(metrics?.weeklyGoalProgress ?? 0);
   const relationshipHealth = metrics?.relationshipHealth ?? 0;
   const totalContacts = metrics?.totalContacts ?? 0;
 
