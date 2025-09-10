@@ -21,7 +21,6 @@ import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { useGoogleIntegration } from "@/hooks/useGoogleIntegration"
 import { SubscriptionBanner } from "@/components/SubscriptionBanner"
-import { OnboardingProgressGate } from "@/components/onboarding/OnboardingProgressGate"
 import { useNavigate } from "react-router-dom"
 import { 
   Search, 
