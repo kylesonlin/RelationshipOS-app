@@ -55,7 +55,9 @@ const queryClient = new QueryClient({
         return failureCount < 2; // Reduced from 3 to 2 for faster failures
       },
       refetchOnWindowFocus: false, // Prevent unnecessary refetches
-      refetchOnReconnect: true,
+      refetchOnMount: false, // Prevent refetch on component mount
+      refetchOnReconnect: false, // Prevent refetch on network reconnect
+      refetchInterval: false, // Disable automatic background refetching to prevent loops
     },
     mutations: {
       retry: 1, // Retry mutations once

@@ -31,8 +31,8 @@ export const useDashboardData = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-    // Enable background updates for smoother UX
-    refetchInterval: 10 * 60 * 1000, // Background refresh every 10 minutes
+    // Disable background updates to prevent infinite loops
+    refetchInterval: false,
     // Return cached data immediately, update in background
     networkMode: 'online',
     initialData: {

@@ -11,6 +11,7 @@ export const useAuth = () => {
   useEffect(() => {
     let isMounted = true;
     let authSubscription: any = null;
+    const currentSessionRef = { current: null as any };
     
     const initializeAuth = async () => {
       try {
@@ -91,6 +92,12 @@ export const useAuth = () => {
         (event, session) => {
           if (!isMounted) return;
           
+          // Prevent unnecessary state updates if session hasn't changed
+          if (JSON.stringify(session) === JSON.stringify(currentSessionRef.current)) {
+            return;
+          }
+          
+          currentSessionRef.current = session;
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
