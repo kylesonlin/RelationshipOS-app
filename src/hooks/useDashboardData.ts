@@ -27,6 +27,26 @@ export const useDashboardData = () => {
   const { toast } = useToast()
 
   useEffect(() => {
+    // Set immediate fallback metrics for instant UI rendering
+    setMetrics({
+      upcomingMeetings: 0,
+      staleContacts: 0,
+      totalContacts: 0,
+      relationshipHealth: 0,
+      weeklyGoal: 0,
+      weeklyGoalProgress: 0,
+      totalTasks: 0,
+      completedTasks: 0,
+      activeTasks: 0,
+      monthlySavings: 4701,
+      tasksAutomated: 15,
+      hoursPerWeek: 5,
+      annualROI: 1574,
+      currentPlanCost: 99,
+      vaCost: 5000
+    })
+    
+    // Then fetch real data in background
     fetchDashboardMetrics()
   }, [])
 
