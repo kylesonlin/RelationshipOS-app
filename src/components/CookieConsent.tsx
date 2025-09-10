@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Cookie, Settings } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +21,7 @@ interface CookiePreferences {
 }
 
 const CookieConsent = () => {
+  const { isDemoUser } = useAuth();
   const [showBanner, setShowBanner] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>({
     necessary: true, // Always required
@@ -73,7 +75,7 @@ const CookieConsent = () => {
     // Initialize your analytics here (Google Analytics, etc.)
   };
 
-  if (!showBanner) return null;
+  if (!showBanner || isDemoUser) return null;
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:max-w-md">
