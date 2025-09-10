@@ -120,6 +120,17 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <Dashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
         path: "oracle",
         element: (
           <ProtectedRoute>
