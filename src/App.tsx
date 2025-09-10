@@ -3,66 +3,93 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Layout from "./components/layout";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
-// Import pages directly for better performance - only keep lazy loading for heavy pages
-import ROIDashboard from "./pages/ROIDashboard";
-import Oracle from "./pages/Oracle";
-import Contacts from "./pages/Contacts";
-import TimeTracking from "./pages/TimeTracking";
-import MeetingPrep from "./pages/MeetingPrep";
-import Analytics from "./pages/Analytics";
-import FollowUpAutomation from "./pages/FollowUpAutomation";
-import Integrations from "./pages/Integrations";
-import TeamSharing from "./pages/TeamSharing";
-import Settings from "./pages/Settings";
-import GamificationDashboard from "./pages/GamificationDashboard";
+import { Suspense, lazy } from "react";
+
+// Critical pages - load immediately for better UX
+import Layout from "./components/layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import Index from "./pages/Index";
-import ResetPassword from "./pages/ResetPassword";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
-import Pricing from "./pages/Pricing";
-import BillingSuccess from "./pages/BillingSuccess";
-import BillingDashboard from "./pages/BillingDashboard";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import Onboarding from "./pages/Onboarding";
-import AdminDashboard from "./pages/AdminDashboard";
-import Support from "./pages/Support";
 
+// Lazy load heavy pages for better initial performance
+const ROIDashboard = lazy(() => import("./pages/ROIDashboard"));
+const Oracle = lazy(() => import("./pages/Oracle"));
+const Contacts = lazy(() => import("./pages/Contacts"));
+const TimeTracking = lazy(() => import("./pages/TimeTracking"));
+const MeetingPrep = lazy(() => import("./pages/MeetingPrep"));
+const Analytics = lazy(() => import("./pages/Analytics"));
+const FollowUpAutomation = lazy(() => import("./pages/FollowUpAutomation"));
+const Integrations = lazy(() => import("./pages/Integrations"));
+const TeamSharing = lazy(() => import("./pages/TeamSharing"));
+const Settings = lazy(() => import("./pages/Settings"));
+const GamificationDashboard = lazy(() => import("./pages/GamificationDashboard"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const BillingSuccess = lazy(() => import("./pages/BillingSuccess"));
+const BillingDashboard = lazy(() => import("./pages/BillingDashboard"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Support = lazy(() => import("./pages/Support"));
+
+// Optimized React Query config
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 15 * 60 * 1000, // 15 minutes (garbage collection)
       retry: (failureCount, error: any) => {
         if (error?.status === 404) return false;
-        return failureCount < 3;
+        return failureCount < 2; // Reduced from 3 to 2 for faster failures
       },
+      refetchOnWindowFocus: false, // Prevent unnecessary refetches
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1, // Retry mutations once
     },
   },
 });
 
-// Wrapper component for providers that need router context
+// Enhanced loading component with better UX
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="flex flex-col items-center space-y-4">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <p className="text-sm text-muted-foreground">Loading...</p>
+    </div>
+  </div>
+);
+
+// Lazy wrapper with enhanced loading
+const LazyWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageLoader />}>
+    {children}
+  </Suspense>
+);
+
 const AppWithProviders = () => (
-  <AnalyticsProvider>
-    <ABTestProvider>
+  <ABTestProvider>
+    <AnalyticsProvider>
       <Outlet />
-      <CookieConsent />
-    </ABTestProvider>
-  </AnalyticsProvider>
+    </AnalyticsProvider>
+  </ABTestProvider>
 );
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <AppWithProviders />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "auth",
@@ -75,43 +102,29 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "reset-password",
-        element: <ResetPassword />,
+        path: "reset-password", 
+        element: (
+          <LazyWrapper>
+            <ResetPassword />
+          </LazyWrapper>
+        ),
         errorElement: <ErrorPage />,
       },
       {
         path: "pricing",
-        element: <Pricing />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "terms",
-        element: <TermsOfService />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "privacy",
-        element: <PrivacyPolicy />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "onboarding",
-        element: <Onboarding />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "billing/success",
-        element: <BillingSuccess />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "billing",
         element: (
-          <ProtectedRoute>
-            <Layout>
-              <BillingDashboard />
-            </Layout>
-          </ProtectedRoute>
+          <LazyWrapper>
+            <Pricing />
+          </LazyWrapper>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "billing-success",
+        element: (
+          <LazyWrapper>
+            <BillingSuccess />
+          </LazyWrapper>
         ),
         errorElement: <ErrorPage />,
       },
@@ -120,7 +133,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <BillingDashboard />
+              <LazyWrapper>
+                <BillingDashboard />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -143,22 +158,26 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "oracle",
+        path: "roi-dashboard",
         element: (
           <ProtectedRoute>
             <Layout>
-              <Oracle />
+              <LazyWrapper>
+                <ROIDashboard />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
       },
       {
-        path: "achievements",
+        path: "oracle",
         element: (
           <ProtectedRoute>
             <Layout>
-              <GamificationDashboard />
+              <LazyWrapper>
+                <Oracle />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -169,7 +188,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Contacts />
+              <LazyWrapper>
+                <Contacts />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -180,7 +201,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <TimeTracking />
+              <LazyWrapper>
+                <TimeTracking />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -191,7 +214,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <MeetingPrep />
+              <LazyWrapper>
+                <MeetingPrep />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -202,29 +227,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Analytics />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "roi-dashboard",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <ROIDashboard />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "gamification-dashboard",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <GamificationDashboard />
+              <LazyWrapper>
+                <Analytics />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -235,29 +240,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <FollowUpAutomation />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "team-sharing",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <TeamSharing />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "follow-up",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <FollowUpAutomation />
+              <LazyWrapper>
+                <FollowUpAutomation />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -268,32 +253,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Integrations />
+              <LazyWrapper>
+                <Integrations />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
         errorElement: <ErrorPage />,
       },
       {
-        path: "team",
+        path: "team-sharing",
         element: (
           <ProtectedRoute>
             <Layout>
-              <TeamSharing />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "documents",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <div className="p-6">
-                <h1 className="text-2xl font-bold">Documents</h1>
-                <p className="text-muted-foreground">Coming soon...</p>
-              </div>
+              <LazyWrapper>
+                <TeamSharing />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -304,7 +279,64 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Settings />
+              <LazyWrapper>
+                <Settings />
+              </LazyWrapper>
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "gamification",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <LazyWrapper>
+                <GamificationDashboard />
+              </LazyWrapper>
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "terms",
+        element: (
+          <LazyWrapper>
+            <TermsOfService />
+          </LazyWrapper>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "privacy",
+        element: (
+          <LazyWrapper>
+            <PrivacyPolicy />
+          </LazyWrapper>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "onboarding",
+        element: (
+          <ProtectedRoute>
+            <LazyWrapper>
+              <Onboarding />
+            </LazyWrapper>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "admin",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <LazyWrapper>
+                <AdminDashboard />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -315,18 +347,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Support />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "admin",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <AdminDashboard />
+              <LazyWrapper>
+                <Support />
+              </LazyWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -340,16 +363,19 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <RouterProvider router={router} />
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-);
+function App() {
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <RouterProvider router={router} />
+          <Toaster />
+          <Sonner />
+          <CookieConsent />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+}
 
 export default App;

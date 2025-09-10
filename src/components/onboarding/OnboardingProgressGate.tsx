@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -8,43 +8,57 @@ import { useGamification } from '@/hooks/useGamification';
 import { useNavigate } from 'react-router-dom';
 
 interface OnboardingProgressGateProps {
-  children: ReactNode;
+  children: React.ReactNode;
   requiredLevel: number;
   featureName: string;
   featureDescription: string;
   unlockActions?: string[];
 }
 
-export const OnboardingProgressGate = ({ 
+export const OnboardingProgressGate = memo(({ 
   children, 
   requiredLevel, 
   featureName, 
   featureDescription,
   unlockActions = []
 }: OnboardingProgressGateProps) => {
-  const { gamificationData: gamification } = useGamification();
+  const { gamificationData } = useGamification();
   const navigate = useNavigate();
   
-  const currentLevel = gamification?.current_level || 1;
-  const currentXP = gamification?.total_xp || 0;
+  const currentLevel = gamificationData?.current_level || 1;
+  const currentXP = gamificationData?.total_xp || 0;
   const hasAccess = currentLevel >= requiredLevel;
 
-  // XP thresholds for levels (simple progression)
-  const getXPForLevel = (level: number) => Math.pow(level - 1, 2) * 100;
-  const nextLevelXP = getXPForLevel(requiredLevel);
-  const progressToRequired = Math.min((currentXP / nextLevelXP) * 100, 100);
+  // Memoize expensive calculations
+  const progressData = useMemo(() => {
+    const getXPForLevel = (level: number) => Math.pow(level - 1, 2) * 100;
+    const nextLevelXP = getXPForLevel(requiredLevel);
+    const progressToRequired = Math.min((currentXP / nextLevelXP) * 100, 100);
+    
+    return {
+      nextLevelXP,
+      progressToRequired
+    };
+  }, [currentXP, requiredLevel]);
 
-  const getLevelIcon = (level: number) => {
-    if (level <= 2) return <Star className="h-4 w-4" />;
-    if (level <= 4) return <Zap className="h-4 w-4" />;
-    return <Crown className="h-4 w-4" />;
-  };
+  const { levelIcon, levelColor } = useMemo(() => {
+    const getLevelIcon = (level: number) => {
+      if (level <= 2) return <Star className="h-4 w-4" />;
+      if (level <= 4) return <Zap className="h-4 w-4" />;
+      return <Crown className="h-4 w-4" />;
+    };
 
-  const getLevelColor = (level: number) => {
-    if (level <= 2) return "bg-green-500";
-    if (level <= 4) return "bg-blue-500";
-    return "bg-purple-500";
-  };
+    const getLevelColor = (level: number) => {
+      if (level <= 2) return "bg-green-500";
+      if (level <= 4) return "bg-blue-500";
+      return "bg-purple-500";
+    };
+
+    return {
+      levelIcon: getLevelIcon(requiredLevel),
+      levelColor: getLevelColor(requiredLevel)
+    };
+  }, [requiredLevel]);
 
   if (hasAccess) {
     return <>{children}</>;
@@ -61,7 +75,7 @@ export const OnboardingProgressGate = ({
       
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2">
-          {getLevelIcon(requiredLevel)}
+          {levelIcon}
           {featureName}
         </CardTitle>
       </CardHeader>
@@ -77,11 +91,11 @@ export const OnboardingProgressGate = ({
             </span>
           </div>
           
-          <Progress value={progressToRequired} className="h-2" />
+          <Progress value={progressData.progressToRequired} className="h-2" />
           
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{currentXP} XP</span>
-            <span>{nextLevelXP} XP needed</span>
+            <span>{progressData.nextLevelXP} XP needed</span>
           </div>
         </div>
 
@@ -110,4 +124,4 @@ export const OnboardingProgressGate = ({
       </CardContent>
     </Card>
   );
-};
+});
