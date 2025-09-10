@@ -376,18 +376,26 @@ const router = createBrowserRouter([
   },
 ]);
 
-function App() {
+function AppContent() {
   const isOnline = useOnlineStatus();
   
+  return (
+    <>
+      <OfflineNotification isOnline={isOnline} />
+      <RouterProvider router={router} />
+      <Toaster />
+      <Sonner />
+      <CookieConsent />
+    </>
+  );
+}
+
+function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <OfflineNotification isOnline={isOnline} />
-          <RouterProvider router={router} />
-          <Toaster />
-          <Sonner />
-          <CookieConsent />
+          <AppContent />
         </TooltipProvider>
       </QueryClientProvider>
     </ErrorBoundary>
