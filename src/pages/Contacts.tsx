@@ -46,8 +46,21 @@ const Contacts = () => {
     company: contact.company || "Unknown Company",
     position: contact.title || "Unknown Position",
     location: contact.additional_fields?.location || "Unknown Location",
-    lastContact: "Recent", // This would come from interactions data
-    relationship: "Strong", // This would be calculated from interactions
+    lastContact: contact.updated_at ? (() => {
+      const days = Math.floor((Date.now() - new Date(contact.updated_at).getTime()) / (1000 * 60 * 60 * 24));
+      if (days === 0) return "Today";
+      if (days === 1) return "Yesterday";
+      if (days < 7) return `${days} days ago`;
+      if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+      return `${Math.floor(days / 30)} months ago`;
+    })() : "No recent contact",
+    relationship: (() => {
+      const daysSinceContact = Math.floor((Date.now() - new Date(contact.updated_at || contact.created_at).getTime()) / (1000 * 60 * 60 * 24));
+      if (daysSinceContact < 7) return "Strong";
+      if (daysSinceContact < 30) return "Good";
+      if (daysSinceContact < 90) return "Cooling";
+      return "Cold";
+    })(),
     priority: "Medium", // This would be calculated based on various factors
     avatar: `${contact.first_name.charAt(0)}${contact.last_name.charAt(0)}`.toUpperCase(),
     tags: contact.additional_fields?.tags || ["Contact"]
