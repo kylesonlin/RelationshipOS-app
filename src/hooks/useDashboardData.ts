@@ -67,6 +67,26 @@ async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
       throw new Error('No authenticated user')
     }
 
+    // Check if this is demo mode - return demo data immediately
+    if (user.id === 'demo-user-123') {
+      return {
+        upcomingMeetings: 3,
+        staleContacts: 8,
+        totalContacts: 47,
+        relationshipHealth: 82,
+        weeklyGoalProgress: 75,
+        totalTasks: 12,
+        completedTasks: 8,
+        activeTasks: 4,
+        monthlySavings: 4701,
+        tasksAutomated: 15,
+        hoursPerWeek: 5,
+        annualROI: 1574,
+        currentPlanCost: 99,
+        vaCost: 5000
+      }
+    }
+
     console.log('Fetching dashboard metrics for user:', user.id)
 
     // Use the optimized database function for ultra-fast queries
