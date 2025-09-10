@@ -69,37 +69,7 @@ async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
 
     console.log('Fetching dashboard metrics for user:', user.id)
 
-    // Use the optimized database function for ultra-fast queries
-    const { data: metricsData, error } = await supabase.rpc('get_dashboard_metrics', {
-      p_user_id: user.id
-    })
-
-    if (error) {
-      console.error('RPC error, falling back to manual queries:', error)
-      return await fallbackFetchMetrics(user.id)
-    }
-
-    if (metricsData && typeof metricsData === 'object') {
-      const data = metricsData as any;
-      return {
-        upcomingMeetings: data.upcomingMeetings || 0,
-        staleContacts: data.staleContacts || 0,
-        totalContacts: data.totalContacts || 0,
-        relationshipHealth: data.relationshipHealth || 0,
-        weeklyGoalProgress: data.weeklyGoalProgress || 0,
-        totalTasks: (data.completedTasks || 0) + (data.pendingTasks || 0),
-        completedTasks: data.completedTasks || 0,
-        activeTasks: data.pendingTasks || 0,
-        monthlySavings: data.monthlySavings || 4701,
-        tasksAutomated: data.tasksAutomated || 15,
-        hoursPerWeek: data.hoursPerWeek || 5,
-        annualROI: data.annualROI || 1574,
-        currentPlanCost: data.currentPlanCost || 99,
-        vaCost: data.vaCost || 5000
-      }
-    }
-
-    // Fallback to manual queries if RPC fails
+    // Use fallback approach since the materialized view wasn't created successfully
     return await fallbackFetchMetrics(user.id)
 
   } catch (error: any) {
