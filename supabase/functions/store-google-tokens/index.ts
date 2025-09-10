@@ -66,6 +66,9 @@ serve(async (req) => {
           avatar_url: user.user_metadata.avatar_url,
           onboarding_completed: true,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id',
+          ignoreDuplicates: false
         });
 
       if (profileError) {
