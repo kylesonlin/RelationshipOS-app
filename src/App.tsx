@@ -23,6 +23,7 @@ import Settings from "./pages/Settings";
 import GamificationDashboard from "./pages/GamificationDashboard";
 import Auth from "./pages/Auth";
 import GoogleSuccess from "./pages/GoogleSuccess";
+import Index from "./pages/Index";
 import ResetPassword from "./pages/ResetPassword";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
@@ -115,13 +116,7 @@ const router = createBrowserRouter([
       },
       {
         index: true,
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <Dashboard />
-            </Layout>
-          </ProtectedRoute>
-        ),
+        element: <Index />,
         errorElement: <ErrorPage />,
       },
       {

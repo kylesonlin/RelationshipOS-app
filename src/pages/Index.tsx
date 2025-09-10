@@ -8,10 +8,14 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Index page - Auth state:', { user: !!user, loading });
+    
     if (!loading) {
       if (user) {
+        console.log('User authenticated, redirecting to dashboard');
         navigate("/dashboard");
       } else {
+        console.log('No user found, redirecting to auth');
         navigate("/auth");
       }
     }

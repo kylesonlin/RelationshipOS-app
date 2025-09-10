@@ -14,34 +14,92 @@ const GoogleSuccess = () => {
   useEffect(() => {
     const handleAuthSuccess = async () => {
       try {
+        console.log('GoogleSuccess page loaded, checking session...');
+        
         // Get the current session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (sessionError || !session) {
-          console.error('No valid session found:', sessionError);
-          // Still redirect even if no session
-          navigate("/");
+        console.log('Session check result:', { session: !!session, error: sessionError });
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          toast({
+            title: "Authentication Error",
+            description: `Session error: ${sessionError.message}`,
+            variant: "destructive",
+          });
+          navigate("/auth");
           return;
         }
 
-        console.log('Google auth successful, session:', session.user.email);
+        if (!session) {
+          console.error('No valid session found after Google auth');
+          toast({
+            title: "Authentication Error", 
+            description: "No valid session found. Please try signing in again.",
+            variant: "destructive",
+          });
+          navigate("/auth");
+          return;
+        }
+
+        console.log('Google auth successful! User:', session.user.email);
+        console.log('Session details:', {
+          userId: session.user.id,
+          email: session.user.email,
+          provider: session.user.app_metadata?.provider,
+          providerToken: !!session.provider_token,
+          providerRefreshToken: !!session.provider_refresh_token
+        });
+
+        // Store Google tokens if available
+        if (session.provider_token && session.provider_refresh_token) {
+          console.log('Storing Google tokens...');
+          try {
+            const { data: tokenResult, error: tokenError } = await supabase.functions.invoke('store-google-tokens', {
+              body: {
+                provider_token: session.provider_token,
+                provider_refresh_token: session.provider_refresh_token,
+                user: session.user
+              }
+            });
+
+            if (tokenError) {
+              console.error('Error storing Google tokens:', tokenError);
+              toast({
+                title: "Warning",
+                description: "Authentication successful, but Google integration may have issues.",
+                variant: "destructive",
+              });
+            } else {
+              console.log('Google tokens stored successfully:', tokenResult);
+            }
+          } catch (tokenStoreError) {
+            console.error('Failed to store Google tokens:', tokenStoreError);
+          }
+        } else {
+          console.warn('No provider tokens found in session');
+        }
 
         toast({
           title: "Welcome to RelationshipOS! 🎉",
           description: "Your Google account has been connected successfully.",
         });
 
-        // Redirect to dashboard immediately
-        navigate("/");
+        // Short delay before redirect to ensure everything is processed
+        setTimeout(() => {
+          console.log('Redirecting to dashboard...');
+          navigate("/");
+        }, 1000);
 
       } catch (error) {
         console.error('Error handling Google auth:', error);
         toast({
-          title: "Welcome to RelationshipOS! 🎉",
-          description: "Your account has been set up successfully.",
+          title: "Authentication Error",
+          description: `Error processing authentication: ${error.message}`,
+          variant: "destructive",
         });
-        // Redirect even on error
-        navigate("/");
+        navigate("/auth");
       } finally {
         setLoading(false);
       }
