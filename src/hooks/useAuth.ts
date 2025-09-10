@@ -26,7 +26,8 @@ export const useAuth = () => {
         
         // Check if we're in development/preview environment
         const isLovablePreview = window.location.hostname.includes('lovable.dev') || 
-                                window.location.hostname.includes('sandbox');
+                                window.location.hostname.includes('sandbox') ||
+                                window.location.hostname.includes('lovableproject.com');
         const isDashboardRoute = window.location.pathname === '/dashboard';
         
         // Check for demo user if no session

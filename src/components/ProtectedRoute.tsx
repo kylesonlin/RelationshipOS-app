@@ -21,7 +21,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (!user) {
     // Check if we're in development/preview environment  
     const isLovablePreview = window.location.hostname.includes('lovable.dev') || 
-                            window.location.hostname.includes('sandbox');
+                            window.location.hostname.includes('sandbox') ||
+                            window.location.hostname.includes('lovableproject.com');
     
     // For dashboard route in development, allow demo mode without reload
     if (window.location.pathname === '/dashboard' && isLovablePreview) {
