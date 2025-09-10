@@ -78,11 +78,11 @@ const LazyWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const AppWithProviders = () => (
-  <ABTestProvider>
-    <AnalyticsProvider>
+  <AnalyticsProvider>
+    <ABTestProvider>
       <Outlet />
-    </AnalyticsProvider>
-  </ABTestProvider>
+    </ABTestProvider>
+  </AnalyticsProvider>
 );
 
 const router = createBrowserRouter([
