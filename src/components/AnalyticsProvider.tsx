@@ -19,19 +19,21 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
   const analytics = useAnalytics();
   const location = useLocation();
 
-  // Track page views automatically (only after analytics is initialized)
+  // Track page views automatically with debouncing
   useEffect(() => {
-    // Add a small delay to ensure everything is initialized
+    if (!analytics) return;
+    
+    // Debounce page tracking to prevent multiple calls
     const timer = setTimeout(() => {
       const pageTitle = document.title || location.pathname;
       analytics.page(pageTitle, {
         path: location.pathname,
         search: location.search,
       });
-    }, 100);
+    }, 300);
 
     return () => clearTimeout(timer);
-  }, [location, analytics]);
+  }, [location.pathname, analytics]); // Only track when path changes
 
   return (
     <AnalyticsContext.Provider value={analytics}>

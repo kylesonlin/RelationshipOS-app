@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    // Improve dev server performance
+    hmr: {
+      overlay: false
+    },
+    watch: {
+      usePolling: false,
+      interval: 100
+    }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
