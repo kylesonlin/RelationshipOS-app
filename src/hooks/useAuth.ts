@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { useGoogleIntegration } from './useGoogleIntegration';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const { storeGoogleTokens } = useGoogleIntegration();
 
   useEffect(() => {
     // Check for existing session FIRST to ensure immediate auth state
@@ -47,15 +45,25 @@ export const useAuth = () => {
         // Handle Google OAuth callback and store tokens - defer to prevent deadlock
         if (event === 'SIGNED_IN' && session?.provider_token) {
           console.log('Google sign-in detected, storing tokens...');
-          setTimeout(() => {
-            storeGoogleTokens(session);
+          setTimeout(async () => {
+            try {
+              await supabase.functions.invoke('store-google-tokens', {
+                body: {
+                  provider_token: session.provider_token,
+                  provider_refresh_token: session.provider_refresh_token,
+                  user: session.user
+                }
+              });
+            } catch (error) {
+              console.error('Failed to store Google tokens:', error);
+            }
           }, 0);
         }
       }
     );
 
     return () => subscription.unsubscribe();
-  }, [storeGoogleTokens]);
+  }, []); // Remove dependency to prevent re-initialization
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
