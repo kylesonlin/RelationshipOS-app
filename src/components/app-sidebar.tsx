@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
-import logoImage from "@/assets/relationshipos-logo.png"
 
 import {
   Sidebar,
@@ -83,7 +82,7 @@ export function AppSidebar() {
           {!collapsed ? (
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center executive-card-premium">
-                <img src={logoImage} alt="RelationshipOS" className="h-6 w-6" />
+                <Command className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <div className="executive-title text-lg">RelationshipOS</div>
@@ -93,7 +92,7 @@ export function AppSidebar() {
           ) : (
             <div className="flex justify-center">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center executive-card-premium">
-                <img src={logoImage} alt="RelationshipOS" className="h-6 w-6" />
+                <Command className="h-5 w-5 text-primary" />
               </div>
             </div>
           )}
