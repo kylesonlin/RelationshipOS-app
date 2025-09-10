@@ -84,6 +84,24 @@ serve(async (req) => {
       }
     }
 
+    // Sync Contacts if scope is available
+    const hasContactsScope = tokens.scopes?.includes('https://www.googleapis.com/auth/contacts.readonly');
+    if (hasContactsScope) {
+      try {
+        console.log('Triggering Contacts sync...');
+        const { data: contactsResult, error: contactsError } = await supabaseClient.functions.invoke('contacts-sync', {
+          body: { user_id }
+        });
+
+        if (contactsError) throw contactsError;
+        results.push({ service: 'contacts', success: true, ...contactsResult });
+        console.log('Contacts sync completed successfully');
+      } catch (error) {
+        console.error('Contacts sync failed:', error);
+        results.push({ service: 'contacts', success: false, error: error.message });
+      }
+    }
+
     // Update user gamification based on sync results
     const successfulSyncs = results.filter(r => r.success);
     if (successfulSyncs.length > 0) {

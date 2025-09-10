@@ -37,7 +37,7 @@ const Auth = () => {
             access_type: 'offline',
             prompt: 'consent',
           },
-          scopes: 'openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly'
+          scopes: 'openid email profile https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/contacts.readonly'
         }
       });
 
@@ -176,7 +176,7 @@ const Auth = () => {
                   <p className="text-sm text-muted-foreground">
                     By continuing, you'll grant access to:
                   </p>
-                  <div className="flex justify-center gap-6 text-xs text-muted-foreground">
+                  <div className="flex justify-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Mail className="h-3 w-3" />
                       Gmail
@@ -184,6 +184,10 @@ const Auth = () => {
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Calendar
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      Contacts
                     </span>
                   </div>
                 </div>
