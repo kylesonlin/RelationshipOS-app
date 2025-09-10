@@ -78,10 +78,29 @@ serve(async (req) => {
 
     console.log('Successfully stored Google tokens and updated profile');
 
+    // Automatically trigger initial data sync for new users
+    try {
+      console.log('Triggering initial Google data sync...');
+      
+      const { error: syncError } = await supabase.functions.invoke('trigger-google-sync', {
+        body: { user_id: user.id }
+      });
+
+      if (syncError) {
+        console.error('Initial sync failed:', syncError);
+        // Don't fail the token storage if sync fails - user can manually sync later
+      } else {
+        console.log('Initial sync completed successfully');
+      }
+    } catch (syncError) {
+      console.error('Error during initial sync:', syncError);
+      // Continue - sync failure shouldn't block token storage
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Google tokens stored successfully' 
+        message: 'Google tokens stored and data sync initiated' 
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

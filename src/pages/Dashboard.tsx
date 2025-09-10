@@ -18,6 +18,7 @@ import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { useGoogleIntegration } from "@/hooks/useGoogleIntegration"
 import { SubscriptionBanner } from "@/components/SubscriptionBanner"
+import { OnboardingProgressGate } from "@/components/onboarding/OnboardingProgressGate"
 import { useNavigate } from "react-router-dom"
 import { 
   Search, 
@@ -208,7 +209,18 @@ const Dashboard = () => {
               {hasIntelligenceData ? (
                 <>
                   <ExecutiveCalendarWidget />
-                  <SmartInsightsWidget />
+                  <OnboardingProgressGate
+                    requiredLevel={2}
+                    featureName="AI Insights"
+                    featureDescription="Get intelligent recommendations based on your relationship data"
+                    unlockActions={[
+                      "Add 5 more contacts (+50 XP)",
+                      "Complete 2 meetings (+40 XP)", 
+                      "Send 3 follow-up emails (+30 XP)"
+                    ]}
+                  >
+                    <SmartInsightsWidget />
+                  </OnboardingProgressGate>
                 </>
               ) : (
                 <Card className="executive-card border-primary/30">
