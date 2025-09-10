@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { handleError } from '@/utils/errorHandling';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -167,7 +168,7 @@ export const ActionSuggestions = () => {
       // Generate new insights
       await generateNewInsights();
     } catch (error) {
-      console.error('Error refreshing insights:', error);
+      handleError(error, 'Insights Refresh');
     } finally {
       setRefreshing(false);
     }

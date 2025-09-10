@@ -78,7 +78,7 @@ export const useDashboardData = () => {
         calendarEventsResult,
         subscriberResult
       ] = await Promise.allSettled([
-        supabase.from('contacts').select('id, first_name, last_name, email, company, created_at').eq('userId', user.id),
+        supabase.from('contacts').select('id, first_name, last_name, email, company, created_at, updated_at').eq('userId', user.id),
         supabase.from('tasks').select('id, title, status, due_date, created_at').eq('userId', user.id),
         supabase.from('user_gamification').select('*').eq('user_id', user.id).maybeSingle(),
         supabase.from('calendar_events').select('id, title, start_time, end_time').gte('start_time', new Date().toISOString()).lte('start_time', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()).order('start_time', { ascending: true }).limit(5),
@@ -101,11 +101,12 @@ export const useDashboardData = () => {
       // Calculate core metrics with safe defaults
       const totalContacts = contacts?.length || 0
       
-      // Calculate stale contacts (contacts without recent activity)
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      // Calculate stale contacts (contacts without recent activity) 
+      // Check for actual contact activity, not just creation date
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
       const staleContacts = contacts?.filter(contact => {
-        const contactDate = new Date(contact.created_at)
-        return contactDate < thirtyDaysAgo
+        const lastActivity = new Date(contact.updated_at || contact.created_at)
+        return lastActivity < fourteenDaysAgo
       }).length || 0
       
       // Use actual calendar events instead of tasks
