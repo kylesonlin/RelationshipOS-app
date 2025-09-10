@@ -62,6 +62,27 @@ export const useDashboardData = () => {
 
 async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
   try {
+    // Check for demo user first
+    const demoUser = localStorage.getItem('demo-user');
+    if (demoUser) {
+      return {
+        upcomingMeetings: 3,
+        staleContacts: 8,
+        totalContacts: 47,
+        relationshipHealth: 82,
+        weeklyGoalProgress: 75,
+        totalTasks: 12,
+        completedTasks: 8,
+        activeTasks: 4,
+        monthlySavings: 4701,
+        tasksAutomated: 15,
+        hoursPerWeek: 5,
+        annualROI: 1574,
+        currentPlanCost: 99,
+        vaCost: 5000
+      }
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       throw new Error('No authenticated user')

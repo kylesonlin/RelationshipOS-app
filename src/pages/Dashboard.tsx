@@ -21,6 +21,7 @@ import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { useGoogleIntegration } from "@/hooks/useGoogleIntegration"
 import { SubscriptionBanner } from "@/components/SubscriptionBanner"
+import { DemoModeIndicator } from "@/components/DemoModeIndicator"
 import { useNavigate } from "react-router-dom"
 import { 
   Search, 
@@ -96,6 +97,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
+      <DemoModeIndicator />
       {/* Subscription Banner */}
       <SubscriptionBanner />
       

@@ -23,6 +23,54 @@ export const useAuth = () => {
           logger.error('Error getting session:', error);
         }
         
+        // Check for demo user if no session
+        if (!session) {
+          const demoUser = localStorage.getItem('demo-user');
+          if (demoUser) {
+            const mockUser = {
+              id: 'demo-user-123',
+              email: 'demo@example.com',
+              aud: 'authenticated',
+              role: 'authenticated',
+              app_metadata: {},
+              user_metadata: { name: 'Demo User' },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              confirmed_at: new Date().toISOString(),
+              email_confirmed_at: new Date().toISOString(),
+              phone_confirmed_at: null,
+              last_sign_in_at: new Date().toISOString(),
+              recovery_sent_at: null,
+              new_email: null,
+              invited_at: null,
+              action_link: null,
+              email_change_sent_at: null,
+              new_phone: null,
+              phone_change_sent_at: null,
+              phone: null,
+              confirmation_sent_at: null,
+              identities: [],
+              factors: []
+            } as any;
+
+            const mockSession = {
+              access_token: 'demo-token',
+              refresh_token: 'demo-refresh',
+              expires_in: 3600,
+              expires_at: Math.floor(Date.now() / 1000) + 3600,
+              token_type: 'bearer',
+              user: mockUser
+            } as any;
+
+            if (isMounted) {
+              setSession(mockSession);
+              setUser(mockUser);
+              setLoading(false);
+            }
+            return;
+          }
+        }
+        
         // Only update state if component is still mounted
         if (isMounted) {
           setSession(session);
@@ -83,6 +131,9 @@ export const useAuth = () => {
   }, []); // Empty dependency array to prevent re-initialization
 
   const signOut = async () => {
+    // Clear demo user data if present
+    localStorage.removeItem('demo-user');
+    
     const { error } = await supabase.auth.signOut();
     if (error) {
       logger.error('Error signing out:', error.message);
@@ -94,6 +145,7 @@ export const useAuth = () => {
     session,
     loading,
     signOut,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    isDemoUser: user?.id === 'demo-user-123'
   };
 };
