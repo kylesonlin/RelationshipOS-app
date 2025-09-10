@@ -141,6 +141,12 @@ export const useSubscription = () => {
         return;
       }
 
+      // Check if usage limit would be exceeded
+      if (!isWithinLimit(resourceType as keyof UsageData)) {
+        console.warn(`Usage limit exceeded for ${resourceType}`);
+        return false;
+      }
+
       const { error } = await supabase.from('usage_tracking').insert({
         user_id: user.id,
         resource_type: resourceType,
@@ -151,8 +157,10 @@ export const useSubscription = () => {
       if (error) throw error;
       
       await loadUsage();
+      return true;
     } catch (err: any) {
       console.error('Error tracking usage:', err);
+      return false;
     }
   };
 
@@ -206,7 +214,13 @@ export const useSubscription = () => {
 
   const isWithinLimit = (limitType: string): boolean => {
     const currentPlan = getCurrentPlan();
-    if (!currentPlan) return false;
+    if (!currentPlan) {
+      // Free users have basic limits
+      const freeLimits = { oracle_queries: 10, contacts: 100, team_members: 1 };
+      const limit = freeLimits[limitType as keyof typeof freeLimits] || 0;
+      const currentUsage = usage[limitType as keyof UsageData] || 0;
+      return currentUsage < limit;
+    }
     
     const limit = currentPlan.limits[limitType];
     if (limit === -1) return true; // Unlimited

@@ -19,9 +19,12 @@ export const ProtectedFeature = ({
   upgradeTitle = "Premium Feature",
   upgradeDescription = "Upgrade to access this feature"
 }: ProtectedFeatureProps) => {
-  const { canUseFeature, createCheckout, loading } = useSubscription();
+  const { canUseFeature, createCheckout, loading, subscription } = useSubscription();
 
-  if (canUseFeature(feature)) {
+  // Check if user can access this feature
+  const hasAccess = canUseFeature(feature);
+
+  if (hasAccess) {
     return <>{children}</>;
   }
 
@@ -45,11 +48,19 @@ export const ProtectedFeature = ({
       </CardHeader>
       <CardContent className="text-center">
         <Button 
-          onClick={() => createCheckout('personal_pro')}
+          onClick={() => {
+            // If already on trial/subscription, go to pricing to upgrade
+            // Otherwise start with personal_pro
+            if (subscription?.subscribed || subscription?.is_trial) {
+              window.location.href = '/pricing';
+            } else {
+              createCheckout('personal_pro');
+            }
+          }}
           disabled={loading}
           className="bg-gradient-primary"
         >
-          {loading ? 'Processing...' : 'Upgrade Now'}
+          {loading ? 'Processing...' : subscription?.subscribed ? 'Upgrade Plan' : 'Start Free Trial'}
         </Button>
       </CardContent>
     </Card>
