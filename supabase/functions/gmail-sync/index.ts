@@ -49,10 +49,46 @@ serve(async (req) => {
       return new Response('Gmail not connected', { status: 400, headers: corsHeaders })
     }
 
-    // Check if token is expired
+    // Check if token is expired and refresh if needed
+    let accessToken = tokens.access_token
     const now = new Date()
     const expiresAt = new Date(tokens.expires_at)
-    if (now >= expiresAt) {
+    
+    if (now >= expiresAt && tokens.refresh_token) {
+      // Refresh the access token
+      const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: Deno.env.get('GOOGLE_CLIENT_ID') || '',
+          client_secret: Deno.env.get('GOOGLE_CLIENT_SECRET') || '',
+          refresh_token: tokens.refresh_token,
+          grant_type: 'refresh_token',
+        }),
+      })
+
+      if (refreshResponse.ok) {
+        const refreshData = await refreshResponse.json()
+        accessToken = refreshData.access_token
+        
+        // Update the stored token
+        await supabaseClient
+          .from('user_google_tokens')
+          .update({ 
+            access_token: accessToken,
+            expires_at: new Date(now.getTime() + refreshData.expires_in * 1000).toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id)
+      } else {
+        return new Response('Failed to refresh token - please reconnect Google account', { 
+          status: 401, 
+          headers: corsHeaders 
+        })
+      }
+    } else if (now >= expiresAt) {
       return new Response('Access token expired - please reconnect Google account', { 
         status: 401, 
         headers: corsHeaders 
@@ -70,7 +106,7 @@ serve(async (req) => {
       `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=50&q=in:sent OR in:inbox`,
       {
         headers: {
-          'Authorization': `Bearer ${tokens.access_token}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       }
@@ -91,7 +127,7 @@ serve(async (req) => {
           `https://gmail.googleapis.com/gmail/v1/users/me/messages/${message.id}`,
           {
             headers: {
-              'Authorization': `Bearer ${tokens.access_token}`,
+              'Authorization': `Bearer ${accessToken}`,
             },
           }
         )
