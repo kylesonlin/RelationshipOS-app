@@ -5,15 +5,18 @@ import "./index.css";
 
 // Preload critical routes for instant navigation
 const preloadRoutes = () => {
-  import("./pages/Contacts.tsx");
-  import("./pages/Analytics.tsx");
-  import("./pages/MeetingPrep.tsx");
-  import("./pages/Oracle.tsx");
-  import("./pages/Integrations.tsx");
+  // Only preload if not in development to avoid module loading issues
+  if (import.meta.env.PROD) {
+    import("./pages/Contacts.tsx");
+    import("./pages/Analytics.tsx");
+    import("./pages/MeetingPrep.tsx");
+    import("./pages/Oracle.tsx");
+    import("./pages/Integrations.tsx");
+  }
 };
 
 // Preload after initial render
-setTimeout(preloadRoutes, 100);
+setTimeout(preloadRoutes, 1000);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
