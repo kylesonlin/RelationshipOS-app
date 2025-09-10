@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, memo, useMemo, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,8 +11,14 @@ import { ActionSuggestions } from "@/components/dashboard/ActionSuggestions"
 import { QuickActions } from "@/components/dashboard/QuickActions"
 import { RelationshipHealthScore } from "@/components/gamification/RelationshipHealthScore"
 import { GoogleSyncCTA } from "@/components/onboarding/GoogleSyncCTA"
-import { ExecutiveCalendarWidget } from "@/components/dashboard/ExecutiveCalendarWidget"
-import { SmartInsightsWidget } from "@/components/ai/SmartInsightsWidget"
+
+// Lazy load heavy components for instant initial render
+const ExecutiveCalendarWidget = React.lazy(() => 
+  import("@/components/dashboard/ExecutiveCalendarWidget").then(m => ({ default: m.ExecutiveCalendarWidget }))
+)
+const SmartInsightsWidget = React.lazy(() => 
+  import("@/components/ai/SmartInsightsWidget").then(m => ({ default: m.SmartInsightsWidget }))
+)
 import { useAuth } from "@/hooks/useAuth"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -39,6 +45,13 @@ import {
   Brain
 } from "lucide-react"
 
+// Memoized loading fallback for suspense
+const ComponentLoader = memo(() => (
+  <div className="h-64 bg-muted/20 animate-pulse rounded-lg flex items-center justify-center">
+    <div className="text-sm text-muted-foreground">Loading...</div>
+  </div>
+))
+
 const Dashboard = () => {
   const { user } = useAuth();
   const { subscription, canUseFeature } = useSubscription();
@@ -47,8 +60,20 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [oracleQuery, setOracleQuery] = useState("");
 
-  // Show UI immediately with loading states for individual components
-  // Don't block the entire page on data loading
+  // Memoized calculations to prevent re-computation
+  const memoizedMetrics = useMemo(() => ({
+    upcomingMeetings: metrics?.upcomingMeetings ?? 0,
+    staleContacts: metrics?.staleContacts ?? 0,
+    weeklyGoal: Math.round(metrics?.weeklyGoalProgress ?? 0),
+    relationshipHealth: metrics?.relationshipHealth ?? 0,
+    totalContacts: metrics?.totalContacts ?? 0,
+    monthlySavings: metrics?.monthlySavings ?? 4701,
+    tasksAutomated: metrics?.tasksAutomated ?? 15,
+    hoursPerWeek: metrics?.hoursPerWeek ?? 5,
+    annualROI: metrics?.annualROI ?? 1574,
+    currentPlanCost: metrics?.currentPlanCost ?? 99,
+    vaCost: metrics?.vaCost ?? 5000
+  }), [metrics])
 
   const handleOracleSearch = () => {
     if (oracleQuery.trim()) {
@@ -58,31 +83,20 @@ const Dashboard = () => {
     }
   };
 
-  // Smart dashboard metrics that adapt to user activity
-  const getTimeBasedGreeting = () => {
+  // Memoized greeting to prevent recalculation
+  const greeting = useMemo(() => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
     if (hour < 17) return "Good afternoon";
     return "Good evening";
-  };
+  }, []);
 
-  // Use real data from the dashboard metrics with fallbacks for instant rendering
-  const upcomingMeetings = metrics?.upcomingMeetings ?? 0;
-  const staleContacts = metrics?.staleContacts ?? 0;
-  const weeklyGoal = Math.round(metrics?.weeklyGoalProgress ?? 0);
-  const relationshipHealth = metrics?.relationshipHealth ?? 0;
-  const totalContacts = metrics?.totalContacts ?? 0;
-
-  // Live ROI calculations from real data with safe fallbacks
-  const monthlySavings = metrics?.monthlySavings ?? 4701;
-  const tasksAutomated = metrics?.tasksAutomated ?? 15;
-  const hoursPerWeek = metrics?.hoursPerWeek ?? 5;
-  const annualROI = metrics?.annualROI ?? 1574;
-  const currentPlanCost = metrics?.currentPlanCost ?? 99;
-
-  // Determine if user needs onboarding vs showing full dashboard
-  const needsOnboarding = totalContacts < 3 && (!isConnected || (!hasGmailAccess && !hasCalendarAccess));
-  const hasIntelligenceData = isConnected && (hasGmailAccess || hasCalendarAccess);
+  // Memoized user state
+  const userState = useMemo(() => ({
+    needsOnboarding: memoizedMetrics.totalContacts < 3 && (!isConnected || (!hasGmailAccess && !hasCalendarAccess)),
+    hasIntelligenceData: isConnected && (hasGmailAccess || hasCalendarAccess),
+    userName: user?.user_metadata?.full_name?.split(' ')[0] || 'Executive'
+  }), [memoizedMetrics.totalContacts, isConnected, hasGmailAccess, hasCalendarAccess, user?.user_metadata?.full_name])
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
@@ -100,7 +114,7 @@ const Dashboard = () => {
               AI Command Center
             </h1>
             <p className="executive-subtitle mt-2">
-              {getTimeBasedGreeting()}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Executive'}
+              {greeting}, {userState.userName}
             </p>
           </div>
         </div>
@@ -114,7 +128,7 @@ const Dashboard = () => {
             Executive ROI Dashboard
           </CardTitle>
           <CardDescription className="executive-subtitle">
-            Your AI team's measurable business impact vs. traditional ${(metrics?.vaCost || 5000).toLocaleString()}/month VA
+            Your AI team's measurable business impact vs. traditional ${memoizedMetrics.vaCost.toLocaleString()}/month VA
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -124,12 +138,12 @@ const Dashboard = () => {
                 {loading ? (
                   <div className="h-8 w-20 bg-muted animate-pulse rounded mx-auto"></div>
                 ) : (
-                  `$${monthlySavings.toLocaleString()}`
+                  `$${memoizedMetrics.monthlySavings.toLocaleString()}`
                 )}
               </div>
               <p className="text-sm font-medium text-success">Monthly Savings</p>
               <p className="text-xs text-muted-foreground mt-1">
-                {Math.round((monthlySavings / (metrics?.vaCost || 5000)) * 100)}% cost reduction vs ${currentPlanCost}/mo plan
+                {Math.round((memoizedMetrics.monthlySavings / memoizedMetrics.vaCost) * 100)}% cost reduction vs ${memoizedMetrics.currentPlanCost}/mo plan
               </p>
             </div>
             <div className="metric-card p-6 text-center">
@@ -137,7 +151,7 @@ const Dashboard = () => {
                 {loading ? (
                   <div className="h-8 w-12 bg-muted animate-pulse rounded mx-auto"></div>
                 ) : (
-                  tasksAutomated
+                  memoizedMetrics.tasksAutomated
                 )}
               </div>
               <p className="text-sm font-medium">Tasks Automated</p>
@@ -148,7 +162,7 @@ const Dashboard = () => {
                 {loading ? (
                   <div className="h-8 w-12 bg-muted animate-pulse rounded mx-auto"></div>
                 ) : (
-                  `${hoursPerWeek}h`
+                  `${memoizedMetrics.hoursPerWeek}h`
                 )}
               </div>
               <p className="text-sm font-medium">Weekly Time Saved</p>
@@ -160,14 +174,14 @@ const Dashboard = () => {
                   <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
                 ) : (
                   <>
-                    {annualROI.toLocaleString()}%
+                    {memoizedMetrics.annualROI.toLocaleString()}%
                     <ArrowUp className="h-5 w-5 text-success" />
                   </>
                 )}
               </div>
               <p className="text-sm font-medium text-success">Annual ROI</p>
               <p className="text-xs text-muted-foreground mt-1">
-                ${(monthlySavings * 12).toLocaleString()} annual savings
+                ${(memoizedMetrics.monthlySavings * 12).toLocaleString()} annual savings
               </p>
             </div>
           </div>
@@ -184,18 +198,20 @@ const Dashboard = () => {
       </Card>
 
       {/* Dynamic Content Based on User State */}
-      {needsOnboarding ? (
+      {userState.needsOnboarding ? (
         // Show onboarding experience for new users
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <GoogleSyncCTA 
-            totalContacts={totalContacts} 
+            totalContacts={memoizedMetrics.totalContacts} 
             onSyncComplete={() => {
               refreshMetrics();
               // Force re-render by updating a state or triggering navigation
               window.location.reload();
             }} 
           />
-          <ExecutiveCalendarWidget />
+          <Suspense fallback={<ComponentLoader />}>
+            <ExecutiveCalendarWidget />
+          </Suspense>
         </div>
       ) : (
         // Show full dashboard for active users
@@ -206,9 +222,11 @@ const Dashboard = () => {
               <ActionSuggestions />
             </div>
             <div className="space-y-6">
-              {hasIntelligenceData ? (
+              {userState.hasIntelligenceData ? (
                 <>
-                  <ExecutiveCalendarWidget />
+                  <Suspense fallback={<ComponentLoader />}>
+                    <ExecutiveCalendarWidget />
+                  </Suspense>
                   <OnboardingProgressGate
                     requiredLevel={2}
                     featureName="AI Insights"
@@ -219,7 +237,9 @@ const Dashboard = () => {
                       "Send 3 follow-up emails (+30 XP)"
                     ]}
                   >
-                    <SmartInsightsWidget />
+                    <Suspense fallback={<ComponentLoader />}>
+                      <SmartInsightsWidget />
+                    </Suspense>
                   </OnboardingProgressGate>
                 </>
               ) : (
@@ -291,14 +311,14 @@ const Dashboard = () => {
                     {loading ? (
                       <div className="h-8 w-12 bg-muted animate-pulse rounded"></div>
                     ) : (
-                      `${relationshipHealth}%`
+                      `${memoizedMetrics.relationshipHealth}%`
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <TrendingUp className="h-4 w-4 text-success" />
                     <span className="font-medium text-success">+5% this week</span>
                   </div>
-                  <Progress value={relationshipHealth} className="h-2" />
+                  <Progress value={memoizedMetrics.relationshipHealth} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -318,14 +338,14 @@ const Dashboard = () => {
                     {loading ? (
                       <div className="h-8 w-12 bg-muted animate-pulse rounded"></div>
                     ) : (
-                      `${weeklyGoal}%`
+                      `${memoizedMetrics.weeklyGoal}%`
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <TrendingUp className="h-4 w-4 text-success" />
                     <span className="font-medium text-success">On track</span>
                   </div>
-                  <Progress value={weeklyGoal} className="h-2" />
+                  <Progress value={memoizedMetrics.weeklyGoal} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -337,10 +357,10 @@ const Dashboard = () => {
                     Today's Meetings
                   </CardTitle>
                   <Badge 
-                    variant={upcomingMeetings > 0 ? "destructive" : "default"} 
+                    variant={memoizedMetrics.upcomingMeetings > 0 ? "destructive" : "default"} 
                     className="text-xs"
                   >
-                    {upcomingMeetings > 0 ? "Action needed" : "All clear"}
+                    {memoizedMetrics.upcomingMeetings > 0 ? "Action needed" : "All clear"}
                   </Badge>
                 </div>
               </CardHeader>
@@ -350,12 +370,12 @@ const Dashboard = () => {
                     {loading ? (
                       <div className="h-8 w-8 bg-muted animate-pulse rounded"></div>
                     ) : (
-                      upcomingMeetings
+                      memoizedMetrics.upcomingMeetings
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>{upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}</span>
+                    <span>{memoizedMetrics.upcomingMeetings > 0 ? "Meeting prep available" : "No meetings today"}</span>
                   </div>
                 </div>
               </CardContent>
@@ -376,11 +396,11 @@ const Dashboard = () => {
                     {loading ? (
                       <div className="h-8 w-8 bg-muted animate-pulse rounded"></div>
                     ) : (
-                      staleContacts
+                      memoizedMetrics.staleContacts
                     )}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
+                    {memoizedMetrics.staleContacts > 0 ? "High-value contacts included" : "All relationships current"}
                   </div>
                 </div>
               </CardContent>
