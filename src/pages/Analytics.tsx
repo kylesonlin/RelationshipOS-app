@@ -25,51 +25,48 @@ import {
 export default function Analytics() {
   const { analytics, loading } = useAnalytics()
 
-  if (loading) {
-    return <DashboardSkeleton />
-  }
+  // Show UI immediately with loading states for individual metrics
+  // Use fallback data to prevent blocking
 
-  if (!analytics) {
-    return <DashboardSkeleton />
-  }
-
-  const totalRelationships = analytics.relationshipHealth.strong + 
-                             analytics.relationshipHealth.warm + 
-                             analytics.relationshipHealth.cold + 
-                             analytics.relationshipHealth.declining
+  const totalRelationships = analytics ? (
+    analytics.relationshipHealth.strong + 
+    analytics.relationshipHealth.warm + 
+    analytics.relationshipHealth.cold + 
+    analytics.relationshipHealth.declining
+  ) : 0
 
   const keyMetrics = [
     {
       title: "Relationship Score",
-      value: `${analytics.keyMetrics.relationshipScore.toFixed(1)}/10`,
+      value: analytics ? `${analytics.keyMetrics.relationshipScore.toFixed(1)}/10` : "0.0/10",
       change: "+12%",
       trend: "up",
       description: "Average across portfolio"
     },
     {
       title: "Active Relationships", 
-      value: analytics.keyMetrics.activeRelationships.toString(),
+      value: analytics ? analytics.keyMetrics.activeRelationships.toString() : "0",
       change: "+8",
       trend: "up",
       description: "Engaged in last 30 days"
     },
     {
       title: "Opportunities Identified",
-      value: analytics.keyMetrics.opportunitiesIdentified.toString(),
+      value: analytics ? analytics.keyMetrics.opportunitiesIdentified.toString() : "0",
       change: "+5",
       trend: "up", 
       description: "This month"
     },
     {
       title: "At-Risk Relationships",
-      value: analytics.keyMetrics.atRiskRelationships.toString(),
+      value: analytics ? analytics.keyMetrics.atRiskRelationships.toString() : "0",
       change: "-3",
       trend: "down",
       description: "Require attention"
     }
   ]
 
-  const businessImpact = [
+  const businessImpact = analytics ? [
     {
       metric: "Pipeline Value",
       value: analytics.businessImpact.pipelineValue,
@@ -98,7 +95,7 @@ export default function Analytics() {
       impact: "Medium", 
       source: "Proactive relationship management"
     }
-  ]
+  ] : []
 
   const riskAlerts = [
     {
@@ -141,7 +138,13 @@ export default function Analytics() {
               )}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{metric.value}</div>
+              <div className="text-2xl font-bold">
+                {loading ? (
+                  <div className="h-8 w-16 bg-muted animate-pulse rounded"></div>
+                ) : (
+                  metric.value
+                )}
+              </div>
               <div className="flex items-center gap-1 text-xs">
                 <span className={metric.trend === 'up' ? 'text-green-600' : 'text-red-600'}>
                   {metric.change}
@@ -172,10 +175,10 @@ export default function Analytics() {
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">Strong ({analytics.relationshipHealth.strong})</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-sm">Strong ({analytics?.relationshipHealth.strong || 0})</span>
+                  </div>
                     <span className="text-sm font-medium">
                       {((analytics.relationshipHealth.strong / totalRelationships) * 100).toFixed(0)}%
                     </span>

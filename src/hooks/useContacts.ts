@@ -23,6 +23,10 @@ export const useContacts = () => {
   const { toast } = useToast()
 
   useEffect(() => {
+    // Set empty array immediately for instant UI rendering
+    setContacts([])
+    
+    // Then fetch real data in background
     fetchContacts()
   }, [])
 

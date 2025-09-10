@@ -44,6 +44,31 @@ export const useAnalytics = () => {
   const { toast } = useToast()
 
   useEffect(() => {
+    // Set immediate fallback data for instant UI rendering
+    setAnalytics({
+      relationshipHealth: {
+        strong: 0,
+        warm: 0,
+        cold: 0,
+        declining: 0
+      },
+      keyMetrics: {
+        relationshipScore: 0,
+        activeRelationships: 0,
+        opportunitiesIdentified: 0,
+        atRiskRelationships: 0
+      },
+      businessImpact: {
+        pipelineValue: '$0',
+        dealVelocity: '0 days',
+        winRate: '0%',
+        customerRetention: '0%'
+      },
+      topContacts: [],
+      engagementTrends: []
+    })
+    
+    // Then fetch real data in background
     fetchAnalytics()
   }, [])
 

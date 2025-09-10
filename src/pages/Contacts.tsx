@@ -35,11 +35,10 @@ const Contacts = () => {
   const { trackUsage } = useSubscription()
   const { contacts, loading } = useContacts()
 
-  if (loading) {
-    return <ContactsSkeleton />;
-  }
-  // Transform contacts data to display format
-  const displayContacts = contacts.map(contact => ({
+  // Show UI immediately with loading states for contact cards
+  // Don't block the page on data loading
+  // Transform contacts data to display format with safe fallbacks
+  const displayContacts = (contacts || []).map(contact => ({
     id: contact.id,
     name: `${contact.first_name} ${contact.last_name}`,
     email: contact.email,
@@ -117,7 +116,29 @@ const Contacts = () => {
       </div>
 
       {/* Contacts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-muted rounded-full"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 w-24 bg-muted rounded"></div>
+                    <div className="h-3 w-20 bg-muted rounded"></div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="h-3 w-full bg-muted rounded"></div>
+                <div className="h-3 w-3/4 bg-muted rounded"></div>
+                <div className="h-3 w-1/2 bg-muted rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredContacts.map((contact) => (
           <Card key={contact.id} className="shadow-soft hover:shadow-medium transition-all cursor-pointer">
             <CardHeader className="pb-3">
@@ -225,7 +246,8 @@ const Contacts = () => {
             </CardContent>
           </Card>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Empty State */}
       {filteredContacts.length === 0 && (
