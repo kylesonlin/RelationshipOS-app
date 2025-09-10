@@ -375,6 +375,9 @@ const router = createBrowserRouter([
 function AppContent() {
   const isOnline = useOnlineStatus();
   
+  console.log('React object in AppContent:', React);
+  console.log('TooltipProvider:', TooltipProvider);
+  
   return (
     <>
       <OfflineNotification isOnline={isOnline} />
@@ -387,16 +390,15 @@ function AppContent() {
 }
 
 function App() {
+  console.log('React object in App:', React);
+  console.log('React version:', React.version);
+  
   return (
-    <React.StrictMode>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <AppContent />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </React.StrictMode>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AppContent />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
