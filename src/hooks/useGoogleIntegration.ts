@@ -107,6 +107,12 @@ export const useGoogleIntegration = () => {
         return { success: false, error: 'Token expired' };
       }
 
+      // Show sync progress toast
+      toast({
+        title: "Starting Sync",
+        description: "Synchronizing your Google data...",
+      });
+
       const { data, error } = await supabase.functions.invoke('trigger-google-sync', {
         body: { user_id: user.id }
       });
@@ -116,25 +122,32 @@ export const useGoogleIntegration = () => {
       const successfulSyncs = data.results?.filter((r: any) => r.success) || [];
       
       if (successfulSyncs.length > 0) {
+        const syncedServices = data.synced_services?.join(', ') || 'unknown services';
+        const emailCount = data.results?.find((r: any) => r.service === 'gmail')?.processed || 0;
+        const eventCount = data.results?.find((r: any) => r.service === 'calendar')?.processed || 0;
+        
         toast({
           title: "Sync Successful",
-          description: `Successfully synced: ${data.synced_services?.join(', ')}`,
+          description: `Synced ${syncedServices}. Processed ${emailCount} emails and ${eventCount} calendar events.`,
         });
       } else {
         toast({
           title: "Sync Issues",
-          description: "Some services couldn't be synced. Check your Google permissions.",
+          description: "Some services couldn't be synced. Check your Google permissions and try again.",
           variant: "destructive"
         });
       }
 
+      // Refresh token status after sync
+      await refetch();
+      
       return { success: true, data };
 
     } catch (error: any) {
       console.error('Google sync error:', error);
       toast({
         title: "Sync Failed",
-        description: error.message || "Failed to sync Google data",
+        description: error.message || "Failed to sync Google data. Please try again.",
         variant: "destructive"
       });
       return { success: false, error: error.message };

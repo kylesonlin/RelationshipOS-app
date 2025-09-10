@@ -52,19 +52,16 @@ serve(async (req) => {
     const hasGmailScope = tokens.scopes?.includes('https://www.googleapis.com/auth/gmail.readonly');
     if (hasGmailScope) {
       try {
-        const gmailResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/gmail-sync`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${tokens.access_token}`,
-            'Content-Type': 'application/json',
-            'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-          },
-          body: JSON.stringify({ user_id })
+        console.log('Triggering Gmail sync...');
+        const { data: gmailResult, error: gmailError } = await supabaseClient.functions.invoke('gmail-sync', {
+          body: { user_id }
         });
 
-        const gmailResult = await gmailResponse.json();
-        results.push({ service: 'gmail', success: gmailResponse.ok, ...gmailResult });
+        if (gmailError) throw gmailError;
+        results.push({ service: 'gmail', success: true, ...gmailResult });
+        console.log('Gmail sync completed successfully');
       } catch (error) {
+        console.error('Gmail sync failed:', error);
         results.push({ service: 'gmail', success: false, error: error.message });
       }
     }
@@ -73,19 +70,16 @@ serve(async (req) => {
     const hasCalendarScope = tokens.scopes?.includes('https://www.googleapis.com/auth/calendar.readonly');
     if (hasCalendarScope) {
       try {
-        const calendarResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/calendar-sync`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${tokens.access_token}`,
-            'Content-Type': 'application/json',
-            'apikey': Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-          },
-          body: JSON.stringify({ user_id })
+        console.log('Triggering Calendar sync...');
+        const { data: calendarResult, error: calendarError } = await supabaseClient.functions.invoke('calendar-sync', {
+          body: { user_id }
         });
 
-        const calendarResult = await calendarResponse.json();
-        results.push({ service: 'calendar', success: calendarResponse.ok, ...calendarResult });
+        if (calendarError) throw calendarError;
+        results.push({ service: 'calendar', success: true, ...calendarResult });
+        console.log('Calendar sync completed successfully');
       } catch (error) {
+        console.error('Calendar sync failed:', error);
         results.push({ service: 'calendar', success: false, error: error.message });
       }
     }

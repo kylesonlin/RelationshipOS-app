@@ -20,90 +20,103 @@ import { useToast } from '@/hooks/use-toast';
 
 export const IntelligentSyncDashboard = () => {
   const { toast } = useToast();
-  const { isConnected, hasGmailAccess, hasCalendarAccess } = useGoogleIntegration();
   const { 
-    syncCalendarData, 
-    syncGmailData, 
+    isConnected, 
+    hasGmailAccess, 
+    hasCalendarAccess, 
+    isExpired,
+    loading: integrationLoading,
+    triggerSync,
+    lastSync
+  } = useGoogleIntegration();
+  const { 
     generateNewInsights, 
     insights, 
-    loading 
+    loading: insightsLoading 
   } = useRelationshipInsights();
   
   const [syncStatus, setSyncStatus] = useState({
-    calendar: { running: false, lastSync: null, count: 0 },
-    gmail: { running: false, lastSync: null, count: 0 },
+    fullSync: { running: false, lastSync: null, progress: 0 },
     insights: { running: false, lastGenerated: null, count: insights.length }
   });
 
-  const handleCalendarSync = async () => {
-    if (!hasCalendarAccess) {
+  const handleFullIntelligentSync = async () => {
+    if (!isConnected) {
       toast({
-        title: "Calendar not connected",
-        description: "Please connect your Google Calendar first",
+        title: "Google not connected",
+        description: "Please connect your Google account first",
         variant: "destructive"
       });
       return;
     }
 
-    setSyncStatus(prev => ({ ...prev, calendar: { ...prev.calendar, running: true } }));
-    
-    try {
-      const result = await syncCalendarData();
-      setSyncStatus(prev => ({
-        ...prev,
-        calendar: {
-          running: false,
-          lastSync: new Date().toISOString(),
-          count: result?.processed_events || 0
-        }
-      }));
-      
+    if (isExpired) {
       toast({
-        title: "Calendar synced successfully",
-        description: `Processed ${result?.processed_events || 0} calendar events`,
-      });
-    } catch (error) {
-      setSyncStatus(prev => ({ ...prev, calendar: { ...prev.calendar, running: false } }));
-      toast({
-        title: "Calendar sync failed",
-        description: "Please try again or check your connection",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleGmailSync = async () => {
-    if (!hasGmailAccess) {
-      toast({
-        title: "Gmail not connected",
-        description: "Please connect your Gmail account first",
+        title: "Google access expired",
+        description: "Please reconnect your Google account",
         variant: "destructive"
       });
       return;
     }
 
-    setSyncStatus(prev => ({ ...prev, gmail: { ...prev.gmail, running: true } }));
+    setSyncStatus(prev => ({ 
+      ...prev, 
+      fullSync: { ...prev.fullSync, running: true, progress: 0 } 
+    }));
     
     try {
-      const result = await syncGmailData();
+      // Step 1: Sync Google data (Gmail + Calendar)
+      setSyncStatus(prev => ({ 
+        ...prev, 
+        fullSync: { ...prev.fullSync, progress: 25 } 
+      }));
+      
+      const syncResult = await triggerSync();
+      
+      if (!syncResult.success) {
+        throw new Error(syncResult.error || 'Sync failed');
+      }
+
+      // Step 2: Generate AI insights from synced data
+      setSyncStatus(prev => ({ 
+        ...prev, 
+        fullSync: { ...prev.fullSync, progress: 75 } 
+      }));
+      
+      const insightResult = await generateNewInsights();
+      
       setSyncStatus(prev => ({
         ...prev,
-        gmail: {
+        fullSync: {
           running: false,
           lastSync: new Date().toISOString(),
-          count: result?.processed || 0
+          progress: 100
+        },
+        insights: {
+          running: false,
+          lastGenerated: new Date().toISOString(),
+          count: insightResult?.insights_generated || 0
         }
       }));
       
+      const emailCount = syncResult.data?.results?.find((r: any) => r.service === 'gmail')?.processed || 0;
+      const eventCount = syncResult.data?.results?.find((r: any) => r.service === 'calendar')?.processed || 0;
+      const insightCount = insightResult?.insights_generated || 0;
+      
       toast({
-        title: "Gmail synced successfully",
-        description: `Processed ${result?.processed || 0} email interactions`,
+        title: "Full Intelligence Sync Complete",
+        description: `Processed ${emailCount} emails, ${eventCount} events, and generated ${insightCount} insights`,
       });
-    } catch (error) {
-      setSyncStatus(prev => ({ ...prev, gmail: { ...prev.gmail, running: false } }));
+      
+    } catch (error: any) {
+      setSyncStatus(prev => ({ 
+        ...prev, 
+        fullSync: { ...prev.fullSync, running: false, progress: 0 } 
+      }));
+      
       toast({
-        title: "Gmail sync failed",
-        description: "Please try again or check your connection",
+        title: "Sync failed",
+        description: error.message || "Please try again or check your connection",
         variant: "destructive"
       });
     }
@@ -137,12 +150,6 @@ export const IntelligentSyncDashboard = () => {
     }
   };
 
-  const handleFullSync = async () => {
-    if (hasCalendarAccess) await handleCalendarSync();
-    if (hasGmailAccess) await handleGmailSync();
-    await handleGenerateInsights();
-  };
-
   return (
     <div className="space-y-6">
       {/* Status Overview */}
@@ -157,26 +164,42 @@ export const IntelligentSyncDashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Sync Progress Bar */}
+          {syncStatus.fullSync.running && (
+            <div className="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Intelligent Sync in Progress</span>
+                <span className="text-sm text-muted-foreground">{syncStatus.fullSync.progress}%</span>
+              </div>
+              <Progress value={syncStatus.fullSync.progress} className="h-2" />
+              <p className="text-xs text-muted-foreground mt-2">
+                {syncStatus.fullSync.progress < 25 ? "Initializing..." :
+                 syncStatus.fullSync.progress < 75 ? "Syncing Google data..." :
+                 "Generating AI insights..."}
+              </p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="text-center p-4 rounded-lg bg-muted/50">
               <Calendar className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-              <div className="font-semibold">Calendar Events</div>
+              <div className="font-semibold">Calendar Access</div>
               <div className="text-2xl font-bold text-blue-600">
-                {syncStatus.calendar.count}
+                {hasCalendarAccess ? <CheckCircle className="h-6 w-6 mx-auto" /> : <AlertCircle className="h-6 w-6 mx-auto text-muted-foreground" />}
               </div>
               <div className="text-xs text-muted-foreground">
-                {syncStatus.calendar.lastSync ? 'Recently synced' : 'Not synced yet'}
+                {hasCalendarAccess ? 'Connected' : 'Not connected'}
               </div>
             </div>
             
             <div className="text-center p-4 rounded-lg bg-muted/50">
               <Mail className="h-8 w-8 mx-auto mb-2 text-green-600" />
-              <div className="font-semibold">Email Interactions</div>
+              <div className="font-semibold">Gmail Access</div>
               <div className="text-2xl font-bold text-green-600">
-                {syncStatus.gmail.count}
+                {hasGmailAccess ? <CheckCircle className="h-6 w-6 mx-auto" /> : <AlertCircle className="h-6 w-6 mx-auto text-muted-foreground" />}
               </div>
               <div className="text-xs text-muted-foreground">
-                {syncStatus.gmail.lastSync ? 'Recently synced' : 'Not synced yet'}
+                {hasGmailAccess ? 'Connected' : 'Not connected'}
               </div>
             </div>
             
@@ -194,40 +217,29 @@ export const IntelligentSyncDashboard = () => {
 
           <div className="flex flex-wrap gap-3">
             <Button 
-              onClick={handleFullSync}
-              disabled={loading || !isConnected}
+              onClick={handleFullIntelligentSync}
+              disabled={syncStatus.fullSync.running || !isConnected || isExpired}
               className="bg-gradient-primary"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Full Intelligence Sync
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={handleCalendarSync}
-              disabled={syncStatus.calendar.running || !hasCalendarAccess}
-            >
-              <Calendar className={`h-4 w-4 mr-2 ${syncStatus.calendar.running ? 'animate-pulse' : ''}`} />
-              Sync Calendar
-            </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={handleGmailSync}
-              disabled={syncStatus.gmail.running || !hasGmailAccess}
-            >
-              <Mail className={`h-4 w-4 mr-2 ${syncStatus.gmail.running ? 'animate-pulse' : ''}`} />
-              Sync Gmail
+              <RefreshCw className={`h-4 w-4 mr-2 ${syncStatus.fullSync.running ? 'animate-spin' : ''}`} />
+              {syncStatus.fullSync.running ? 'Syncing...' : 'Full Intelligence Sync'}
             </Button>
             
             <Button 
               variant="outline"
               onClick={handleGenerateInsights}
-              disabled={syncStatus.insights.running}
+              disabled={syncStatus.insights.running || insightsLoading}
             >
-              <Brain className={`h-4 w-4 mr-2 ${syncStatus.insights.running ? 'animate-pulse' : ''}`} />
-              Generate Insights
+              <Brain className={`h-4 w-4 mr-2 ${(syncStatus.insights.running || insightsLoading) ? 'animate-pulse' : ''}`} />
+              Generate New Insights
             </Button>
+            
+            {lastSync && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground ml-auto">
+                <Clock className="h-4 w-4" />
+                Last sync: {new Date(lastSync).toLocaleDateString()}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
