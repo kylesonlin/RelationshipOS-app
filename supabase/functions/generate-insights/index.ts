@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -140,43 +141,41 @@ serve(async (req) => {
       }
     }
 
-    // 4. Simulated LinkedIn-style insights (teaser for Level 4 feature)
-    const simulatedInsights = [
-      {
-        user_id: user.id,
-        contact_id: null,
-        insight_type: 'linkedin_preview',
-        title: 'Sarah Chen visiting San Francisco',
-        description: 'Your contact from Acme Corp is in your area next week - perfect coffee opportunity',
-        priority: 'high',
-        action_data: {
-          contact_name: 'Sarah Chen',
-          company: 'Acme Corp',
-          location: 'San Francisco',
-          visit_dates: 'Next week',
-          unlock_level: 4
-        },
-        expires_at: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        user_id: user.id,
-        contact_id: null,
-        insight_type: 'linkedin_preview',
-        title: 'Michael Rodriguez promoted to VP',
-        description: 'Your connection just got promoted - great opportunity to congratulate and reconnect',
-        priority: 'medium',
-        action_data: {
-          contact_name: 'Michael Rodriguez',
-          new_title: 'VP of Engineering',
-          company: 'TechFlow Inc',
-          unlock_level: 4
-        },
-        expires_at: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ]
+    // 4. AI-Powered Relationship Health Insights
+    const { data: contactData } = await supabaseClient
+      .from('contacts')
+      .select(`
+        id, first_name, last_name, email, company,
+        email_interactions!inner(sent_at, direction, sentiment_score)
+      `)
+      .eq('userId', user.id)
+      .order('last_contact_date', { ascending: true })
+      .limit(10)
 
-    // Add simulated insights for demo purposes
-    insights.push(...simulatedInsights)
+    // Generate AI-powered insights for relationship health
+    const relationshipInsights = await generateRelationshipHealthInsights(contactData || [])
+    insights.push(...relationshipInsights.map(insight => ({
+      ...insight,
+      user_id: user.id,
+      expires_at: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    })))
+
+    // 5. Smart Opportunity Detection via AI
+    const { data: recentContacts } = await supabaseClient
+      .from('contacts')
+      .select(`
+        id, first_name, last_name, email, company, title,
+        contact_activities(activity_type, activity_date)
+      `)
+      .eq('userId', user.id)
+      .gte('updated_at', new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString())
+
+    const opportunityInsights = await generateOpportunityInsights(recentContacts || [])
+    insights.push(...opportunityInsights.map(insight => ({
+      ...insight,
+      user_id: user.id,
+      expires_at: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
+    })))
 
     // Clean up expired insights
     await supabaseClient
@@ -219,21 +218,127 @@ serve(async (req) => {
   }
 })
 
-// Helper function to get stale contacts (this would be a database function in production)
-async function getStaleContacts(supabaseClient: any, userId: string, daysThreshold: number) {
-  const cutoffDate = new Date(Date.now() - daysThreshold * 24 * 60 * 60 * 1000)
+// AI-powered relationship health analysis
+async function generateRelationshipHealthInsights(contacts: any[]): Promise<any[]> {
+  const insights = []
   
-  const { data } = await supabaseClient
-    .from('contacts')
-    .select(`
-      id, first_name, last_name, email,
-      contact_activities(activity_date)
-    `)
-    .eq('userId', userId)
-    .order('updated_at', { ascending: true })
+  for (const contact of contacts.slice(0, 5)) {
+    const interactions = contact.email_interactions || []
+    const sentimentAvg = interactions.reduce((sum: number, i: any) => sum + (i.sentiment_score || 0), 0) / interactions.length
+    const responseTime = calculateAverageResponseTime(interactions)
+    
+    // Declining sentiment detection
+    if (sentimentAvg < -0.2 && interactions.length > 2) {
+      insights.push({
+        contact_id: contact.id,
+        insight_type: 'relationship_health',
+        title: `Relationship cooling with ${contact.first_name} ${contact.last_name}`,
+        description: `Sentiment analysis shows declining engagement (${(sentimentAvg * 100).toFixed(0)}% negative trend). Consider a warm outreach.`,
+        priority: 'high',
+        action_data: {
+          contact_name: `${contact.first_name} ${contact.last_name}`,
+          sentiment_score: sentimentAvg,
+          suggested_action: 'Schedule a friendly check-in call',
+          talking_points: ['Ask about recent projects', 'Share relevant industry insights', 'Offer assistance']
+        }
+      })
+    }
+    
+    // Positive momentum detection
+    if (sentimentAvg > 0.3 && interactions.length > 1) {
+      insights.push({
+        contact_id: contact.id,
+        insight_type: 'positive_momentum',
+        title: `Strong momentum with ${contact.first_name} ${contact.last_name}`,
+        description: `Excellent engagement trend (${(sentimentAvg * 100).toFixed(0)}% positive). Perfect time for deeper collaboration.`,
+        priority: 'medium',
+        action_data: {
+          contact_name: `${contact.first_name} ${contact.last_name}`,
+          sentiment_score: sentimentAvg,
+          suggested_action: 'Propose strategic collaboration',
+          next_steps: ['Schedule strategy session', 'Explore partnership opportunities', 'Make strategic introductions']
+        }
+      })
+    }
+  }
   
-  return data?.filter((contact: any) => {
-    const lastActivity = contact.contact_activities?.[0]?.activity_date
-    return !lastActivity || new Date(lastActivity) < cutoffDate
-  }).slice(0, 5) || []
+  return insights
+}
+
+// Smart opportunity detection using AI patterns
+async function generateOpportunityInsights(contacts: any[]): Promise<any[]> {
+  const insights = []
+  
+  // Group contacts by company for introduction opportunities
+  const companyMap = new Map()
+  contacts.forEach(contact => {
+    if (contact.company) {
+      if (!companyMap.has(contact.company)) {
+        companyMap.set(contact.company, [])
+      }
+      companyMap.get(contact.company).push(contact)
+    }
+  })
+  
+  // Detect warm introduction opportunities
+  companyMap.forEach((companyContacts, company) => {
+    if (companyContacts.length >= 2) {
+      const contact1 = companyContacts[0]
+      const contact2 = companyContacts[1]
+      
+      insights.push({
+        contact_id: contact1.id,
+        insight_type: 'warm_introduction',
+        title: `Introduction opportunity at ${company}`,
+        description: `You know ${contact1.first_name} and ${contact2.first_name} at ${company}. Consider facilitating an introduction.`,
+        priority: 'medium',
+        action_data: {
+          primary_contact: `${contact1.first_name} ${contact1.last_name}`,
+          secondary_contact: `${contact2.first_name} ${contact2.last_name}`,
+          company: company,
+          introduction_value: 'Cross-department collaboration potential'
+        }
+      })
+    }
+  })
+  
+  // Detect industry expertise patterns
+  const titleKeywords = ['VP', 'Director', 'Head of', 'Chief', 'Manager']
+  const seniorContacts = contacts.filter(contact => 
+    titleKeywords.some(keyword => contact.title?.includes(keyword))
+  )
+  
+  if (seniorContacts.length > 0) {
+    const contact = seniorContacts[0]
+    insights.push({
+      contact_id: contact.id,
+      insight_type: 'expertise_network',
+      title: `Industry expertise: ${contact.first_name} ${contact.last_name}`,
+      description: `${contact.title} at ${contact.company} - valuable for strategic insights and industry intelligence.`,
+      priority: 'medium',
+      action_data: {
+        contact_name: `${contact.first_name} ${contact.last_name}`,
+        expertise_area: contact.title,
+        suggested_topics: ['Industry trends', 'Strategic insights', 'Market intelligence']
+      }
+    })
+  }
+  
+  return insights
+}
+
+// Calculate average response time for relationship health
+function calculateAverageResponseTime(interactions: any[]): number {
+  const responses = interactions
+    .filter((i: any) => i.direction === 'sent')
+    .map((i: any) => new Date(i.sent_at).getTime())
+  
+  if (responses.length < 2) return 0
+  
+  const intervals = []
+  for (let i = 1; i < responses.length; i++) {
+    intervals.push(responses[i] - responses[i-1])
+  }
+  
+  return intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length / (1000 * 60 * 60) // hours
 }

@@ -12,6 +12,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions"
 import { RelationshipHealthScore } from "@/components/gamification/RelationshipHealthScore"
 import { GoogleSyncCTA } from "@/components/onboarding/GoogleSyncCTA"
 import { ExecutiveCalendarWidget } from "@/components/dashboard/ExecutiveCalendarWidget"
+import { SmartInsightsWidget } from "@/components/ai/SmartInsightsWidget"
 import { useAuth } from "@/hooks/useAuth"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -199,9 +200,12 @@ const Dashboard = () => {
             <div className="lg:col-span-2">
               <ActionSuggestions />
             </div>
-            <div>
+            <div className="space-y-6">
               {hasIntelligenceData ? (
-                <ExecutiveCalendarWidget />
+                <>
+                  <ExecutiveCalendarWidget />
+                  <SmartInsightsWidget />
+                </>
               ) : (
                 <Card className="executive-card border-primary/30">
                   <CardHeader>

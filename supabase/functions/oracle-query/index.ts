@@ -240,13 +240,12 @@ Based on my relationship data and our conversation history, provide intelligent 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'gpt-5-2025-08-07',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
-        max_tokens: 1000
+        max_completion_tokens: 1000
       })
     })
 

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { EnhancedMeetingPrep } from "@/components/ai/EnhancedMeetingPrep"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -427,6 +428,16 @@ export default function MeetingPrep() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Enhanced AI Meeting Prep */}
+      <EnhancedMeetingPrep 
+        attendeeEmails={['sarah.johnson@example.com', 'michael.torres@techflow.com']}
+        meetingTitle="Quarterly Strategy Review"
+        meetingDate={new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()}
+        onPrepComplete={(prepData) => {
+          console.log('Meeting prep completed:', prepData);
+        }}
+      />
     </div>
   )
 }
