@@ -40,7 +40,16 @@ const AB_TESTS: Record<string, ABTest> = {
 
 export const ABTestProvider = ({ children }: ABTestProviderProps) => {
   const { user } = useAuth();
-  const analytics = useAnalyticsContext();
+  
+  // Safely get analytics context - don't crash if not available
+  let analytics;
+  try {
+    analytics = useAnalyticsContext();
+  } catch (error) {
+    console.warn('Analytics context not available:', error);
+    analytics = null;
+  }
+  
   const [assignments, setAssignments] = useState<Record<string, string>>({});
   const [hasTrackedExperiments, setHasTrackedExperiments] = useState(false);
 

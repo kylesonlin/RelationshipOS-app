@@ -44,8 +44,6 @@ export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
 
 export const useAnalyticsContext = () => {
   const context = useContext(AnalyticsContext);
-  if (!context) {
-    throw new Error('useAnalyticsContext must be used within an AnalyticsProvider');
-  }
+  // Return null instead of throwing to prevent crashes during initialization
   return context;
 };
