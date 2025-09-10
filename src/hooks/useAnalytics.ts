@@ -19,15 +19,18 @@ interface PageViewEvent {
 export const useAnalytics = () => {
   const { user, loading } = useAuth();
 
-  // Initialize analytics
+  // Initialize analytics with proper dependency management
   useEffect(() => {
     // Don't run analytics if auth is still loading
     if (loading) return;
     
-    // Initialize your analytics service here
-    // For example: Google Analytics, Mixpanel, Amplitude, etc.
+    // Prevent multiple initializations
+    let isInitialized = false;
     
-    if (typeof window !== 'undefined') {
+    const initializeAnalytics = () => {
+      if (isInitialized || typeof window === 'undefined') return;
+      isInitialized = true;
+      
       // Set user properties if logged in
       if (user) {
         identifyUser(user.id, {
@@ -35,8 +38,15 @@ export const useAnalytics = () => {
           created_at: user.created_at,
         });
       }
-    }
-  }, [user, loading]);
+    };
+
+    initializeAnalytics();
+    
+    // Cleanup
+    return () => {
+      isInitialized = false;
+    };
+  }, [user?.id, loading]); // Only re-run when user ID changes or loading completes
 
   const track = useCallback((event: string, properties?: Record<string, any>) => {
     const eventData: AnalyticsEvent = {

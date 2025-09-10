@@ -8,56 +8,78 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isInitialized = false;
+    let isMounted = true;
+    let authSubscription: any = null;
     
     const initializeAuth = async () => {
-      if (isInitialized) return;
-      isInitialized = true;
-      
       try {
+        // Get initial session
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (!isMounted) return;
         
         if (error) {
           console.error('Error getting session:', error);
         }
         
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        // Only update state if component is still mounted
+        if (isMounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    initializeAuth();
+    // Set up auth state listener
+    const setupAuthListener = () => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          if (!isMounted) return;
+          
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-
-        if (event === 'SIGNED_IN' && session?.provider_token) {
-          setTimeout(async () => {
-            try {
-              await supabase.functions.invoke('store-google-tokens', {
-                body: {
-                  provider_token: session.provider_token,
-                  provider_refresh_token: session.provider_refresh_token,
-                  user: session.user
-                }
-              });
-            } catch (error) {
-              console.error('Failed to store Google tokens:', error);
-            }
-          }, 0);
+          // Handle Google token storage only for sign-in events
+          if (event === 'SIGNED_IN' && session?.provider_token) {
+            setTimeout(async () => {
+              if (!isMounted) return;
+              try {
+                await supabase.functions.invoke('store-google-tokens', {
+                  body: {
+                    provider_token: session.provider_token,
+                    provider_refresh_token: session.provider_refresh_token,
+                    user: session.user
+                  }
+                });
+              } catch (error) {
+                console.error('Failed to store Google tokens:', error);
+              }
+            }, 0);
+          }
         }
-      }
-    );
+      );
+      return subscription;
+    };
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Initialize auth and set up listener
+    initializeAuth();
+    authSubscription = setupAuthListener();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+      }
+    };
+  }, []); // Empty dependency array to prevent re-initialization
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
