@@ -388,13 +388,15 @@ function AppContent() {
 
 function App() {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <AppContent />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <React.StrictMode>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </React.StrictMode>
   );
 }
 
