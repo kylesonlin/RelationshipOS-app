@@ -1249,6 +1249,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_dashboard_data: {
+        Args: { user_id_param: string }
+        Returns: Json
+      }
       get_security_dashboard: {
         Args: Record<PropertyKey, never>
         Returns: {

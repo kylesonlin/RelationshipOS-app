@@ -26,7 +26,7 @@ export const useDashboardData = () => {
     queryKey: ['dashboard-metrics'],
     queryFn: fetchDashboardMetrics,
     staleTime: 2 * 60 * 1000, // 2 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     refetchOnWindowFocus: false,
     initialData: {
       upcomingMeetings: 0,
@@ -62,17 +62,38 @@ async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
 
     console.log('Fetching dashboard metrics for user:', user.id)
 
-    // Single optimized query to get all data at once
-    const { data: dashboardData, error } = await supabase.rpc('get_dashboard_data', {
-      user_id_param: user.id
-    })
+    // Try optimized single query first
+    const { data: contacts, error: contactsError } = await supabase.from('contacts')
+      .select('id, created_at, updated_at')
+      .eq('userId', user.id)
 
-    if (error) {
-      console.warn('Dashboard RPC failed, falling back to individual queries:', error)
-      return await fallbackFetchMetrics(user.id)
-    }
+    const { data: tasks, error: tasksError } = await supabase.from('tasks')
+      .select('id, status')
+      .eq('userId', user.id)
 
-    return transformDashboardData(dashboardData)
+    // Get other data in parallel
+    const [gamificationResult, calendarResult, subscriberResult] = await Promise.allSettled([
+      supabase.from('user_gamification')
+        .select('relationship_health_score, weekly_goal_progress, weekly_goal_target')
+        .eq('user_id', user.id)
+        .maybeSingle(),
+      supabase.from('calendar_events')
+        .select('id')
+        .eq('user_id', user.id)
+        .gte('start_time', new Date().toISOString())
+        .lte('start_time', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString())
+        .limit(10),
+      supabase.from('subscribers')
+        .select('plan_id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+    ])
+
+    const gamificationData = gamificationResult.status === 'fulfilled' ? gamificationResult.value.data : null
+    const calendarEvents = calendarResult.status === 'fulfilled' ? calendarResult.value.data : []
+    const subscriber = subscriberResult.status === 'fulfilled' ? subscriberResult.value.data : null
+
+    return calculateMetrics(contacts || [], tasks || [], gamificationData, calendarEvents, subscriber)
 
   } catch (error: any) {
     console.error('Dashboard metrics error:', error)
