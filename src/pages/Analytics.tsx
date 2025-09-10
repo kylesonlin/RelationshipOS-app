@@ -28,7 +28,7 @@ export default function Analytics() {
   // Show UI immediately with loading states for individual metrics
   // Use fallback data to prevent blocking
 
-  const totalRelationships = analytics ? (
+  const totalRelationships = analytics?.relationshipHealth ? (
     analytics.relationshipHealth.strong + 
     analytics.relationshipHealth.warm + 
     analytics.relationshipHealth.cold + 
@@ -174,55 +174,79 @@ export default function Analytics() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                   <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-sm">Strong ({analytics?.relationshipHealth.strong || 0})</span>
+                    <span className="text-sm">Strong ({analytics?.relationshipHealth?.strong || 0})</span>
                   </div>
                     <span className="text-sm font-medium">
-                      {((analytics.relationshipHealth.strong / totalRelationships) * 100).toFixed(0)}%
+                      {analytics?.relationshipHealth && totalRelationships > 0 
+                        ? ((analytics.relationshipHealth.strong / totalRelationships) * 100).toFixed(0)
+                        : 0}%
                     </span>
                   </div>
-                  <Progress value={(analytics.relationshipHealth.strong / totalRelationships) * 100} className="h-2" />
+                  <Progress value={
+                    analytics?.relationshipHealth && totalRelationships > 0 
+                      ? (analytics.relationshipHealth.strong / totalRelationships) * 100 
+                      : 0
+                  } className="h-2" />
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm">Warm ({analytics.relationshipHealth.warm})</span>
+                      <span className="text-sm">Warm ({analytics?.relationshipHealth?.warm || 0})</span>
                     </div>
                     <span className="text-sm font-medium">
-                      {((analytics.relationshipHealth.warm / totalRelationships) * 100).toFixed(0)}%
+                      {analytics?.relationshipHealth && totalRelationships > 0 
+                        ? ((analytics.relationshipHealth.warm / totalRelationships) * 100).toFixed(0)
+                        : 0}%
                     </span>
                   </div>
-                  <Progress value={(analytics.relationshipHealth.warm / totalRelationships) * 100} className="h-2" />
+                  <Progress value={
+                    analytics?.relationshipHealth && totalRelationships > 0 
+                      ? (analytics.relationshipHealth.warm / totalRelationships) * 100 
+                      : 0
+                  } className="h-2" />
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                      <span className="text-sm">Cold ({analytics.relationshipHealth.cold})</span>
+                      <span className="text-sm">Cold ({analytics?.relationshipHealth?.cold || 0})</span>
                     </div>
                     <span className="text-sm font-medium">
-                      {((analytics.relationshipHealth.cold / totalRelationships) * 100).toFixed(0)}%
+                      {analytics?.relationshipHealth && totalRelationships > 0 
+                        ? ((analytics.relationshipHealth.cold / totalRelationships) * 100).toFixed(0)
+                        : 0}%
                     </span>
                   </div>
-                  <Progress value={(analytics.relationshipHealth.cold / totalRelationships) * 100} className="h-2" />
+                  <Progress value={
+                    analytics?.relationshipHealth && totalRelationships > 0 
+                      ? (analytics.relationshipHealth.cold / totalRelationships) * 100 
+                      : 0
+                  } className="h-2" />
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                      <span className="text-sm">Declining ({analytics.relationshipHealth.declining})</span>
+                      <span className="text-sm">Declining ({analytics?.relationshipHealth?.declining || 0})</span>
                     </div>
                     <span className="text-sm font-medium">
-                      {((analytics.relationshipHealth.declining / totalRelationships) * 100).toFixed(0)}%
+                      {analytics?.relationshipHealth && totalRelationships > 0 
+                        ? ((analytics.relationshipHealth.declining / totalRelationships) * 100).toFixed(0)
+                        : 0}%
                     </span>
                   </div>
-                  <Progress value={(analytics.relationshipHealth.declining / totalRelationships) * 100} className="h-2" />
+                  <Progress value={
+                    analytics?.relationshipHealth && totalRelationships > 0 
+                      ? (analytics.relationshipHealth.declining / totalRelationships) * 100 
+                      : 0
+                  } className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -235,7 +259,7 @@ export default function Analytics() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analytics.topContacts.map((contact, index) => (
+                  {analytics?.topContacts?.map((contact, index) => (
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="space-y-1">
                         <div className="font-medium">{contact.name}</div>
@@ -327,7 +351,7 @@ export default function Analytics() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {analytics.engagementTrends.map((month, index) => (
+                {analytics?.engagementTrends?.map((month, index) => (
                   <div key={index} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{month.month}</span>
