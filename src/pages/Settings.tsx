@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AISettings } from "@/components/settings/AISettings"
 import { SecurityDashboard } from "@/components/security/SecurityDashboard"
+import { ProfileForm } from "@/components/settings/ProfileForm"
 import { 
   Settings, 
   User, 
@@ -70,41 +71,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="profile">
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Settings</CardTitle>
-              <CardDescription>Manage your personal information and preferences</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Display Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter your display name"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Email</label>
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Bio</label>
-                  <textarea
-                    placeholder="Tell us about yourself"
-                    rows={3}
-                    className="w-full px-3 py-2 border border-input rounded-md bg-background resize-none"
-                  />
-                </div>
-              </div>
-              <Button>Save Changes</Button>
-            </CardContent>
-          </Card>
+          <ProfileForm />
         </TabsContent>
 
         <TabsContent value="notifications">

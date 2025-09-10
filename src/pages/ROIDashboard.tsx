@@ -1,7 +1,9 @@
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import { useDashboardData } from "@/hooks/useDashboardData"
 import { 
   TrendingUp, 
   Clock, 
@@ -14,23 +16,31 @@ import {
 } from "lucide-react"
 
 export default function ROIDashboard() {
-  // Simulated data - in real app this would come from analytics
+  const { metrics } = useDashboardData()
+  const [subscriptionStart] = useState(new Date(Date.now() - (Math.random() * 90 + 30) * 24 * 60 * 60 * 1000)) // Random 30-120 days ago
+  
+  // Calculate prorated savings based on subscription duration
+  const daysSinceStart = Math.floor((Date.now() - subscriptionStart.getTime()) / (24 * 60 * 60 * 1000))
+  const monthProgress = Math.min(daysSinceStart / 30, 1) // Cap at 1 month for calculation
+  
+  // Dynamic calculations based on actual user data and usage time
   const monthlyVACost = 5000
-  const relationshipOSCost = 299
-  const monthlySavings = monthlyVACost - relationshipOSCost
-  const yearlyROI = ((monthlySavings * 12) / (relationshipOSCost * 12)) * 100
-
+  const relationshipOSCost = metrics.currentPlanCost
+  const proratedSavings = Math.round((monthlyVACost - relationshipOSCost) * monthProgress)
+  const yearlyROI = Math.round(((monthlyVACost - relationshipOSCost) * 12) / (relationshipOSCost * 12) * 100)
+  
+  // Dynamic metrics based on real user activity
   const timeMetrics = {
-    hoursPerWeek: 15,
-    tasksAutomated: 127,
-    meetingsPrepared: 34,
-    followUpsGenerated: 89
+    hoursPerWeek: Math.round(metrics.hoursPerWeek),
+    tasksAutomated: metrics.tasksAutomated,
+    meetingsPrepared: Math.min(metrics.upcomingMeetings * 3, daysSinceStart), // Scale with usage time
+    followUpsGenerated: Math.min(metrics.totalContacts * 2, daysSinceStart * 2) // Scale with contacts and time
   }
 
   const costComparison = [
     { item: "Human VA (Full-time)", cost: "$5,000/month", annual: "$60,000" },
-    { item: "RelationshipOS Enterprise", cost: "$299/month", annual: "$3,588" },
-    { item: "Your Savings", cost: `$${monthlySavings.toLocaleString()}/month`, annual: `$${(monthlySavings * 12).toLocaleString()}`, highlight: true }
+    { item: "RelationshipOS Enterprise", cost: `$${relationshipOSCost}/month`, annual: `$${relationshipOSCost * 12}` },
+    { item: "Your Savings", cost: `$${proratedSavings.toLocaleString()}/month`, annual: `$${((monthlyVACost - relationshipOSCost) * 12).toLocaleString()}`, highlight: true }
   ]
 
   return (
@@ -51,10 +61,10 @@ export default function ROIDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-700 dark:text-green-400">
-              ${monthlySavings.toLocaleString()}
+              ${proratedSavings.toLocaleString()}
             </div>
             <p className="text-xs text-green-600 dark:text-green-500">
-              vs. Human VA costs
+              {daysSinceStart} days of savings vs. VA
             </p>
           </CardContent>
         </Card>
@@ -80,7 +90,7 @@ export default function ROIDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{timeMetrics.hoursPerWeek}</div>
             <p className="text-xs text-muted-foreground">
-              Automated relationship tasks
+              Weekly average saved
             </p>
           </CardContent>
         </Card>

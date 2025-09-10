@@ -31,15 +31,15 @@ import {
 // Command Center Navigation
 const commandItems = [
   { title: "Command Center", url: "/dashboard", icon: Command },
-  { title: "Relationship Intelligence", url: "/contacts", icon: Users },
-  { title: "Strategy Assistant", url: "/oracle", icon: Brain },
-  { title: "Performance Analytics", url: "/analytics", icon: TrendingUp },
+  { title: "Contacts & CRM", url: "/contacts", icon: Users },
+  { title: "AI Assistant", url: "/oracle", icon: Brain },
+  { title: "Reports & Analytics", url: "/analytics", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 // Intelligence Tools
 const intelligenceItems = [
-  { title: "Strategic Intelligence", url: "/strategic-intelligence", icon: Target },
+  { title: "Business Intelligence", url: "/strategic-intelligence", icon: Target },
   { title: "Integrations", url: "/integrations", icon: Puzzle },
   { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
   { title: "Follow-Up Automation", url: "/follow-up-automation", icon: Zap },
