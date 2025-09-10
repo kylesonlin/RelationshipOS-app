@@ -1257,6 +1257,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
+      get_dashboard_metrics_optimized: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
       get_security_dashboard: {
         Args: Record<PropertyKey, never>
         Returns: {
