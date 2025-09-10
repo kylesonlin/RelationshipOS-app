@@ -1,15 +1,15 @@
 import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
-import { OfflineNotification } from "./components/OfflineNotification";
-import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+// Temporarily commented out to isolate React issue
+// import { OfflineNotification } from "./components/OfflineNotification";
+// import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 // Critical pages - load immediately for better UX
 import Layout from "./components/layout";
@@ -373,14 +373,15 @@ const router = createBrowserRouter([
 ]);
 
 function AppContent() {
-  const isOnline = useOnlineStatus();
+  // Temporarily remove useOnlineStatus to isolate React issue
+  // const isOnline = useOnlineStatus();
   
   console.log('React object in AppContent:', React);
-  console.log('TooltipProvider:', TooltipProvider);
+  console.log('React version available:', React.version);
   
   return (
     <>
-      <OfflineNotification isOnline={isOnline} />
+      {/* <OfflineNotification isOnline={isOnline} /> */}
       <RouterProvider router={router} />
       <Toaster />
       <Sonner />
