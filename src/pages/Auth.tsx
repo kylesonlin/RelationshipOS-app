@@ -189,24 +189,9 @@ const Auth = () => {
                 {/* Demo mode - de-emphasized */}
                 <Button
                   onClick={() => {
-                    // Create a mock session for development
-                    const mockUser = {
-                      id: 'demo-user-123',
-                      email: 'demo@example.com',
-                      user_metadata: {
-                        name: 'Demo User',
-                        avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-                      }
-                    };
-                    
-                    // Store mock user in localStorage for useAuth hook
-                    localStorage.setItem('supabase.auth.token', JSON.stringify({
-                      user: mockUser,
-                      access_token: 'demo-token',
-                      expires_at: Date.now() + 3600000 // 1 hour from now
-                    }));
-                    
-                    navigate('/dashboard');
+                    // Store demo user flag for useAuth hook
+                    localStorage.setItem('demo-user', 'true');
+                    navigate('/');
                   }}
                   variant="outline"
                   className="w-full h-10 text-sm text-muted-foreground border-muted-foreground/30 hover:bg-muted/50"

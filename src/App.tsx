@@ -150,13 +150,7 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <Dashboard />
-            </Layout>
-          </ProtectedRoute>
-        ),
+        element: <Index />, // Use same component as index
         errorElement: <ErrorPage />,
       },
       {
