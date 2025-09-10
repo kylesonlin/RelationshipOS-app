@@ -43,6 +43,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Support = lazy(() => import("./pages/Support"));
 const StrategicIntelligence = lazy(() => import("./pages/StrategicIntelligence"));
+const IconExtractor = lazy(() => import("./pages/IconExtractor"));
 
 // Optimized React Query config
 const queryClient = new QueryClient({
@@ -367,6 +368,15 @@ const router = createBrowserRouter([
               </LazyWrapper>
             </Layout>
           </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "icon-extractor",
+        element: (
+          <LazyWrapper>
+            <IconExtractor />
+          </LazyWrapper>
         ),
         errorElement: <ErrorPage />,
       },
