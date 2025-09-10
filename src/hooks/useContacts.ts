@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { handleError, handleSuccess } from '@/utils/errorHandling'
+import { useGamificationActions } from '@/hooks/useGamificationActions'
 
 export interface Contact {
   id: string
@@ -20,6 +21,7 @@ export interface Contact {
 export const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
+  const { contactAdded } = useGamificationActions()
 
   useEffect(() => {
     // Set empty array immediately for instant UI rendering
@@ -68,11 +70,15 @@ export const useContacts = () => {
       setContacts(prev => [data, ...prev])
       handleSuccess('Contact added successfully');
 
+      // Trigger gamification update for adding a contact
+      await contactAdded()
+
       return data
     } catch (error: any) {
       handleError(error, 'Contact Add');
     }
   }
+
 
   const updateContact = async (id: string, updates: Partial<Contact>) => {
     try {
