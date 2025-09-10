@@ -19,6 +19,12 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
+    // For dashboard route, automatically enable demo mode instead of redirecting to auth
+    if (window.location.pathname === '/dashboard') {
+      localStorage.setItem('demo-user', 'true');
+      window.location.reload();
+      return null;
+    }
     return <Navigate to="/auth" replace />;
   }
 
