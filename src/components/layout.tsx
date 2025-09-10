@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Bell, Search, LogOut } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { PerformanceMonitor } from "@/components/PerformanceMonitor"
 import { useAuth } from "@/hooks/useAuth"
 import {
   DropdownMenu,
@@ -69,6 +70,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
       </div>
+      <PerformanceMonitor 
+        showDetails={process.env.NODE_ENV === 'development'} 
+        compact={false} 
+      />
     </SidebarProvider>
   )
 }
