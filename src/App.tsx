@@ -9,18 +9,21 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
+import { 
+  LazyROIDashboard, 
+  LazyOracle, 
+  LazyContacts, 
+  LazyTimeTracking, 
+  LazyMeetingPrep, 
+  LazyAnalytics, 
+  LazyFollowUpAutomation, 
+  LazyIntegrations, 
+  LazyTeamSharing, 
+  LazySettings, 
+  LazyGamificationDashboard,
+  LazyPageWrapper 
+} from "./components/LazyComponents";
 import Dashboard from "./pages/Dashboard";
-import ROIDashboard from "./pages/ROIDashboard";
-import Oracle from "./pages/Oracle";
-import Contacts from "./pages/Contacts";
-import TimeTracking from "./pages/TimeTracking";
-import MeetingPrep from "./pages/MeetingPrep";
-import Analytics from "./pages/Analytics";
-import FollowUpAutomation from "./pages/FollowUpAutomation";
-import Integrations from "./pages/Integrations";
-import TeamSharing from "./pages/TeamSharing";
-import Settings from "./pages/Settings";
-import GamificationDashboard from "./pages/GamificationDashboard";
 import Auth from "./pages/Auth";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import Index from "./pages/Index";
@@ -135,7 +138,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Oracle />
+              <LazyPageWrapper>
+                <LazyOracle />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -146,7 +151,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <GamificationDashboard />
+              <LazyPageWrapper>
+                <LazyGamificationDashboard />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -157,7 +164,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Contacts />
+              <LazyPageWrapper>
+                <LazyContacts />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -168,7 +177,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <TimeTracking />
+              <LazyPageWrapper>
+                <LazyTimeTracking />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -179,7 +190,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <MeetingPrep />
+              <LazyPageWrapper>
+                <LazyMeetingPrep />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -190,7 +203,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Analytics />
+              <LazyPageWrapper>
+                <LazyAnalytics />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -201,7 +216,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <ROIDashboard />
+              <LazyPageWrapper>
+                <LazyROIDashboard />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -212,7 +229,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <GamificationDashboard />
+              <LazyPageWrapper>
+                <LazyGamificationDashboard />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -223,7 +242,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <FollowUpAutomation />
+              <LazyPageWrapper>
+                <LazyFollowUpAutomation />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -234,7 +255,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <TeamSharing />
+              <LazyPageWrapper>
+                <LazyTeamSharing />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -256,7 +279,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <FollowUpAutomation />
+              <LazyPageWrapper>
+                <LazyFollowUpAutomation />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -267,7 +292,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Integrations />
+              <LazyPageWrapper>
+                <LazyIntegrations />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -278,7 +305,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <TeamSharing />
+              <LazyPageWrapper>
+                <LazyTeamSharing />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
@@ -303,7 +332,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Layout>
-              <Settings />
+              <LazyPageWrapper>
+                <LazySettings />
+              </LazyPageWrapper>
             </Layout>
           </ProtectedRoute>
         ),
