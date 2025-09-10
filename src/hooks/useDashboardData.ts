@@ -25,9 +25,16 @@ export const useDashboardData = () => {
   const { data: metrics, isLoading: loading, refetch } = useQuery({
     queryKey: ['dashboard-metrics'],
     queryFn: fetchDashboardMetrics,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    staleTime: 5 * 60 * 1000, // 5 minutes - more aggressive caching
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    // Enable background updates for smoother UX
+    refetchInterval: 10 * 60 * 1000, // Background refresh every 10 minutes
+    // Return cached data immediately, update in background
+    networkMode: 'online',
     initialData: {
       upcomingMeetings: 0,
       staleContacts: 0,
@@ -62,38 +69,38 @@ async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
 
     console.log('Fetching dashboard metrics for user:', user.id)
 
-    // Try optimized single query first
-    const { data: contacts, error: contactsError } = await supabase.from('contacts')
-      .select('id, created_at, updated_at')
-      .eq('userId', user.id)
+    // Use the optimized database function for ultra-fast queries
+    const { data: metricsData, error } = await supabase.rpc('get_dashboard_metrics', {
+      p_user_id: user.id
+    })
 
-    const { data: tasks, error: tasksError } = await supabase.from('tasks')
-      .select('id, status')
-      .eq('userId', user.id)
+    if (error) {
+      console.error('RPC error, falling back to manual queries:', error)
+      return await fallbackFetchMetrics(user.id)
+    }
 
-    // Get other data in parallel
-    const [gamificationResult, calendarResult, subscriberResult] = await Promise.allSettled([
-      supabase.from('user_gamification')
-        .select('relationship_health_score, weekly_goal_progress, weekly_goal_target')
-        .eq('user_id', user.id)
-        .maybeSingle(),
-      supabase.from('calendar_events')
-        .select('id')
-        .eq('user_id', user.id)
-        .gte('start_time', new Date().toISOString())
-        .lte('start_time', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString())
-        .limit(10),
-      supabase.from('subscribers')
-        .select('plan_id')
-        .eq('user_id', user.id)
-        .maybeSingle()
-    ])
+    if (metricsData && typeof metricsData === 'object') {
+      const data = metricsData as any;
+      return {
+        upcomingMeetings: data.upcomingMeetings || 0,
+        staleContacts: data.staleContacts || 0,
+        totalContacts: data.totalContacts || 0,
+        relationshipHealth: data.relationshipHealth || 0,
+        weeklyGoalProgress: data.weeklyGoalProgress || 0,
+        totalTasks: (data.completedTasks || 0) + (data.pendingTasks || 0),
+        completedTasks: data.completedTasks || 0,
+        activeTasks: data.pendingTasks || 0,
+        monthlySavings: data.monthlySavings || 4701,
+        tasksAutomated: data.tasksAutomated || 15,
+        hoursPerWeek: data.hoursPerWeek || 5,
+        annualROI: data.annualROI || 1574,
+        currentPlanCost: data.currentPlanCost || 99,
+        vaCost: data.vaCost || 5000
+      }
+    }
 
-    const gamificationData = gamificationResult.status === 'fulfilled' ? gamificationResult.value.data : null
-    const calendarEvents = calendarResult.status === 'fulfilled' ? calendarResult.value.data : []
-    const subscriber = subscriberResult.status === 'fulfilled' ? subscriberResult.value.data : null
-
-    return calculateMetrics(contacts || [], tasks || [], gamificationData, calendarEvents, subscriber)
+    // Fallback to manual queries if RPC fails
+    return await fallbackFetchMetrics(user.id)
 
   } catch (error: any) {
     console.error('Dashboard metrics error:', error)
