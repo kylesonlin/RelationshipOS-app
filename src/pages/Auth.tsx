@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Mail, Calendar, Users, TrendingUp } from "lucide-react";
+import { Loader2, Mail, Calendar, Users, TrendingUp, Command } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
@@ -123,8 +123,8 @@ const Auth = () => {
         <div className="flex justify-center lg:justify-end order-1 lg:order-2">
           <Card className="w-full max-w-md shadow-elegant">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">ROS</span>
+              <div className="mx-auto w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center border shadow-elegant">
+                <Command className="h-8 w-8 text-white" />
               </div>
               <div>
                 <CardTitle className="text-2xl">Welcome to RelationshipOS</CardTitle>
