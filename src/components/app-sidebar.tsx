@@ -9,7 +9,8 @@ import {
   Trophy,
   Shield,
   Calendar,
-  Clock
+  Clock,
+  Target
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { ProfileNavigationCard } from "@/components/ProfileNavigationCard"
@@ -27,17 +28,18 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-// Executive AI Command Center Navigation
+// Executive Command Center Navigation
 const commandItems = [
-  { title: "AI Command Center", url: "/", icon: Command },
+  { title: "Executive Command Center", url: "/", icon: Command },
   { title: "Relationship Intelligence", url: "/contacts", icon: Users },
-  { title: "AI Strategy Assistant", url: "/oracle", icon: Brain },
+  { title: "Strategy Assistant", url: "/oracle", icon: Brain },
   { title: "Executive Intelligence", url: "/analytics", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 // Intelligence Tools
 const intelligenceItems = [
+  { title: "Strategic Intelligence", url: "/strategic-intelligence", icon: Target },
   { title: "Data Intelligence Hub", url: "/integrations", icon: Puzzle },
   { title: "Meeting Intelligence", url: "/meeting-prep", icon: Calendar },
   { title: "Automation Engine", url: "/follow-up-automation", icon: Zap },

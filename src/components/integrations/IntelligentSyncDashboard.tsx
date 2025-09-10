@@ -157,7 +157,7 @@ export const IntelligentSyncDashboard = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
-            AI-Powered Data Intelligence
+            Intelligent Data Processing
           </CardTitle>
           <CardDescription>
             Real-time sync and analysis of your Google Calendar and Gmail data

@@ -16,9 +16,6 @@ import { GoogleSyncCTA } from "@/components/onboarding/GoogleSyncCTA"
 const ExecutiveCalendarWidget = lazy(() => 
   import("@/components/dashboard/ExecutiveCalendarWidget").then(m => ({ default: m.ExecutiveCalendarWidget }))
 )
-const SmartInsightsWidget = lazy(() => 
-  import("@/components/ai/SmartInsightsWidget").then(m => ({ default: m.SmartInsightsWidget }))
-)
 import { useAuth } from "@/hooks/useAuth"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -111,7 +108,7 @@ const Dashboard = () => {
           </div>
           <div className="text-left">
             <h1 className="executive-title text-4xl md:text-5xl">
-              AI Command Center
+              Executive Command Center
             </h1>
             <p className="executive-subtitle mt-2">
               {greeting}, {userState.userName}
@@ -226,27 +223,33 @@ const Dashboard = () => {
                   <Suspense fallback={<ComponentLoader />}>
                     <ExecutiveCalendarWidget />
                   </Suspense>
-                  <OnboardingProgressGate
-                    requiredLevel={2}
-                    featureName="AI Insights"
-                    featureDescription="Get intelligent recommendations based on your relationship data"
-                    unlockActions={[
-                      "Add 5 more contacts (+50 XP)",
-                      "Complete 2 meetings (+40 XP)", 
-                      "Send 3 follow-up emails (+30 XP)"
-                    ]}
-                  >
-                    <Suspense fallback={<ComponentLoader />}>
-                      <SmartInsightsWidget />
-                    </Suspense>
-                  </OnboardingProgressGate>
+                  <Card className="executive-card border-primary/30">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-lg">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        Strategic Intelligence
+                      </CardTitle>
+                      <CardDescription>
+                        Executive insights and strategic recommendations
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button 
+                        onClick={() => navigate('/strategic-intelligence')}
+                        className="w-full executive-button"
+                      >
+                        <Target className="h-4 w-4 mr-2" />
+                        View Strategic Intelligence
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </>
               ) : (
                 <Card className="executive-card border-primary/30">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Brain className="h-5 w-5 text-primary" />
-                      AI Strategy Assistant
+                      Strategy Assistant
                     </CardTitle>
                     <CardDescription>
                       Executive decision support and strategic insights

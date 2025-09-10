@@ -42,6 +42,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Support = lazy(() => import("./pages/Support"));
+const StrategicIntelligence = lazy(() => import("./pages/StrategicIntelligence"));
 
 // Optimized React Query config
 const queryClient = new QueryClient({
@@ -348,6 +349,19 @@ const router = createBrowserRouter([
             <Layout>
               <LazyWrapper>
                 <Support />
+              </LazyWrapper>
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "strategic-intelligence",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <LazyWrapper>
+                <StrategicIntelligence />
               </LazyWrapper>
             </Layout>
           </ProtectedRoute>

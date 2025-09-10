@@ -314,8 +314,8 @@ const Oracle = () => {
       {/* Usage Meter */}
       <UsageMeter 
         resourceType="oracle_queries" 
-        title="AI Oracle Usage" 
-        description="Monthly AI-powered relationship insights"
+        title="Strategy Assistant Usage" 
+        description="Monthly intelligent relationship insights"
       />
       
       {/* Header with AI Mode Indicator */}
@@ -381,8 +381,8 @@ const Oracle = () => {
       {/* Search Interface */}
       <ProtectedFeature 
         feature="ai_oracle" 
-        upgradeTitle="AI Oracle Insights"
-        upgradeDescription="Get AI-powered insights about your relationships and networking strategy"
+        upgradeTitle="Strategy Assistant"
+        upgradeDescription="Get intelligent insights about your relationships and networking strategy"
       >
         <Card className="shadow-medium border-primary/20">
           <CardContent className="p-6">
@@ -390,7 +390,7 @@ const Oracle = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                 <Input
-                  placeholder="Ask the Oracle: 'Who should I prioritize this week?' or 'What's the context for my next meeting?'"
+                  placeholder="Ask the Strategy Assistant: 'Who should I prioritize this week?' or 'What's the context for my next meeting?'"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}

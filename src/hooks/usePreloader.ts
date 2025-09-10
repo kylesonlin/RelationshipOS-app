@@ -8,6 +8,8 @@ export const usePreloader = () => {
           return import('@/pages/Dashboard');
         case '/analytics':
           return import('@/pages/Analytics');
+        case '/strategic-intelligence':
+          return import('@/pages/StrategicIntelligence');
         case '/settings':
           return import('@/pages/Settings');
         case '/integrations':
