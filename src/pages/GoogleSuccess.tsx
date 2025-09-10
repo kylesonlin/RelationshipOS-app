@@ -52,33 +52,19 @@ const GoogleSuccess = () => {
           providerRefreshToken: !!session.provider_refresh_token
         });
 
-        // Store Google tokens if available
+        // Store Google tokens in background (non-blocking)
         if (session.provider_token && session.provider_refresh_token) {
-          console.log('Storing Google tokens...');
-          try {
-            const { data: tokenResult, error: tokenError } = await supabase.functions.invoke('store-google-tokens', {
-              body: {
-                provider_token: session.provider_token,
-                provider_refresh_token: session.provider_refresh_token,
-                user: session.user
-              }
-            });
-
-            if (tokenError) {
-              console.error('Error storing Google tokens:', tokenError);
-              toast({
-                title: "Warning",
-                description: "Authentication successful, but Google integration may have issues.",
-                variant: "destructive",
-              });
-            } else {
-              console.log('Google tokens stored successfully:', tokenResult);
+          console.log('Storing Google tokens in background...');
+          // Fire and forget - don't block user navigation
+          supabase.functions.invoke('store-google-tokens', {
+            body: {
+              provider_token: session.provider_token,
+              provider_refresh_token: session.provider_refresh_token,
+              user: session.user
             }
-          } catch (tokenStoreError) {
-            console.error('Failed to store Google tokens:', tokenStoreError);
-          }
-        } else {
-          console.warn('No provider tokens found in session');
+          }).catch(error => {
+            console.error('Background token storage failed:', error);
+          });
         }
 
         toast({
@@ -86,11 +72,9 @@ const GoogleSuccess = () => {
           description: "Your Google account has been connected successfully.",
         });
 
-        // Short delay before redirect to ensure everything is processed
-        setTimeout(() => {
-          console.log('Redirecting to dashboard...');
-          navigate("/");
-        }, 1000);
+        // Immediate redirect for faster UX
+        console.log('Redirecting to dashboard...');
+        navigate("/dashboard");
 
       } catch (error) {
         console.error('Error handling Google auth:', error);
