@@ -70,6 +70,8 @@ export const useDashboardData = () => {
         return
       }
 
+      console.log('Fetching dashboard metrics for user:', user.id)
+
       // Use advanced caching to prevent duplicate requests
       const [
         contactsResult,
