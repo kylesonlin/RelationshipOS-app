@@ -19,6 +19,8 @@ interface SubscriptionStatus {
   trial_end: string | null;
   subscription_start: string | null;
   subscription_end: string | null;
+  stripe_customer_id?: string;
+  trial_used?: boolean;
 }
 
 interface UsageData {

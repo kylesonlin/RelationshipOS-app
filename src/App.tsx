@@ -116,6 +116,17 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
+        path: "billing-dashboard",
+        element: (
+          <ProtectedRoute>
+            <Layout>
+              <BillingDashboard />
+            </Layout>
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
         index: true,
         element: <Index />,
         errorElement: <ErrorPage />,
@@ -236,17 +247,6 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Layout>
               <TeamSharing />
-            </Layout>
-          </ProtectedRoute>
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "billing-dashboard", 
-        element: (
-          <ProtectedRoute>
-            <Layout>
-              <BillingDashboard />
             </Layout>
           </ProtectedRoute>
         ),

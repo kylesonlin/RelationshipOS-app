@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { useSubscription } from "@/hooks/useSubscription"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { useGoogleIntegration } from "@/hooks/useGoogleIntegration"
+import { SubscriptionBanner } from "@/components/SubscriptionBanner"
 import { useNavigate } from "react-router-dom"
 import { 
   Search, 
@@ -84,6 +85,9 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-7xl mx-auto">
+      {/* Subscription Banner */}
+      <SubscriptionBanner />
+      
       {/* Executive AI Command Center Hero */}
       <div className="text-center space-y-6 py-8">
         <div className="flex items-center justify-center gap-4 mb-4">
