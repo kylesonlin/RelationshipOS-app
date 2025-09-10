@@ -14,12 +14,10 @@ const GoogleSuccess = () => {
   useEffect(() => {
     const handleAuthSuccess = async () => {
       try {
-        console.log('GoogleSuccess page loaded, checking session...');
+        
         
         // Get the current session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        console.log('Session check result:', { session: !!session, error: sessionError });
         
         if (sessionError) {
           console.error('Session error:', sessionError);
@@ -33,7 +31,6 @@ const GoogleSuccess = () => {
         }
 
         if (!session) {
-          console.error('No valid session found after Google auth');
           toast({
             title: "Authentication Error", 
             description: "No valid session found. Please try signing in again.",
@@ -43,18 +40,9 @@ const GoogleSuccess = () => {
           return;
         }
 
-        console.log('Google auth successful! User:', session.user.email);
-        console.log('Session details:', {
-          userId: session.user.id,
-          email: session.user.email,
-          provider: session.user.app_metadata?.provider,
-          providerToken: !!session.provider_token,
-          providerRefreshToken: !!session.provider_refresh_token
-        });
-
+        
         // Store Google tokens in background (non-blocking)
         if (session.provider_token && session.provider_refresh_token) {
-          console.log('Storing Google tokens in background...');
           // Fire and forget - don't block user navigation
           supabase.functions.invoke('store-google-tokens', {
             body: {
@@ -71,9 +59,8 @@ const GoogleSuccess = () => {
           title: "Welcome to RelationshipOS! 🎉",
           description: "Your Google account has been connected successfully.",
         });
-
+        
         // Immediate redirect for faster UX
-        console.log('Redirecting to dashboard...');
         navigate("/dashboard");
 
       } catch (error) {

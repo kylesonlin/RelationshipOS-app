@@ -11,7 +11,7 @@ export const GoogleIntegrationStatus = () => {
     hasCalendarAccess, 
     loading, 
     error,
-    checkGoogleIntegrationStatus 
+    checkConnectionStatus 
   } = useGoogleIntegration();
 
   if (loading) {
@@ -81,7 +81,7 @@ export const GoogleIntegrationStatus = () => {
         )}
         
         <Button 
-          onClick={checkGoogleIntegrationStatus}
+          onClick={checkConnectionStatus}
           variant="outline" 
           className="w-full"
           disabled={loading}

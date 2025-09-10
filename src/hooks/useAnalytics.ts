@@ -51,7 +51,6 @@ export const useAnalytics = () => {
     };
 
     // Send to your analytics service
-    console.log('Analytics Event:', eventData);
     
     // Example implementations:
     
@@ -88,7 +87,7 @@ export const useAnalytics = () => {
       timestamp: new Date().toISOString(),
     };
 
-    console.log('Page View:', pageData);
+    
 
     // Google Analytics
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -108,7 +107,7 @@ export const useAnalytics = () => {
   }, [user, track]);
 
   const identifyUser = useCallback((userId: string, traits: Record<string, any>) => {
-    console.log('Identify User:', userId, traits);
+    
 
     // Mixpanel
     if (typeof window !== 'undefined' && (window as any).mixpanel) {

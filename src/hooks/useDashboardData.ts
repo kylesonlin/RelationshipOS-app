@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
-import { useToast } from '@/hooks/use-toast'
+import { handleError } from '@/utils/errorHandling'
 
 export interface DashboardMetrics {
   upcomingMeetings: number
@@ -37,7 +37,6 @@ export const useDashboardData = () => {
     vaCost: 5000
   })
   const [loading, setLoading] = useState(true)
-  const { toast } = useToast()
 
   useEffect(() => {
     // Set immediate fallback data for instant UI rendering
@@ -161,13 +160,8 @@ export const useDashboardData = () => {
         vaCost
       })
 
-    } catch (error) {
-      console.error('Error fetching dashboard metrics:', error)
-      toast({
-        title: "Error",
-        description: "Failed to load dashboard metrics",
-        variant: "destructive"
-      })
+    } catch (error: any) {
+      handleError(error, 'Dashboard Metrics');
     } finally {
       setLoading(false)
     }

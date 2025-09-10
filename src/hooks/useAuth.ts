@@ -8,15 +8,13 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let initialized = false;
+    let isInitialized = false;
     
-    // Check for existing session FIRST to ensure immediate auth state
     const initializeAuth = async () => {
-      if (initialized) return;
-      initialized = true;
+      if (isInitialized) return;
+      isInitialized = true;
       
       try {
-        console.log('Initializing auth...');
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -34,20 +32,15 @@ export const useAuth = () => {
 
     initializeAuth();
 
-    // Set up auth state listener for future changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        // Skip if this is the initial session we already handled
         if (event === 'INITIAL_SESSION') return;
         
-        console.log('Auth state changed:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
 
-        // Handle Google OAuth callback and store tokens - only once per sign-in
-        if (event === 'SIGNED_IN' && session?.provider_token && !session.user.last_sign_in_at) {
-          console.log('Google sign-in detected, storing tokens...');
+        if (event === 'SIGNED_IN' && session?.provider_token) {
           setTimeout(async () => {
             try {
               await supabase.functions.invoke('store-google-tokens', {
@@ -66,7 +59,7 @@ export const useAuth = () => {
     );
 
     return () => subscription.unsubscribe();
-  }, []); // Empty dependency array to prevent re-initialization
+  }, []);
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();

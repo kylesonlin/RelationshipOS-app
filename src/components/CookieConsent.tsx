@@ -71,7 +71,6 @@ const CookieConsent = () => {
 
   const initializeAnalytics = () => {
     // Initialize your analytics here (Google Analytics, etc.)
-    console.log('Analytics initialized');
   };
 
   if (!showBanner) return null;

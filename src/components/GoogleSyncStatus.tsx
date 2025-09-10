@@ -3,15 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle, RefreshCw, Calendar, Mail, CheckCircle, Clock } from 'lucide-react';
-import { useGoogleSync } from '@/hooks/useGoogleSync';
 import { useGoogleIntegration } from '@/hooks/useGoogleIntegration';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const GoogleSyncStatus = () => {
   const [isSyncing, setIsSyncing] = useState(false);
-  const { triggerSync, isConnected, isExpired, hasGmailScope, hasCalendarScope, lastSync } = useGoogleSync();
-  const googleIntegration = useGoogleIntegration();
+  const { triggerSync, isConnected, isExpired, hasGmailAccess, hasCalendarAccess, lastSync } = useGoogleIntegration();
   const { toast } = useToast();
 
   const handleSync = async () => {
@@ -114,13 +112,13 @@ export const GoogleSyncStatus = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
-          {hasGmailScope && (
+          {hasGmailAccess && (
             <Badge variant="outline" className="flex items-center gap-1">
               <Mail className="h-3 w-3" />
               Gmail Connected
             </Badge>
           )}
-          {hasCalendarScope && (
+          {hasCalendarAccess && (
             <Badge variant="outline" className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Calendar Connected
@@ -150,7 +148,7 @@ export const GoogleSyncStatus = () => {
           </Button>
         </div>
 
-        {!hasGmailScope && !hasCalendarScope && (
+        {!hasGmailAccess && !hasCalendarAccess && (
           <div className="text-sm text-orange-600 bg-orange-50 p-3 rounded">
             No Gmail or Calendar permissions detected. Click "Reconnect" to grant access.
           </div>

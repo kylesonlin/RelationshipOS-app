@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
-import { useToast } from '@/hooks/use-toast'
+import { handleError, handleSuccess } from '@/utils/errorHandling'
 
 export interface Contact {
   id: string
@@ -20,7 +20,6 @@ export interface Contact {
 export const useContacts = () => {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
-  const { toast } = useToast()
 
   useEffect(() => {
     // Set empty array immediately for instant UI rendering
@@ -43,13 +42,8 @@ export const useContacts = () => {
 
       if (error) throw error
       setContacts(data || [])
-    } catch (error) {
-      console.error('Error fetching contacts:', error)
-      toast({
-        title: "Error",
-        description: "Failed to load contacts",
-        variant: "destructive"
-      })
+    } catch (error: any) {
+      handleError(error, 'Contact Fetch');
     } finally {
       setLoading(false)
     }
@@ -72,19 +66,11 @@ export const useContacts = () => {
       if (error) throw error
 
       setContacts(prev => [data, ...prev])
-      toast({
-        title: "Success",
-        description: "Contact added successfully"
-      })
+      handleSuccess('Contact added successfully');
 
       return data
-    } catch (error) {
-      console.error('Error adding contact:', error)
-      toast({
-        title: "Error",
-        description: "Failed to add contact",
-        variant: "destructive"
-      })
+    } catch (error: any) {
+      handleError(error, 'Contact Add');
     }
   }
 
@@ -103,19 +89,11 @@ export const useContacts = () => {
         contact.id === id ? { ...contact, ...data } : contact
       ))
 
-      toast({
-        title: "Success",
-        description: "Contact updated successfully"
-      })
+      handleSuccess('Contact updated successfully');
 
       return data
-    } catch (error) {
-      console.error('Error updating contact:', error)
-      toast({
-        title: "Error",
-        description: "Failed to update contact",
-        variant: "destructive"
-      })
+    } catch (error: any) {
+      handleError(error, 'Contact Update');
     }
   }
 
@@ -129,17 +107,9 @@ export const useContacts = () => {
       if (error) throw error
 
       setContacts(prev => prev.filter(contact => contact.id !== id))
-      toast({
-        title: "Success",
-        description: "Contact deleted successfully"
-      })
-    } catch (error) {
-      console.error('Error deleting contact:', error)
-      toast({
-        title: "Error",
-        description: "Failed to delete contact",
-        variant: "destructive"
-      })
+      handleSuccess('Contact deleted successfully');
+    } catch (error: any) {
+      handleError(error, 'Contact Delete');
     }
   }
 
