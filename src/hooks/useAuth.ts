@@ -24,10 +24,21 @@ export const useAuth = () => {
           logger.error('Error getting session:', error);
         }
         
+        // Check if we're in development/preview environment
+        const isLovablePreview = window.location.hostname.includes('lovable.dev') || 
+                                window.location.hostname.includes('sandbox');
+        const isDashboardRoute = window.location.pathname === '/dashboard';
+        
         // Check for demo user if no session
         if (!session) {
           const demoUser = localStorage.getItem('demo-user');
-          if (demoUser) {
+          
+          // Auto-enable demo mode for dashboard in development environment
+          if (!demoUser && isDashboardRoute && isLovablePreview) {
+            localStorage.setItem('demo-user', 'true');
+          }
+          
+          if (demoUser || (isDashboardRoute && isLovablePreview)) {
             const mockUser = {
               id: 'demo-user-123',
               email: 'demo@example.com',

@@ -19,12 +19,20 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    // For dashboard route, automatically enable demo mode instead of redirecting to auth
-    if (window.location.pathname === '/dashboard') {
-      localStorage.setItem('demo-user', 'true');
-      window.location.reload();
-      return null;
+    // Check if we're in development/preview environment  
+    const isLovablePreview = window.location.hostname.includes('lovable.dev') || 
+                            window.location.hostname.includes('sandbox');
+    
+    // For dashboard route in development, allow demo mode without reload
+    if (window.location.pathname === '/dashboard' && isLovablePreview) {
+      // The useAuth hook will handle demo mode initialization
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      );
     }
+    
     return <Navigate to="/auth" replace />;
   }
 
