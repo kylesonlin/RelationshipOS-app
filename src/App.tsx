@@ -4,10 +4,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
+import { OfflineNotification } from "./components/OfflineNotification";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 // Critical pages - load immediately for better UX
 import Layout from "./components/layout";
@@ -61,13 +63,10 @@ const queryClient = new QueryClient({
 });
 
 // Enhanced loading component with better UX
+import { EnhancedLoading } from "@/components/ui/enhanced-loading";
+
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="flex flex-col items-center space-y-4">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      <p className="text-sm text-muted-foreground">Loading...</p>
-    </div>
-  </div>
+  <EnhancedLoading message="Loading page..." variant="full" />
 );
 
 // Lazy wrapper with enhanced loading
@@ -364,10 +363,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const isOnline = useOnlineStatus();
+  
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
+          <OfflineNotification isOnline={isOnline} />
           <RouterProvider router={router} />
           <Toaster />
           <Sonner />
