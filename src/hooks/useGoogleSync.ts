@@ -1,4 +1,4 @@
-import { useAdvancedQuery } from '@/hooks/useAdvancedCache';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -77,11 +77,11 @@ export const useGoogleSync = () => {
     }
   };
 
-  const { data: syncStatus, loading: syncLoading } = useAdvancedQuery({
+  const { data: syncStatus, isLoading: syncLoading } = useQuery({
     queryKey: ['google-sync-status'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { data: null, error: null };
+      if (!user) return null;
 
       const { data, error } = await supabase
         .from('user_google_tokens')
@@ -89,7 +89,8 @@ export const useGoogleSync = () => {
         .eq('user_id', user.id)
         .single();
 
-      return { data, error };
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
   });

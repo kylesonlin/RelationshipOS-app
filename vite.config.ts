@@ -19,24 +19,11 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Vendor chunks for better caching
+          // Simplified vendor chunks - let Vite handle most bundling automatically
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': [
-            '@radix-ui/react-dialog', 
-            '@radix-ui/react-dropdown-menu', 
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-select',
-            '@radix-ui/react-toast'
-          ],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-tabs'],
           'chart-vendor': ['recharts'],
           'query-vendor': ['@tanstack/react-query'],
-          'icon-vendor': ['lucide-react'],
-          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
-          
-          // Feature-based chunks
-          'dashboard-core': ['./src/pages/Dashboard.tsx', './src/hooks/useDashboardData.ts'],
-          'analytics-core': ['./src/pages/Analytics.tsx', './src/hooks/useAnalyticsData.ts'],
-          'contacts-core': ['./src/pages/Contacts.tsx', './src/hooks/useContacts.ts'],
         },
       },
     },
