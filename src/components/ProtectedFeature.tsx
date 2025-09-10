@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ export const ProtectedFeature = ({
   upgradeDescription = "Upgrade to access this feature"
 }: ProtectedFeatureProps) => {
   const { canUseFeature, createCheckout, loading, subscription } = useSubscription();
+  const navigate = useNavigate();
 
   // Check if user can access this feature
   const hasAccess = canUseFeature(feature);
@@ -52,7 +54,7 @@ export const ProtectedFeature = ({
             // If already on trial/subscription, go to pricing to upgrade
             // Otherwise start with personal_pro
             if (subscription?.subscribed || subscription?.is_trial) {
-              window.location.href = '/pricing';
+              navigate('/pricing');
             } else {
               createCheckout('personal_pro');
             }

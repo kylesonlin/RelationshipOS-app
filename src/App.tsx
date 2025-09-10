@@ -1,3 +1,4 @@
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +8,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import { ABTestProvider } from "./components/ABTestProvider";
 import CookieConsent from "./components/CookieConsent";
-import { Suspense, lazy } from "react";
 
 // Critical pages - load immediately for better UX
 import Layout from "./components/layout";

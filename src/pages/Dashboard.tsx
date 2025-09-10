@@ -1,4 +1,4 @@
-import React, { useState, memo, useMemo, Suspense } from "react"
+import { useState, memo, useMemo, Suspense, lazy } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,10 +13,10 @@ import { RelationshipHealthScore } from "@/components/gamification/RelationshipH
 import { GoogleSyncCTA } from "@/components/onboarding/GoogleSyncCTA"
 
 // Lazy load heavy components for instant initial render
-const ExecutiveCalendarWidget = React.lazy(() => 
+const ExecutiveCalendarWidget = lazy(() => 
   import("@/components/dashboard/ExecutiveCalendarWidget").then(m => ({ default: m.ExecutiveCalendarWidget }))
 )
-const SmartInsightsWidget = React.lazy(() => 
+const SmartInsightsWidget = lazy(() => 
   import("@/components/ai/SmartInsightsWidget").then(m => ({ default: m.SmartInsightsWidget }))
 )
 import { useAuth } from "@/hooks/useAuth"
@@ -205,8 +205,7 @@ const Dashboard = () => {
             totalContacts={memoizedMetrics.totalContacts} 
             onSyncComplete={() => {
               refreshMetrics();
-              // Force re-render by updating a state or triggering navigation
-              window.location.reload();
+              // Trigger re-render without full page reload
             }} 
           />
           <Suspense fallback={<ComponentLoader />}>

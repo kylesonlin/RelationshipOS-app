@@ -1,4 +1,4 @@
-import { useRouteError, Link } from "react-router-dom";
+import { useRouteError, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
@@ -11,6 +11,7 @@ interface RouteError {
 
 const ErrorPage = () => {
   const error = useRouteError() as RouteError;
+  const navigate = useNavigate();
   
   const getErrorMessage = () => {
     if (error?.status === 404) {
@@ -32,7 +33,8 @@ const ErrorPage = () => {
   };
 
   const handleRefresh = () => {
-    window.location.reload();
+    // Navigate to current location to trigger a soft refresh
+    navigate(0);
   };
 
   return (
