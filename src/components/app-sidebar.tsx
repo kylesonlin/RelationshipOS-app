@@ -28,21 +28,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-// Executive Command Center Navigation
+// Command Center Navigation
 const commandItems = [
-  { title: "Executive Command Center", url: "/", icon: Command },
+  { title: "Command Center", url: "/dashboard", icon: Command },
   { title: "Relationship Intelligence", url: "/contacts", icon: Users },
   { title: "Strategy Assistant", url: "/oracle", icon: Brain },
-  { title: "Executive Intelligence", url: "/analytics", icon: TrendingUp },
+  { title: "Performance Analytics", url: "/analytics", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 // Intelligence Tools
 const intelligenceItems = [
   { title: "Strategic Intelligence", url: "/strategic-intelligence", icon: Target },
-  { title: "Data Intelligence Hub", url: "/integrations", icon: Puzzle },
-  { title: "Meeting Intelligence", url: "/meeting-prep", icon: Calendar },
-  { title: "Automation Engine", url: "/follow-up-automation", icon: Zap },
+  { title: "Integrations", url: "/integrations", icon: Puzzle },
+  { title: "Meeting Prep", url: "/meeting-prep", icon: Calendar },
+  { title: "Follow-Up Automation", url: "/follow-up-automation", icon: Zap },
 ]
 
 // Professional Growth (subtle placement)
@@ -88,7 +88,7 @@ export function AppSidebar() {
               </div>
               <div>
                 <div className="executive-title text-lg">RelationshipOS</div>
-                <div className="text-xs text-muted-foreground">Executive Command Center</div>
+                <div className="text-xs text-muted-foreground">Command Center</div>
               </div>
             </div>
           ) : (

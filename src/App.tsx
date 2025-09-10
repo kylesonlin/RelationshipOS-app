@@ -290,7 +290,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "gamification",
+        path: "gamification-dashboard",
         element: (
           <ProtectedRoute>
             <Layout>
@@ -332,7 +332,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "admin",
+        path: "admin-dashboard",
         element: (
           <ProtectedRoute>
             <Layout>

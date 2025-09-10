@@ -75,11 +75,34 @@ export default function SettingsPage() {
               <CardTitle>Profile Settings</CardTitle>
               <CardDescription>Manage your personal information and preferences</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Profile settings coming soon</p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Display Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your display name"
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email</label>
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Bio</label>
+                  <textarea
+                    placeholder="Tell us about yourself"
+                    rows={3}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background resize-none"
+                  />
+                </div>
               </div>
+              <Button>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -90,11 +113,31 @@ export default function SettingsPage() {
               <CardTitle>Notification Preferences</CardTitle>
               <CardDescription>Control how and when you receive notifications</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Bell className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Notification settings coming soon</p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Email Notifications</h4>
+                    <p className="text-sm text-muted-foreground">Receive updates via email</p>
+                  </div>
+                  <input type="checkbox" className="rounded" defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Meeting Reminders</h4>
+                    <p className="text-sm text-muted-foreground">Get notified before meetings</p>
+                  </div>
+                  <input type="checkbox" className="rounded" defaultChecked />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Weekly Reports</h4>
+                    <p className="text-sm text-muted-foreground">Receive weekly performance summaries</p>
+                  </div>
+                  <input type="checkbox" className="rounded" />
+                </div>
               </div>
+              <Button>Save Preferences</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -109,10 +152,23 @@ export default function SettingsPage() {
               <CardTitle>Data Management</CardTitle>
               <CardDescription>Export, import, and manage your data</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Data management coming soon</p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="border border-input rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Export Data</h4>
+                  <p className="text-sm text-muted-foreground mb-4">Download all your data in JSON format</p>
+                  <Button variant="outline">Export All Data</Button>
+                </div>
+                <div className="border border-input rounded-lg p-4">
+                  <h4 className="font-medium mb-2">Import Data</h4>
+                  <p className="text-sm text-muted-foreground mb-4">Import data from CSV or JSON files</p>
+                  <Button variant="outline">Import Data</Button>
+                </div>
+                <div className="border border-destructive/50 bg-destructive/5 rounded-lg p-4">
+                  <h4 className="font-medium mb-2 text-destructive">Delete Account</h4>
+                  <p className="text-sm text-muted-foreground mb-4">Permanently delete your account and all data</p>
+                  <Button variant="destructive">Delete Account</Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -124,11 +180,33 @@ export default function SettingsPage() {
               <CardTitle>Appearance</CardTitle>
               <CardDescription>Customize the look and feel of your workspace</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                <Palette className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Appearance settings coming soon</p>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Theme</label>
+                  <select className="w-full px-3 py-2 border border-input rounded-md bg-background">
+                    <option>System Default</option>
+                    <option>Light Mode</option>
+                    <option>Dark Mode</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Sidebar Position</label>
+                  <select className="w-full px-3 py-2 border border-input rounded-md bg-background">
+                    <option>Left</option>
+                    <option>Right</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Dashboard Layout</label>
+                  <select className="w-full px-3 py-2 border border-input rounded-md bg-background">
+                    <option>Default</option>
+                    <option>Compact</option>
+                    <option>Spacious</option>
+                  </select>
+                </div>
               </div>
+              <Button>Save Appearance</Button>
             </CardContent>
           </Card>
         </TabsContent>
