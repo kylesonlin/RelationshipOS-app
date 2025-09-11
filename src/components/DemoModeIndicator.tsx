@@ -11,7 +11,9 @@ export const DemoModeIndicator = () => {
   if (!isDemoUser) return null
 
   const handleSignIn = () => {
+    // Clear both localStorage and sessionStorage demo flags
     localStorage.removeItem('demo-user')
+    sessionStorage.removeItem('demo-user')
     signOut()
     navigate('/auth')
   }

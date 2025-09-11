@@ -189,8 +189,8 @@ const Auth = () => {
                 {/* Demo mode - de-emphasized */}
                 <Button
                   onClick={() => {
-                    // Store demo user flag for useAuth hook
-                    localStorage.setItem('demo-user', 'true');
+                    // Store demo user flag for this session only
+                    sessionStorage.setItem('demo-user', 'true');
                     navigate('/');
                   }}
                   variant="outline"

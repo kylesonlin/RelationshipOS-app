@@ -28,18 +28,13 @@ export const useAuth = () => {
         const isLovablePreview = window.location.hostname.includes('lovable.dev') || 
                                 window.location.hostname.includes('sandbox') ||
                                 window.location.hostname.includes('lovableproject.com');
-        const isDashboardRoute = window.location.pathname === '/dashboard';
         
-        // Check for demo user if no session
+        // Check for demo user - but only if explicitly set in this session
         if (!session) {
-          const demoUser = localStorage.getItem('demo-user');
+          const demoUser = sessionStorage.getItem('demo-user'); // Changed to sessionStorage
           
-          // Auto-enable demo mode for dashboard in development environment
-          if (!demoUser && isDashboardRoute && isLovablePreview) {
-            localStorage.setItem('demo-user', 'true');
-          }
-          
-          if (demoUser || (isDashboardRoute && isLovablePreview)) {
+          // Demo mode handling - only via explicit selection, no auto-enable
+          if (demoUser) {
             const mockUser = {
               id: 'demo-user-123',
               email: 'demo@example.com',
@@ -150,8 +145,9 @@ export const useAuth = () => {
   }, []); // Empty dependency array to prevent re-initialization
 
   const signOut = async () => {
-    // Clear demo user data if present
+    // Clear demo user data if present (both localStorage and sessionStorage)
     localStorage.removeItem('demo-user');
+    sessionStorage.removeItem('demo-user');
     
     const { error } = await supabase.auth.signOut();
     if (error) {
