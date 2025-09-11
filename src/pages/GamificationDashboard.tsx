@@ -7,6 +7,7 @@ import { ProgressChallenges } from "@/components/gamification/ProgressChallenges
 import { XPBar } from "@/components/gamification/XPBar"
 import { LinkedInTeaser } from "@/components/gamification/LinkedInTeaser"
 import { NetworkXPSystem } from "@/components/gamification/NetworkXPSystem"
+import { useGamification } from "@/hooks/useGamification"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,7 @@ import {
 
 export default function GamificationDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { gamificationData, loading, getLevel, getHealthScoreLevel } = useGamification()
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -47,59 +49,82 @@ export default function GamificationDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-blue/5">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">Level 12</div>
-            <div className="text-sm text-muted-foreground">Relationship Pro</div>
-            <div className="mt-2">
-              <Badge variant="default" className="text-xs">
-                <Star className="h-3 w-3 mr-1" />
-                2,400 XP
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+      {loading || !gamificationData ? (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="border-2 border-muted">
+              <CardContent className="p-4">
+                <div className="animate-pulse space-y-2">
+                  <div className="h-6 bg-muted rounded w-1/2"></div>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-blue/5">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-primary mb-1">Level {getLevel(gamificationData.total_xp)}</div>
+              <div className="text-sm text-muted-foreground">
+                {getLevel(gamificationData.total_xp) >= 15 ? 'Relationship Master' : 
+                 getLevel(gamificationData.total_xp) >= 10 ? 'Network Builder' : 
+                 getLevel(gamificationData.total_xp) >= 5 ? 'Relationship Pro' : 'Networking Novice'}
+              </div>
+              <div className="mt-2">
+                <Badge variant="default" className="text-xs">
+                  <Star className="h-3 w-3 mr-1" />
+                  {gamificationData.total_xp.toLocaleString()} XP
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600 mb-1">15 Days</div>
-            <div className="text-sm text-muted-foreground">Current Streak</div>
-            <div className="mt-2">
-              <Badge variant="outline" className="text-orange-600 border-orange-600 text-xs">
-                <Flame className="h-3 w-3 mr-1" />
-                On Fire!
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-orange-600 mb-1">{gamificationData.current_streak} Days</div>
+              <div className="text-sm text-muted-foreground">Current Streak</div>
+              <div className="mt-2">
+                <Badge variant="outline" className="text-orange-600 border-orange-600 text-xs">
+                  <Flame className="h-3 w-3 mr-1" />
+                  {gamificationData.current_streak >= 7 ? 'On Fire!' : 
+                   gamificationData.current_streak >= 3 ? 'Building!' : 'Getting Started!'}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">Score: 78</div>
-            <div className="text-sm text-muted-foreground">Health Score</div>
-            <div className="mt-2">
-              <Badge variant="outline" className="text-green-600 border-green-600 text-xs">
-                <Heart className="h-3 w-3 mr-1" />
-                Gold Tier
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600 mb-1">Score: {gamificationData.relationship_health_score}</div>
+              <div className="text-sm text-muted-foreground">Health Score</div>
+              <div className="mt-2">
+                <Badge variant="outline" className="text-green-600 border-green-600 text-xs">
+                  <Heart className="h-3 w-3 mr-1" />
+                  {getHealthScoreLevel(gamificationData.relationship_health_score).level}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600 mb-1">Rank #8</div>
-            <div className="text-sm text-muted-foreground">This Week</div>
-            <div className="mt-2">
-              <Badge variant="outline" className="text-purple-600 border-purple-600 text-xs">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                Rising
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-purple-600 mb-1">
+                {gamificationData.weekly_goal_progress || 0}/{gamificationData.weekly_goal_target || 5}
+              </div>
+              <div className="text-sm text-muted-foreground">Weekly Progress</div>
+              <div className="mt-2">
+                <Badge variant="outline" className="text-purple-600 border-purple-600 text-xs">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  {((gamificationData.weekly_goal_progress || 0) / (gamificationData.weekly_goal_target || 5) * 100).toFixed(0)}%
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Main Dashboard */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
